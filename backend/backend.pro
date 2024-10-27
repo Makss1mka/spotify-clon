@@ -8,19 +8,27 @@ CONFIG += c++20 cmdline
 
 SOURCES += \
         src/concepts/request.cpp \
-        src/main.cpp \
         src/concepts/server.cpp \
         src/concepts/router.cpp \
         src/concepts/routerDispatcher.cpp \
-        src/handlers/userRouter.cpp \
-        src/utils/parsers.cpp
+        src/main.cpp \
+        \
+        src/adminModule/adminRouter.cpp \
+        src/adminModule/adminProvider.cpp \
+        \
+        src/authModule/authRouter.cpp \
+        src/authModule/authProvider.cpp
+
 
 HEADERS += \
         src/headers/concepts/Request.h \
         src/headers/concepts/Router.h \
         src/headers/concepts/RouterDispatcher.h \
         src/headers/concepts/Server.h \
-        src/headers/handlers/userRouter.h
+        \
+        src/headers/adminModule/adminRouter.h \
+        \
+        src/headers/authModule/authRouter.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Router.h"
+#include "Request.h"
 
 class RouterDispatcher {
 public:
@@ -11,8 +12,8 @@ public:
     RouterDispatcher(const RouterDispatcher&) = delete;
     void operator=(const RouterDispatcher&) = delete;
 
-    QByteArray routing(QByteArray &request);
-    void addRouter(Router &router);
+    QByteArray routing(Request &request);
+    void addRouter(Router router);
 private:
     RouterDispatcher();
 

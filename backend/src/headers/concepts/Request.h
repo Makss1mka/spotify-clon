@@ -12,8 +12,8 @@ public:
     Request();
     void print();
 
-    QByteArray method;
-    QByteArray url;
+    std::string method;
+    std::string url;
     std::map<QByteArray, QByteArray> query;
     std::map<QByteArray, QByteArray> headers;
     std::map<QByteArray, QByteArray> body;

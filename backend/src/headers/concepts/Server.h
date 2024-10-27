@@ -12,10 +12,7 @@ public:
     Server(int port);
     QTcpSocket *socket;
 
-private:
-    QByteArray Data;
 
-    void sendToClient(QString str);
 public slots:
     void incomingConnection(qintptr socketDescriptor);
     void slotReadyRead();

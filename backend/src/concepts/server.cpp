@@ -3,13 +3,18 @@
 #include <QCoreApplication>
 #include "../headers/concepts/Server.h"
 #include "../headers/concepts/Request.h"
+#include "../headers/concepts/RouterDispatcher.h"
+#include "../headers/handlers/adminRouter.h"
 
 Server::Server(int port) {
     if(this->listen(QHostAddress::Any, port)) {
         qDebug() << "Server started on " << port << " port";
     } else {
         qWarning() << "Server starting error";
+        exit(1);
     }
+
+    RouterDispatcher::getDispatcher().addRouter(adminRouter());
 }
 
 void Server::incomingConnection(qintptr socketDescriptor) {
@@ -27,13 +32,8 @@ void Server::slotReadyRead() {
     qDebug() << "Request" << request;
 
     Request req = Request::parseFromQByteArray(request);
-    req.print();
 
-    QByteArray response = "HTTP/1.1 404 Not Found\r\n"
-            "Content-Type: text/plain\r\n"
-            "Content-Length: 16\r\n"
-            "\r\n"
-            "Cannot send file";
+    QByteArray response = RouterDispatcher::getDispatcher().routing(req);
 
     socket->write(response);
     socket->flush();
@@ -49,11 +49,7 @@ void Server::slotReadyRead() {
 // }
 
 // if (request.contains("GET /get ")) {
-//     response = "HTTP/1.1 200 OK\r\n"
-//                "Content-Type: text/plain\r\n"
-//                "Content-Length: 5\r\n"
-//                "\r\n"
-//                "hello";
+//
 // } else if(request.contains("GET /getBilly ")) {
 //     QFile file("../../../assets/billy.jpg");
 //     if(file.exists()) qDebug() << "Penis";

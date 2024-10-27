@@ -1,4 +1,5 @@
 #include "../headers/concepts/RouterDispatcher.h"
+#include "../headers/concepts/Request.h"
 
 RouterDispatcher::RouterDispatcher() {}
 
@@ -7,14 +8,15 @@ RouterDispatcher& RouterDispatcher::getDispatcher() {
     return dispatcher;
 }
 
-void RouterDispatcher::addRouter(Router &router) {
+void RouterDispatcher::addRouter(Router router) {
     routers.push_back(router);
 }
 
-QByteArray RouterDispatcher::routing(QByteArray &request) {
+QByteArray RouterDispatcher::routing(Request &request) {
     QByteArray response;
 
     for(auto &router : routers) {
+        qDebug() << "JOPA";
         response = router.routing(request);
     }
 

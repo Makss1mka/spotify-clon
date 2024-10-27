@@ -5,30 +5,28 @@
 #include <vector>
 #include <QByteArray>
 #include <functional>
+#include "Request.h"
 
 class Router {
 public:
     Router(std::string urlPrefix = "");
 
-    QByteArray routing(QByteArray &request);
-    bool addGetRoute(std::string url, QByteArray (*handler) (QByteArray));
-    bool addPostRoute(std::string url, QByteArray (*handler) (QByteArray));
-    bool addUpdateRoute(std::string url, QByteArray (*handler) (QByteArray));
-    bool addDeleteRoute(std::string url, QByteArray (*handler) (QByteArray));
+    QByteArray routing(Request &request);
+    bool addGetRoute(std::string url, QByteArray (*handler) (Request));
+    bool addPostRoute(std::string url, QByteArray (*handler) (Request));
+    bool addUpdateRoute(std::string url, QByteArray (*handler) (Request));
+    bool addDeleteRoute(std::string url, QByteArray (*handler) (Request));
+    void getRouterInfo();
 private:
     std::string urlPrefix;
-    bool addRoute(std::string method, std::string url, QByteArray (*handler) (QByteArray));
+    bool addRoute(std::string method, std::string url, QByteArray (*handler) (Request));
 
     class Route {
     public:
-        Route(std::string method, std::string url, QByteArray (*handler) (QByteArray)) {
-            method = method;
-            url = url;
-            handler = handler;
-        }
+        Route(std::string method, std::string url, QByteArray (*handler) (Request));
         std::string url;
         std::string method;
-        QByteArray (*handler) (QByteArray);
+        QByteArray (*handler) (Request);
     };
 
     std::vector<Route> routes;
