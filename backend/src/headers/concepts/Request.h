@@ -3,7 +3,6 @@
 
 #include <map>
 #include <QByteArray>
-#include <iostream>
 
 class Request {
 public:

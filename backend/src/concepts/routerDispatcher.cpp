@@ -16,7 +16,6 @@ QByteArray RouterDispatcher::routing(Request &request) {
     QByteArray response;
 
     for(auto &router : routers) {
-        qDebug() << "JOPA";
         response = router.routing(request);
     }
 

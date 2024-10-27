@@ -4,7 +4,7 @@
 #include "../headers/concepts/Server.h"
 #include "../headers/concepts/Request.h"
 #include "../headers/concepts/RouterDispatcher.h"
-#include "../headers/handlers/adminRouter.h"
+#include "../headers/adminModule/AdminRouter.h"
 
 Server::Server(int port) {
     if(this->listen(QHostAddress::Any, port)) {
@@ -14,7 +14,7 @@ Server::Server(int port) {
         exit(1);
     }
 
-    RouterDispatcher::getDispatcher().addRouter(adminRouter());
+    RouterDispatcher::getDispatcher().addRouter(AdminRouter());
 }
 
 void Server::incomingConnection(qintptr socketDescriptor) {
