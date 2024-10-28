@@ -18,7 +18,8 @@ SOURCES += \
         src/adminModule/adminProvider.cpp \
         \
         src/authModule/authRouter.cpp \
-        src/authModule/authProvider.cpp
+        src/authModule/authProvider.cpp \
+        src/utils/envFile.cpp
 
 
 HEADERS += \
@@ -29,9 +30,11 @@ HEADERS += \
         src/headers/concepts/Request.h \
         src/headers/concepts/Router.h \
         src/headers/concepts/RouterDispatcher.h \
-        src/headers/concepts/Server.h
+        src/headers/concepts/Server.h \
+        src/headers/utils/envFile.h
 
-
+RESOURCES += \
+    resources.qrc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

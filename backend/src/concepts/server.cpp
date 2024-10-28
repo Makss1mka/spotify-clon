@@ -6,6 +6,8 @@
 #include "../headers/concepts/RouterDispatcher.h"
 #include "../headers/adminModule/AdminRouter.h"
 
+#include "../headers/utils/envFile.h"
+
 Server::Server(int port) {
     if(this->listen(QHostAddress::Any, port)) {
         qDebug() << "Server started on " << port << " port";

@@ -13,24 +13,24 @@ public:
     Router(std::string urlPrefix = "");
 
     QByteArray routing(Request &request);
-    bool addGetRoute(std::string url, QByteArray (*handler) (Request&, Router*));
-    bool addPostRoute(std::string url, QByteArray (*handler) (Request&, Router*));
-    bool addUpdateRoute(std::string url, QByteArray (*handler) (Request&, Router*));
-    bool addDeleteRoute(std::string url, QByteArray (*handler) (Request&, Router*));
+    bool addGetRoute(std::string url, std::function<QByteArray(Request&)> handler);
+    bool addPostRoute(std::string url, std::function<QByteArray(Request&)> handler);
+    bool addUpdateRoute(std::string url, std::function<QByteArray(Request&)> handler);
+    bool addDeleteRoute(std::string url, std::function<QByteArray(Request&)> handler);
     void getRouterInfo();
 
     void addProvider(const std::string& key, std::shared_ptr<Provider>provider);
     std::shared_ptr<Provider> getProvider(const std::string& key);
 private:
     std::string urlPrefix;
-    bool addRoute(std::string method, std::string url, QByteArray (*handler) (Request&, Router*));
+    bool addRoute(std::string method, std::string url, std::function<QByteArray(Request&)> handler);
 
     class Route {
     public:
-        Route(std::string method, std::string url, QByteArray (*handler) (Request&, Router*));
+        Route(std::string method, std::string url, std::function<QByteArray(Request&)> handler);
         std::string url;
         std::string method;
-        QByteArray (*handler) (Request);
+        std::function<QByteArray(Request&)> handler;
     };
 
     std::vector<Route> routes;

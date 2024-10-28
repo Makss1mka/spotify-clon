@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>.env</file>
+        <file>db/userInfo.txt</file>
+        <file>static/billy.jpg</file>
+    </qresource>
+</RCC>

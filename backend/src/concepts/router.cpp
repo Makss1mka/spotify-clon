@@ -1,17 +1,18 @@
 #include "../headers/concepts/Router.h"
 #include "../headers/concepts/Request.h"
+#include <functional>
 
 Router::Router(std::string urlPrefix) {
     this->urlPrefix = urlPrefix;
 }
 
-Router::Route::Route(std::string method, std::string url, QByteArray (*handler) (Request&, Router*)) {
+Router::Route::Route(std::string method, std::string url, std::function<QByteArray(Request&)> handler) {
     this->method = method;
     this->handler = handler;
     this->url = url;
 }
 
-bool Router::addRoute(std::string method, std::string url, QByteArray (*handler) (Request&, Router*)) {
+bool Router::addRoute(std::string method, std::string url, std::function<QByteArray(Request&)> handler) {
     for(auto &route : routes) {
         if(url == route.url && method == route.method) return false;
     }
@@ -20,26 +21,26 @@ bool Router::addRoute(std::string method, std::string url, QByteArray (*handler)
     return true;
 }
 
-bool Router::addGetRoute(std::string url, QByteArray (*handler) (Request&, Router*)) {
+bool Router::addGetRoute(std::string url, std::function<QByteArray(Request&)> handler) {
     return addRoute("GET", url, handler);
 }
 
-bool Router::addPostRoute(std::string url, QByteArray (*handler) (Request&, Router*)) {
+bool Router::addPostRoute(std::string url, std::function<QByteArray(Request&)> handler) {
     return addRoute("POST", url, handler);
 }
 
-bool Router::addUpdateRoute(std::string url, QByteArray (*handler) (Request&, Router*)) {
+bool Router::addUpdateRoute(std::string url, std::function<QByteArray(Request&)> handler) {
     return addRoute("UPDATE", url, handler);
 }
 
-bool Router::addDeleteRoute(std::string url, QByteArray (*handler) (Request&, Router*)) {
+bool Router::addDeleteRoute(std::string url, std::function<QByteArray(Request&)> handler) {
     return addRoute("DELETE", url, handler);
 }
 
 QByteArray Router::routing(Request &request) {
     for(auto& route : routes) {
         if(request.url == urlPrefix + route.url && request.method == route.method) {
-            return route.handler(request, this);
+            return route.handler(request);
         }
     }
     QByteArray response = "";
