@@ -3,20 +3,20 @@
 
 #include <QTcpServer>
 #include <QTcpSocket>
-#include <QVector>
+#include <QRunnable>
+#include <QSqlDatabase>
 
 class Server : public QTcpServer {
     Q_OBJECT
-
 public:
     Server(int port);
-    QTcpSocket *socket;
+private:
+    bool openDbConnections();
+    std::shared_ptr<QSqlDatabase> getConnection();
 
-
+    std::shared_ptr<QSqlDatabase> connection;
 public slots:
     void incomingConnection(qintptr socketDescriptor);
-    void slotReadyRead();
-
 };
 
 #endif // SERVER_H

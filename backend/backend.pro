@@ -1,4 +1,4 @@
-QT = core network
+QT = core network sql
 
 CONFIG += c++20 cmdline
 
@@ -23,6 +23,7 @@ SOURCES += \
 
 
 HEADERS += \
+        src/headers/authModule/AuthProvider.h \
         src/headers/adminModule/AdminProvider.h \
         src/headers/adminModule/AdminRouter.h \
         src/headers/authModule/AuthRouter.h \

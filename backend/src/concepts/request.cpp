@@ -23,6 +23,11 @@ void Request::print() {
 
 Request Request::parseFromQByteArray(QByteArray rawReq) {
     Request parsedReq;
+
+    if (rawReq == "") {
+        return parsedReq;
+    }
+
     QList<QByteArray> splitedRawReq = rawReq.split('\r');
     int tempInd = splitedRawReq[0].indexOf(" /");
 

@@ -52,6 +52,9 @@ void Router::getRouterInfo() {
     for(auto& route : routes) {
         qDebug() << route.method << " " << route.url;
     }
+    for(auto& [key, provider] : providers) {
+        qDebug() << key;
+    }
 }
 
 void Router::addProvider(const std::string& key, std::shared_ptr<Provider> provider) {
@@ -59,5 +62,6 @@ void Router::addProvider(const std::string& key, std::shared_ptr<Provider> provi
 }
 
 std::shared_ptr<Provider> Router::getProvider(const std::string& key) {
-    return providers[key];
+    qDebug() << "Jopa 1.5" << key;
+    return this->providers[key];
 }

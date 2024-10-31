@@ -2,9 +2,6 @@
 #define ADMINROUTER_H
 
 #include "../concepts/Router.h"
-#include "../concepts/Provider.h"
-#include <map>
-#include <memory>
 
 class AdminRouter : public Router {
 public:

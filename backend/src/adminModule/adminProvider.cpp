@@ -1,49 +1,33 @@
 #include "../headers/adminModule/AdminProvider.h"
 #include "../headers/utils/envFile.h"
-#include <QFile>
 #include <QDebug>
-#include <QTextStream>
-#include <QString>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
-#include <vector>
+#include <QSqlQuery>
 
 AdminProvider::AdminProvider() {}
 
 QByteArray AdminProvider::getAllUserInfo() {
-    QFile file(env::get("USERS_INFO_DB", ":/.env"));
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Cannot open env file with path: " << env::get("USERS_INFO_DB", ":/.env");
-        return "";
-    }
-
     QJsonArray userArray;
     QJsonObject user;
 
-    // QTextStream in(&file);
-    // while (!in.atEnd()) {
-    //     QString line = in.readLine();
-    //     user["role"] = line.mid(2);
-    //     line = in.readLine();
-    //     user["id"] = line.mid(2).toInt();
-    //     line = in.readLine();
-    //     user["name"] = line.mid(2);
-    //     line = in.readLine();
-    //     user["password"] = line.mid(2);
-    //     line = in.readLine();
-    //     user["email"] = line.mid(2);
-    //     line = in.readLine();
-    //     line = in.readLine();
-    //     if(line != "au") {
-    //         line = in.readLine();
-    //         std::vector<int> playlists;
+    QSqlQuery query;
+    if(!query.exec("SELECT * FROM userInfo")) {
+        qDebug() << "Cannot select data in method: getAllUserInfo";
+        return "";
+    }
 
+    while (query.next()) {
+        user["id"] = query.value(0).toInt();
+        user["login"] = query.value(1).toString();
+        user["role"] = query.value(3).toInt();
+        user["email"] = query.value(4).toString();
+        userArray.append(user);
+    }
 
-    //     }
+    QJsonDocument jsonDoc(userArray);
+    QByteArray jsonData = jsonDoc.toJson();
 
-    // }
-
-    QByteArray data = "hello";
-    return data;
+    return jsonData;
 }

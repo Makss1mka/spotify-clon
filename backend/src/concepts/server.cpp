@@ -1,11 +1,14 @@
 #include <QFile>
-#include <QDir>
 #include <QCoreApplication>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QTcpSocket>
+#include <QThreadPool>
 #include "../headers/concepts/Server.h"
 #include "../headers/concepts/Request.h"
 #include "../headers/concepts/RouterDispatcher.h"
 #include "../headers/adminModule/AdminRouter.h"
-
+#include "../headers/authModule/AuthRouter.h"
 #include "../headers/utils/envFile.h"
 
 Server::Server(int port) {
@@ -16,68 +19,42 @@ Server::Server(int port) {
         exit(1);
     }
 
+    if(!Server::openDbConnections()) throw "Cannot open DB connections";
     RouterDispatcher::getDispatcher().addRouter(AdminRouter());
+    RouterDispatcher::getDispatcher().addRouter(AuthRouter());
+}
+
+bool Server::openDbConnections() {
+    connection = std::make_shared<QSqlDatabase>(QSqlDatabase::addDatabase("QSQLITE"));
+    connection->setDatabaseName(env::get("USERS_INFO_DB", ":/.env"));
+
+    if(!connection->open()) {
+        qDebug() << "Cannot connect to database, db path: " << env::get("USERS_INFO_DB", ":/.env") << connection->lastError().text();
+        return false;
+    }
+    return true;
 }
 
 void Server::incomingConnection(qintptr socketDescriptor) {
-    socket = new QTcpSocket;
-    socket->setSocketDescriptor(socketDescriptor);
-
-    connect(socket, &QTcpSocket::readyRead, this, &Server::slotReadyRead);
-    connect(socket, &QTcpSocket::disconnected, socket, &QTcpSocket::deleteLater);
-
+    QTcpSocket* socket = new QTcpSocket();
     qDebug() << "Client has connected" << socketDescriptor;
+
+    if(socket->setSocketDescriptor(socketDescriptor)) {
+        connect(socket, &QTcpSocket::readyRead, [socket](){
+            QByteArray request = socket->readAll();
+            qDebug() << "Request" << request;
+
+            Request req = Request::parseFromQByteArray(request);
+
+            QByteArray response = RouterDispatcher::getDispatcher().routing(req);
+
+            socket->write(response);
+            socket->flush();
+        });
+        connect(socket, &QTcpSocket::disconnected, [socket](){
+            socket->deleteLater();
+        });
+    } else {
+        qDebug() << "Cannot connect user " << socketDescriptor;
+    }
 }
-
-void Server::slotReadyRead() {
-    QByteArray request = socket->readAll();
-    qDebug() << "Request" << request;
-
-    Request req = Request::parseFromQByteArray(request);
-
-    QByteArray response = RouterDispatcher::getDispatcher().routing(req);
-
-    socket->write(response);
-    socket->flush();
-}
-
-
-// void Server::sendToClient(QString str) {
-//     Data.clear();
-//     QDataStream out(&Data, QIODevice::WriteOnly);
-//     out.setVersion(QDataStream::Qt_6_7);
-//     out << str;
-//     socket->write(Data);
-// }
-
-// if (request.contains("GET /get ")) {
-//
-// } else if(request.contains("GET /getBilly ")) {
-//     QFile file("../../../assets/billy.jpg");
-//     if(file.exists()) qDebug() << "Penis";
-//     if(file.open(QIODevice::ReadOnly)) {
-//         QByteArray fileContent = file.readAll();
-//         file.close();
-
-//         response = "HTTP/1.1 200 OK\r\n"
-//                    "Content-Type: image/jpeg\r\n"
-//                    "Content-Length: " + QByteArray::number(fileContent.size()) + "\r\n"
-//                                                               "\r\n";
-//         response.append(fileContent);
-
-//         //qDebug() << fileContent;
-//     } else {
-//         response = "HTTP/1.1 404 Not Found\r\n"
-//                    "Content-Type: text/plain\r\n"
-//                    "Content-Length: 16\r\n"
-//                    "\r\n"
-//                    "Cannot send file";
-//         qWarning() << "Cannot send file";
-//     }
-// } else {
-//     response = "HTTP/1.1 404 Not Found\r\n"
-//                "Content-Type: text/plain\r\n"
-//                "Content-Length: 9\r\n"
-//                "\r\n"
-//                "Not Found";
-// }

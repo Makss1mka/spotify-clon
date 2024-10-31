@@ -3,6 +3,7 @@
 
 #include <map>
 #include <QByteArray>
+#include <QString>
 
 class Request {
 public:
@@ -11,11 +12,11 @@ public:
     Request();
     void print();
 
-    std::string method;
-    std::string url;
-    std::map<QByteArray, QByteArray> query;
-    std::map<QByteArray, QByteArray> headers;
-    std::map<QByteArray, QByteArray> body;
+    QString method;
+    QString url;
+    std::map<QString, QString> query;
+    std::map<QString, QString> headers;
+    std::map<QString, QString> body;
 };
 
 #endif // REQUEST_H
