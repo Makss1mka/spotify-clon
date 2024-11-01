@@ -61,7 +61,3 @@ void Router::addProvider(const std::string& key, std::shared_ptr<Provider> provi
     providers[key] = provider;
 }
 
-std::shared_ptr<Provider> Router::getProvider(const std::string& key) {
-    qDebug() << "Jopa 1.5" << key;
-    return this->providers[key];
-}

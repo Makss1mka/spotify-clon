@@ -19,9 +19,13 @@ public:
     bool addDeleteRoute(std::string url, std::function<QByteArray(Request&)> handler);
     void getRouterInfo();
 
-    void addProvider(const std::string& key, std::shared_ptr<Provider>provider);
-    std::shared_ptr<Provider> getProvider(const std::string& key);
-private:
+    void addProvider(const std::string& key, std::shared_ptr<Provider> provider);
+
+    template<typename T>
+    std::shared_ptr<T> getProvider(const std::string& key) {
+        return std::dynamic_pointer_cast<T>(this->providers[key]);
+    }
+protected:
     std::string urlPrefix;
     bool addRoute(std::string method, std::string url, std::function<QByteArray(Request&)> handler);
 

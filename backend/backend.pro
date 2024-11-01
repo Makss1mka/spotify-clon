@@ -32,7 +32,8 @@ HEADERS += \
         src/headers/concepts/Router.h \
         src/headers/concepts/RouterDispatcher.h \
         src/headers/concepts/Server.h \
-        src/headers/utils/envFile.h
+        src/headers/utils/envFile.h \
+        src/headers/utils/map.h
 
 RESOURCES += \
     resources.qrc

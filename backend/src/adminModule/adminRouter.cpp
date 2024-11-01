@@ -11,16 +11,12 @@ AdminRouter::AdminRouter() : Router("/admin") {
 }
 
 void AdminRouter::setupProviders() {
-    std::shared_ptr<AdminProvider> adminProvider = std::make_shared<AdminProvider>();
-
-    this->addProvider("adminProvider", adminProvider);
+    this->addProvider("adminProvider", std::make_shared<AdminProvider>());
 }
 
 void AdminRouter::setupRoutes() {
     this->addGetRoute("/getAllUserInfo", [this](Request& request) -> QByteArray {
-        qDebug() << "Jopa";
-        std::shared_ptr<AdminProvider> adminProvider = std::dynamic_pointer_cast<AdminProvider>(this->getProvider("adminProvider"));
-        qDebug() << "Jopa 2";
+        std::shared_ptr<AdminProvider> adminProvider = this->getProvider<AdminProvider>("adminProvider");
         QByteArray data = adminProvider->getAllUserInfo();
         QByteArray response;
 

@@ -12,9 +12,7 @@ AuthRouter::AuthRouter() : Router("/auth") {
 }
 
 void AuthRouter::setupProviders() {
-    std::shared_ptr<AuthProvider> authProvider = std::make_shared<AuthProvider>();
-
-    this->addProvider("authProvider", authProvider);
+    this->addProvider("authProvider", std::make_shared<AuthProvider>());
 }
 
 void AuthRouter::setupRoutes() {
@@ -28,7 +26,7 @@ void AuthRouter::setupRoutes() {
             return response;
         }
 
-        std::shared_ptr<AuthProvider> authProvider = std::dynamic_pointer_cast<AuthProvider>(this->getProvider("authProvider"));
+        std::shared_ptr<AuthProvider> authProvider = this->getProvider<AuthProvider>("authProvider");
         QByteArray data = authProvider->registerUser(request.body["login"], request.body["password"], request.body["email"]);
         QByteArray response;
 
@@ -64,7 +62,7 @@ void AuthRouter::setupRoutes() {
             return response;
         }
 
-        std::shared_ptr<AuthProvider> authProvider = std::dynamic_pointer_cast<AuthProvider>(this->getProvider("authProvider"));
+        std::shared_ptr<AuthProvider> authProvider = this->getProvider<AuthProvider>("authProvider");
         QByteArray data;
         QByteArray response;
         QString emptyStr = "";

@@ -11,6 +11,8 @@
 #include "../headers/authModule/AuthRouter.h"
 #include "../headers/utils/envFile.h"
 
+#include "../headers/utils/map.h"
+
 Server::Server(int port) {
     if(this->listen(QHostAddress::Any, port)) {
         qDebug() << "Server started on " << port << " port";
@@ -18,6 +20,13 @@ Server::Server(int port) {
         qWarning() << "Server starting error";
         exit(1);
     }
+
+    Map<std::string, std::string> testMap;
+    testMap.set("key1", "value1");
+    testMap.set("key2", "value2");
+    testMap.set("key3", "value3");
+
+    qDebug() << "Values: " << testMap.get("key1") << "  " << testMap.get("key2") << "  " << testMap.get("key3");
 
     if(!Server::openDbConnections()) throw "Cannot open DB connections";
     RouterDispatcher::getDispatcher().addRouter(AdminRouter());
