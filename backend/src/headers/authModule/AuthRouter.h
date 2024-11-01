@@ -7,8 +7,8 @@ class AuthRouter : public Router {
 public:
     AuthRouter();
 private:
-    void setupProviders();
-    void setupRoutes();
+    void setupProviders() override;
+    void setupRoutes() override;
 };
 
 #endif // USERHANDLERS_H

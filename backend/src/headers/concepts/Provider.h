@@ -2,9 +2,9 @@
 #define PROVIDER_H
 
 class Provider {
-public:
-    Provider();
+protected:
     virtual ~Provider() = default;
+    Provider();
 };
 
 #endif // PROVIDER_H

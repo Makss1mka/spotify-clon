@@ -13,11 +13,11 @@ public:
     void operator=(const RouterDispatcher&) = delete;
 
     QByteArray routing(Request &request);
-    void addRouter(Router router);
+    void addRouter(std::shared_ptr<Router> router);
 private:
     RouterDispatcher();
 
-    std::vector<Router> routers;
+    std::vector<std::shared_ptr<Router>> routers;
 };
 
 #endif // ROUTERDISPATCHER_H

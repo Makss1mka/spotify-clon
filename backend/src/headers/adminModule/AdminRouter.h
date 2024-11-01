@@ -7,8 +7,8 @@ class AdminRouter : public Router {
 public:
     AdminRouter();
 private:
-    void setupProviders();
-    void setupRoutes();
+    void setupProviders() override;
+    void setupRoutes() override;
 };
 
 #endif // ADMINROUTER_H

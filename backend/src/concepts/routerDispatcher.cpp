@@ -8,7 +8,7 @@ RouterDispatcher& RouterDispatcher::getDispatcher() {
     return dispatcher;
 }
 
-void RouterDispatcher::addRouter(Router router) {
+void RouterDispatcher::addRouter(std::shared_ptr<Router> router) {
     routers.push_back(router);
 }
 
@@ -16,10 +16,9 @@ QByteArray RouterDispatcher::routing(Request &request) {
     QByteArray response;
 
     for(auto &router : routers) {
-        response = router.routing(request);
+        response = router->routing(request);
+        if (response != "") return response;
     }
-
-    if(response.length() != 0) return response;
 
     response = "HTTP/1.1 404 Not Found\r\n"
           "Content-Type: text/plain\r\n"

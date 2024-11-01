@@ -43,8 +43,7 @@ QByteArray Router::routing(Request &request) {
             return route.handler(request);
         }
     }
-    QByteArray response = "";
-    return response;
+    return "";
 }
 
 void Router::getRouterInfo() {

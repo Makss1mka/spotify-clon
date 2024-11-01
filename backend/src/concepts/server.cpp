@@ -21,16 +21,9 @@ Server::Server(int port) {
         exit(1);
     }
 
-    Map<std::string, std::string> testMap;
-    testMap.set("key1", "value1");
-    testMap.set("key2", "value2");
-    testMap.set("key3", "value3");
-
-    qDebug() << "Values: " << testMap.get("key1") << "  " << testMap.get("key2") << "  " << testMap.get("key3");
-
     if(!Server::openDbConnections()) throw "Cannot open DB connections";
-    RouterDispatcher::getDispatcher().addRouter(AdminRouter());
-    RouterDispatcher::getDispatcher().addRouter(AuthRouter());
+    RouterDispatcher::getDispatcher().addRouter(std::make_shared<AdminRouter>());
+    RouterDispatcher::getDispatcher().addRouter(std::make_shared<AuthRouter>());
 }
 
 bool Server::openDbConnections() {

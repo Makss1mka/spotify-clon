@@ -12,6 +12,9 @@ class Router {
 public:
     Router(std::string urlPrefix = "");
 
+    virtual void setupProviders() = 0;
+    virtual void setupRoutes() = 0;
+
     QByteArray routing(Request &request);
     bool addGetRoute(std::string url, std::function<QByteArray(Request&)> handler);
     bool addPostRoute(std::string url, std::function<QByteArray(Request&)> handler);
