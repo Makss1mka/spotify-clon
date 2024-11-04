@@ -1,6 +1,8 @@
 #include "../headers/authModule/AuthProvider.h"
 #include "../headers/utils/envFile.h"
 #include "../headers/concepts/Request.h"
+#include "../headers/utils/exceptions.h"
+#include "../headers/utils/statusCodes.h"
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -11,13 +13,12 @@
 AuthProvider::AuthProvider() {}
 
 QByteArray AuthProvider::registerUser(QString& login, QString& email, QString& password) {
-    // status code = 0 - user created
-    // status code = 1 - login is taken
-    // status code = 2 - email is taken
     QSqlQuery query;
     if(!query.exec("SELECT * FROM userInfo WHERE login='" + login + "' or email='" + email + "';")) {
-        qDebug() << "Cannot select data in method: AuthProvider::registerUser";
-        return "";
+        throw DbException(
+            "Cannot select data in method: AuthProvider::registerUser",
+
+            );
     }
 
     if(query.next()) {

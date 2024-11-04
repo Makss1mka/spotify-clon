@@ -9,6 +9,7 @@ CONFIG += c++20 cmdline
 SOURCES += \
         src/concepts/provider.cpp \
         src/concepts/request.cpp \
+        src/concepts/response.cpp \
         src/concepts/server.cpp \
         src/concepts/router.cpp \
         src/concepts/routerDispatcher.cpp \
@@ -21,24 +22,31 @@ SOURCES += \
         src/authModule/authProvider.cpp \
         src/musicModule/musicProvider.cpp \
         src/musicModule/musicRouter.cpp \
-        src/utils/envFile.cpp
+        src/utils/envFile.cpp \
+        src/utils/exceptions.cpp
 
 
 HEADERS += \
         src/headers/authModule/AuthProvider.h \
+        src/headers/authModule/AuthRouter.h \
+        \
         src/headers/adminModule/AdminProvider.h \
         src/headers/adminModule/AdminRouter.h \
-        src/headers/authModule/AuthRouter.h \
+        \
         src/headers/concepts/Provider.h \
         src/headers/concepts/Request.h \
+        src/headers/concepts/Response.h \
         src/headers/concepts/Router.h \
         src/headers/concepts/RouterDispatcher.h \
         src/headers/concepts/Server.h \
+        \
         src/headers/musicModule/MusicProvider.h \
         src/headers/musicModule/MusicRouter.h \
+        \
         src/headers/utils/envFile.h \
         src/headers/utils/map.h \
-        src/headers/utils/variables.h
+        src/headers/utils/exceptions.h \
+        src/headers/utils/statusCodes.h
 
 RESOURCES += \
     resources.qrc
