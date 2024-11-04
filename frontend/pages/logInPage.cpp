@@ -7,7 +7,7 @@
 #include <QSpacerItem>
 #include <QFont>
 
-LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
+LogInPage::LogInPage(QWidget *parent) : QWidget(parent) {
     QFont font = this->font();
     font.setPointSize(14);
     this->setFont(font);
@@ -21,16 +21,16 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
 
     QLineEdit *loginEdit = new QLineEdit(this);
     loginEdit->setContentsMargins(20, 0, 20, 0);
-    loginEdit->setPlaceholderText("login");
+    loginEdit->setPlaceholderText("Логин");
     layout->addWidget(loginEdit);
 
     QLineEdit *passwordEdit = new QLineEdit(this);
     passwordEdit->setContentsMargins(20, 0, 20, 0);
-    passwordEdit->setPlaceholderText("password");
+    passwordEdit->setPlaceholderText("Пароль");
     passwordEdit->setEchoMode(QLineEdit::Password);
     layout->addWidget(passwordEdit);
 
-    QLabel *registerLabel = new QLabel("Регистрация", this);
+    QLabel *registerLabel = new QPushButton("Регистрация", this);
     font.setPointSize(10);
     registerLabel->setFont(font);
     registerLabel->setAlignment(Qt::AlignCenter);
@@ -39,7 +39,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent) {
     registerLabel->setOpenExternalLinks(true);
     layout->addWidget(registerLabel);
 
-    QLabel *forgotLabel = new QLabel("Забыли пароль", this);
+    QLabel *forgotLabel = new QPushButton("Забыли пароль", this);
     forgotLabel->setFont(font);
     forgotLabel->setAlignment(Qt::AlignCenter);
     forgotLabel->setTextFormat(Qt::RichText);

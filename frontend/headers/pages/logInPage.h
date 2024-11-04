@@ -3,12 +3,10 @@
 
 #include <QWidget>
 
-class LoginWidget : public QWidget {
+class LogInPage : public QWidget {
     Q_OBJECT
-
 public:
-    explicit LoginWidget(QWidget *parent = nullptr);
-
+    explicit LogInPage(QWidget *parent = nullptr);
 };
 
 #endif // LOGINPAGE_H

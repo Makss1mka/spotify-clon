@@ -37,7 +37,6 @@ void AdminRouter::setupRoutes() {
     });
 
     this->addGetRoute("/getBilly", [this](Request& request) -> QByteArray {
-        qDebug() << "POPA 2";
         QFile file(":/static/billy.jpg");
         if(file.open(QIODevice::ReadOnly)) {
             QByteArray fileContent = file.readAll();

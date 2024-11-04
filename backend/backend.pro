@@ -19,6 +19,8 @@ SOURCES += \
         \
         src/authModule/authRouter.cpp \
         src/authModule/authProvider.cpp \
+        src/musicModule/musicProvider.cpp \
+        src/musicModule/musicRouter.cpp \
         src/utils/envFile.cpp
 
 
@@ -32,8 +34,11 @@ HEADERS += \
         src/headers/concepts/Router.h \
         src/headers/concepts/RouterDispatcher.h \
         src/headers/concepts/Server.h \
+        src/headers/musicModule/MusicProvider.h \
+        src/headers/musicModule/MusicRouter.h \
         src/headers/utils/envFile.h \
-        src/headers/utils/map.h
+        src/headers/utils/map.h \
+        src/headers/utils/variables.h
 
 RESOURCES += \
     resources.qrc
