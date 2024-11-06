@@ -1,20 +1,40 @@
 #include "../headers/utils/exceptions.h"
 #include "../headers/utils/statusCodes.h"
+#include <QString>
+#include <QException>
 
-HandlingException::HandlingException(const std::string &consoleMes, const QByteArray& responseBodyMes, StatusCode code)
-    : std::runtime_error(consoleMes), responseBodyMes(responseBodyMes), code(code) {}
+HandlingException::HandlingException(const QString& consoleMes, const QString& responseBodyMes, const QString& code)
+    : message(consoleMes), responseBodyMes(responseBodyMes), code(code) {}
 
-DbException::DbException(const std::string &consoleMes, const QByteArray& responseBodyMes, StatusCode code)
+DbException::DbException(const QString& consoleMes, const QString& responseBodyMes, const QString& code)
     : HandlingException(consoleMes, responseBodyMes, code) {}
 
-FileException::FileException(const std::string &consoleMes, const QByteArray& responseBodyMes, StatusCode code)
+FileException::FileException(const QString& consoleMes, const QString& responseBodyMes, const QString& code)
     : HandlingException(consoleMes, responseBodyMes, code) {}
 
-QueryException::QueryException(const std::string &consoleMes, const QByteArray& responseBodyMes, StatusCode code)
+QueryException::QueryException(const QString& consoleMes, const QString& responseBodyMes, const QString& code)
     : DbException(consoleMes, responseBodyMes, code) {}
 
-ConflictDbException::ConflictDbException(const std::string &consoleMes, const QByteArray& responseBodyMes)
-    : QueryException(consoleMes, responseBodyMes, CONFLICT) {}
+ServiceUnavailableException::ServiceUnavailableException(const QString& consoleMes, const QString& responseBodyMes)
+    : DbException(consoleMes, responseBodyMes, StatusCode::SERVICE_UNAVAILABLE) {}
 
-BadRequestException::BadRequestException(const std::string &consoleMes, v responseBodyMes)
-    : QueryException(consoleMes, responseBodyMes, BAD_REQUEST) {}
+ConflictDbException::ConflictDbException(const QString& consoleMes, const QString& responseBodyMes)
+    : QueryException(consoleMes, responseBodyMes, StatusCode::CONFLICT) {}
+
+BadRequestException::BadRequestException(const QString& consoleMes, const QString& responseBodyMes)
+    : QueryException(consoleMes, responseBodyMes, StatusCode::BAD_REQUEST) {}
+
+NotFoundException::NotFoundException(const QString& consoleMes, const QString& responseBodyMes)
+    : QueryException(consoleMes, responseBodyMes, StatusCode::NOT_FOUND) {}
+
+QString HandlingException::getCode() {
+    return this->code;
+}
+
+QString HandlingException::getMessage() {
+    return message;
+}
+
+QByteArray HandlingException::getResponseBodyData() {
+    return this->responseBodyMes.toUtf8();
+}

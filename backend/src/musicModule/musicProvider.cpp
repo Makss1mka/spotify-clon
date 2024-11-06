@@ -1,6 +1,8 @@
 #include "../headers/musicModule/MusicProvider.h"
 #include "../headers/utils/envFile.h"
 #include "../headers/concepts/Request.h"
+#include "../headers/utils/exceptions.h"
+#include "../headers/utils/statusCodes.h"
 #include <QDebug>
 #include <QByteArray>
 #include <QJsonArray>
@@ -8,15 +10,18 @@
 #include <QJsonDocument>
 #include <QSqlQuery>
 #include <QString>
+#include <QFile>
 
 MusicProvider::MusicProvider() {}
 
-QByteArray MusicProvider::getById(int id) {
+QByteArray MusicProvider::getById(const QString& id) {
     QSqlQuery query;
 
     if(!query.exec("SELECT * FROM music WHERE id=" + id + ";")) {
-        qDebug() << "Cannot select data in method: MusicProvider::getById";
-        return "";
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::getById is unavailable",
+            "Music service is temporarily unavailable"
+        );
     }
 
     if(query.next()) {
@@ -31,24 +36,108 @@ QByteArray MusicProvider::getById(int id) {
 
         return QJsonDocument(musicData).toJson();
     } else {
-        return "0";
+        throw NotFoundException(
+            "Cannot find music with id: " + id,
+            "Music not found"
+        );
     }
 }
 
-QByteArray MusicProvider::getFile(std::string path) {
+QByteArray MusicProvider::getFile(const QString&  path) {
     QFile file(env::get("MUSIC_DIR", ":/.env") + path);
     if(file.open(QIODevice::ReadOnly)) {
         QByteArray fileContent = file.readAll();
         file.close();
-        return response;
+        return fileContent;
+    } else {
+        throw FileException(
+            "Cannot find music file, path: " + path,
+            "Cannot find music",
+            StatusCode::NOT_FOUND
+        );
     }
-    return "";
 }
 
-QByteArray MusicProvider::getByAuthor(std::string author) {
+QByteArray MusicProvider::getByAuthor(const QString&  authorName) {
+    QSqlQuery query;
 
+    if(!query.exec("SELECT * FROM music WHERE author_name='" + authorName + "' ORDER BY listens DESC;")) {
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::getByAuthor is unavailable",
+            "Music service is temporarily unavailable"
+        );
+    }
+
+    QJsonArray musicArray;
+    QJsonObject musicEntry;
+
+    while(query.next()) {
+        musicEntry["id"] = query.value(0).toInt();
+        musicEntry["name"] = query.value(1).toString();
+        musicEntry["file"] = query.value(2).toString();
+        musicEntry["author_id"] = query.value(3).toString();
+        musicEntry["author_name"] = query.value(4).toString();
+        musicEntry["duration"] = query.value(5).toInt();
+        musicEntry["listens"] = query.value(6).toInt();
+
+        musicArray.append(musicEntry);
+    }
+
+    return QJsonDocument(musicArray).toJson();
 }
 
 QByteArray MusicProvider::getAll() {
+    QSqlQuery query;
 
+    if(!query.exec("SELECT * FROM music ORDER BY listens DESC;")) {
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::getByAuthor is unavailable",
+            "Music service is temporarily unavailable"
+        );
+    }
+
+    QJsonArray musicArray;
+    QJsonObject musicEntry;
+
+    while(query.next()) {
+        musicEntry["id"] = query.value(0).toInt();
+        musicEntry["name"] = query.value(1).toString();
+        musicEntry["file"] = query.value(2).toString();
+        musicEntry["author_id"] = query.value(3).toString();
+        musicEntry["author_name"] = query.value(4).toString();
+        musicEntry["duration"] = query.value(5).toInt();
+        musicEntry["listens"] = query.value(6).toInt();
+
+        musicArray.append(musicEntry);
+    }
+
+    return QJsonDocument(musicArray).toJson();
+}
+
+QByteArray MusicProvider::findByName(const QString&  name) {
+    QSqlQuery query;
+
+    if(!query.exec("SELECT * FROM music WHERE name LIKE '%" + name + "%' ORDER BY listens DESC;")) {
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::getByAuthor is unavailable",
+            "Music service is temporarily unavailable"
+        );
+    }
+
+    QJsonArray musicArray;
+    QJsonObject musicEntry;
+
+    while(query.next()) {
+        musicEntry["id"] = query.value(0).toInt();
+        musicEntry["name"] = query.value(1).toString();
+        musicEntry["file"] = query.value(2).toString();
+        musicEntry["author_id"] = query.value(3).toString();
+        musicEntry["author_name"] = query.value(4).toString();
+        musicEntry["duration"] = query.value(5).toInt();
+        musicEntry["listens"] = query.value(6).toInt();
+
+        musicArray.append(musicEntry);
+    }
+
+    return QJsonDocument(musicArray).toJson();
 }

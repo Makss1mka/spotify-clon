@@ -23,7 +23,8 @@ SOURCES += \
         src/musicModule/musicProvider.cpp \
         src/musicModule/musicRouter.cpp \
         src/utils/envFile.cpp \
-        src/utils/exceptions.cpp
+        src/utils/exceptions.cpp \
+        src/utils/statusCodes.cpp
 
 
 HEADERS += \

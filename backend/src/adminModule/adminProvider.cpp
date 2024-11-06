@@ -1,5 +1,7 @@
 #include "../headers/adminModule/AdminProvider.h"
 #include "../headers/utils/envFile.h"
+#include "../headers/utils/exceptions.h"
+#include "../headers/utils/statusCodes.h"
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -14,8 +16,10 @@ QByteArray AdminProvider::getAllUserInfo() {
 
     QSqlQuery query;
     if(!query.exec("SELECT * FROM userInfo")) {
-        qDebug() << "Cannot select data in method: getAllUserInfo";
-        return "";
+        throw ServiceUnavailableException(
+            "Method: getAllUserInfo is unavailable",
+            "Admin service is temporarily unavailable"
+        );
     }
 
     while (query.next()) {

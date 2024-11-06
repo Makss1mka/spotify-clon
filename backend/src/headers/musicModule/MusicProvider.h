@@ -8,9 +8,10 @@
 class MusicProvider : public Provider {
 public:
     MusicProvider();
-    QByteArray getById(int id);
-    QByteArray getFile(std::string path);
-    QByteArray getByAuthor(std::string author);
+    QByteArray getById(const QString& id);
+    QByteArray getFile(const QString&  path);
+    QByteArray getByAuthor(const QString&  author);
+    QByteArray findByName(const QString&  name);
     QByteArray getAll();
 };
 

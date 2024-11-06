@@ -3,15 +3,13 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QTcpSocket>
-#include <QThreadPool>
 #include "../headers/concepts/Server.h"
 #include "../headers/concepts/Request.h"
 #include "../headers/concepts/RouterDispatcher.h"
 #include "../headers/adminModule/AdminRouter.h"
 #include "../headers/authModule/AuthRouter.h"
+#include "../headers/musicModule/MusicRouter.h"
 #include "../headers/utils/envFile.h"
-
-#include "../headers/utils/map.h"
 
 Server::Server(int port) {
     if(this->listen(QHostAddress::Any, port)) {
@@ -24,6 +22,7 @@ Server::Server(int port) {
     if(!Server::openDbConnections()) throw "Cannot open DB connections";
     RouterDispatcher::getDispatcher().addRouter(std::make_shared<AdminRouter>());
     RouterDispatcher::getDispatcher().addRouter(std::make_shared<AuthRouter>());
+    RouterDispatcher::getDispatcher().addRouter(std::make_shared<MusicRouter>());
 }
 
 bool Server::openDbConnections() {

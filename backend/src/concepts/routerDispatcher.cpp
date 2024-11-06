@@ -1,5 +1,6 @@
 #include "../headers/concepts/RouterDispatcher.h"
 #include "../headers/concepts/Request.h"
+#include "../headers/utils/exceptions.h"
 
 RouterDispatcher::RouterDispatcher() {}
 
@@ -15,16 +16,25 @@ void RouterDispatcher::addRouter(std::shared_ptr<Router> router) {
 QByteArray RouterDispatcher::routing(Request &request) {
     QByteArray response;
 
-    for(auto &router : routers) {
-        response = router->routing(request);
-        if (response != "") return response;
+    try {
+        for(auto &router : routers) {
+            response = router->routing(request);
+            if (response != "") return response;
+        }
+        throw NotFoundException(
+            "Not found",
+            "Not found"
+        );
+    } catch (HandlingException& exc) {
+        qDebug() << exc.getMessage();
+
+        response = "HTTP/1.1 " + exc.getCode().toUtf8() + "\r\n"
+                "Content-Type: text/plain\r\n"
+                "Content-Length: " + QByteArray::number(exc.getResponseBodyData().size()) + "\r\n"
+                "\r\n";
+        response.append(exc.getResponseBodyData());
     }
 
-    response = "HTTP/1.1 404 Not Found\r\n"
-          "Content-Type: text/plain\r\n"
-          "Content-Length: 9\r\n"
-          "\r\n"
-          "Not Found";
     return response;
 }
 

@@ -4,30 +4,28 @@
 #include <QString>
 #include <QByteArray>
 
-enum StatusCode {
-
-CONTINUE = 100,
-SWITCHING_PROTOCOLS = 101,
-OK = 200,
-CREATED = 201,
-ACCEPTED = 202,
-NO_CONTENT = 204,
-MOVED_PERMANENTLY = 301,
-FOUND = 302,
-NOT_MODIFIED = 304,
-BAD_REQUEST = 400,
-UNAUTHORIZED = 401,
-FORBIDDEN = 403,
-NOT_FOUND = 404,
-METHOD_NOT_ALLOWED = 405,
-CONFLICT = 409,
-TOO_MANY_REQUESTS = 429,
-INTERNAL_SERVER_ERROR = 500,
-NOT_IMPLEMENTED = 501,
-BAD_GETAWAY = 502,
-SERVICE_UNAVAILABLE = 503,
-GATEWAY_TIMEOUT = 504,
-
-};
+namespace StatusCode {
+    extern QString CONTINUE;
+    extern QString SWITCHING_PROTOCOLS;
+    extern QString OK;
+    extern QString CREATED;
+    extern QString ACCEPTED;
+    extern QString NO_CONTENT;
+    extern QString MOVED_PERMANENTLY;
+    extern QString FOUND;
+    extern QString NOT_MODIFIED;
+    extern QString BAD_REQUEST;
+    extern QString UNAUTHORIZED;
+    extern QString FORBIDDEN;
+    extern QString NOT_FOUND;
+    extern QString METHOD_NOT_ALLOWED;
+    extern QString CONFLICT;
+    extern QString TOO_MANY_REQUESTS;
+    extern QString INTERNAL_SERVER_ERROR;
+    extern QString NOT_IMPLEMENTED;
+    extern QString BAD_GETAWAY;
+    extern QString SERVICE_UNAVAILABLE;
+    extern QString GATEWAY_TIMEOUT;
+}
 
 #endif // STATUSCODES_H

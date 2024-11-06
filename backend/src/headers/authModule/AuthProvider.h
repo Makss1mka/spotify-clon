@@ -8,8 +8,8 @@
 class AuthProvider : public Provider {
 public:
     AuthProvider();
-    QByteArray registerUser(QString& login, QString& email, QString& password);
-    QByteArray authUser(QString& login, QString& email, QString& password);
+    QByteArray registerUser(const QString& login, const QString& email, const QString& password);
+    QByteArray authUser(const QString& login, const QString& email, const QString& password);
 };
 
 #endif // AUTHPROVIDER_H

@@ -7,6 +7,14 @@ template<typename T, typename K>
 class Map {
 public:
     Map() {}
+    ~Map() {
+        for(auto &pair : pairs) {
+            delete pair.key;
+            delete pair.value;
+            delete pair;
+        }
+        delete pairs;
+    }
 
     const K& get(const T& key) {
         for(auto &pair : pairs) {
@@ -22,14 +30,8 @@ public:
             }
         }
         pairs.push_back(Pair(key, value));
-        //operator[] (
-        // const K& operator[] (const T& key) {
-        //     for(auto &pair : pairs) {
-        //         if(pair.key == key) return pair.value;
-        //     }
-        //     throw "Key " + key + " out of map keys";
-        // }
     }
+
     int count(const T& key) {
         for(auto &pair : pairs) {
             if(pair.key == key) return 1;

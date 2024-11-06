@@ -12,37 +12,44 @@
 
 AuthProvider::AuthProvider() {}
 
-QByteArray AuthProvider::registerUser(QString& login, QString& email, QString& password) {
+QByteArray AuthProvider::registerUser(const QString& login, const QString& email, const QString& password) {
     QSqlQuery query;
     if(!query.exec("SELECT * FROM userInfo WHERE login='" + login + "' or email='" + email + "';")) {
-        throw DbException(
-            "Cannot select data in method: AuthProvider::registerUser",
-
-            );
+        throw ServiceUnavailableException("Method: AuthProvider::registerUser is unavailable", "Auth service is temporarily unavailable");
     }
 
     if(query.next()) {
         if(query.value(1).toString() == login) {
-            return "1";
+            throw ConflictDbException(
+                "User with this login is actualy exist, " + login + ", " + password + ", " + email,
+                "User with this login is actualy exist"
+            );
         } else {
-            return "2";
+            throw ConflictDbException(
+                "User with this email is actualy exist, " + login + ", " + password + ", " + email,
+                "User with this email is actualy exist"
+            );
         }
     } else {
         if(!query.exec("INSERT INTO userInfo (login, password, role, email) VALUES ('" + login + "', '" + password + "', 0, '" + email + "');")) {
-            qDebug() << "Cannot insert data in method: AuthProvider::registerUser";
-            return "";
+            throw ServiceUnavailableException(
+                "Cannot select data in method: AuthProvider::registerUser",
+                "Auth service is temporarily unavailable"
+            );
         }
-        return "0";
+        return "User was successfuly created";
     }
 }
 
-QByteArray AuthProvider::authUser(QString& login, QString& email, QString& password) {
+QByteArray AuthProvider::authUser(const QString& login, const QString& email, const QString& password) {
     QJsonObject userData;
 
     QSqlQuery query;
     if(!query.exec("SELECT * FROM userInfo WHERE (login='" + login + "' or email='" + email + "') and password='" + password + "';")) {
-        qDebug() << "Cannot select data in method: AuthProvider::registerUser";
-        return "503";
+        throw ServiceUnavailableException(
+            "Method: AuthProvider::authUser is unavailable",
+            "Auth service is temporarily unavailable"
+        );
     }
 
     if(query.next()) {
@@ -50,7 +57,11 @@ QByteArray AuthProvider::authUser(QString& login, QString& email, QString& passw
         userData["role"] = query.value(3).toInt();
         userData["email"] = query.value(4).toString();
     } else {
-        return "401";
+        throw QueryException(
+            "Invalid account credentials, login|password|email:" + login + ", " + password + ", " + email,
+            "Invalid account credentials",
+            StatusCode::UNAUTHORIZED
+        );
     }
 
     QJsonDocument jsonDoc(userData);

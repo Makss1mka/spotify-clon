@@ -3,40 +3,57 @@
 
 #include <stdexcept>
 #include <QByteArray>
+#include <QString>
+#include <QException>
 #include "./statusCodes.h"
 
-class HandlingException : public std::runtime_error {
+class HandlingException : public QException {
 public:
-    explicit HandlingException(const std::string& consoleMes, const QByteArray& responseBodyMes, StatusCode code);
+    explicit HandlingException(const QString& consoleMes, const QString& responseBodyMes, const QString& code);
 
-    StatusCode getCode();
+    QString getCode();
+    QString getMessage();
     QByteArray getResponseBodyData();
 protected:
-    StatusCode code;
-    QByteArray responseBodyMes;
+    QString code;
+    QString responseBodyMes;
+    QString message;
 };
 
 class DbException : public HandlingException {
 public:
-    explicit DbException(const std::string& consoleMes, const QByteArray& responseBodyMes, StatusCode code);
+    explicit DbException(const QString& consoleMes, const QString& responseBodyMes, const QString& code);
 };
 
-class QueryException : public HandlingException {
+class QueryException : public DbException {
 public:
-    explicit QueryException(const std::string& consoleMes, const QByteArray& responseBodyMes, StatusCode code);
+    explicit QueryException(const QString& consoleMes, const QString& responseBodyMes, const QString& code);
+};
+
+class ServiceUnavailableException : public DbException {
+public:
+    explicit ServiceUnavailableException(const QString& consoleMes, const QString& responseBodyMes);
 };
 
 class ConflictDbException : public QueryException {
-    explicit ConflictDbException(const std::string& consoleMes, const QByteArray& responseBodyMes);
+public:
+    explicit ConflictDbException(const QString& consoleMes, const QString& responseBodyMes);
 };
 
 class BadRequestException : public QueryException {
-    explicit BadRequestException(const std::string& consoleMes, const QByteArray& responseBodyMes);
+public:
+    explicit BadRequestException(const QString& consoleMes, const QString& responseBodyMes);
+};
+
+class NotFoundException : public QueryException {
+public:
+    explicit NotFoundException(const QString& consoleMes, const QString& responseBodyMes);
 };
 
 class FileException : public HandlingException {
-    explicit FileException(const std::string& consoleMes, const QByteArray& responseBodyMes, StatusCode code);
-}
+public:
+    explicit FileException(const QString& consoleMes, const QString& responseBodyMes, const QString& code);
+};
 
 
 #endif // EXCEPTIONS_H
