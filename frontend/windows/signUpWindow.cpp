@@ -1,4 +1,5 @@
-#include "../headers/pages/signUpPage.h"
+#include "../headers/windows/SignUpWindow.h"
+#include "../headers/utils/coverFunks.h"
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -7,7 +8,7 @@
 #include <QSpacerItem>
 #include <QFont>
 
-SignUpPage::SignUpPage(QWidget *parent) : QWidget(parent) {
+SignUpWindow::SignUpWindow(QWidget *parent) : QWidget(parent) {
     QFont font = this->font();
     font.setPointSize(14);
     this->setFont(font);
@@ -36,25 +37,16 @@ SignUpPage::SignUpPage(QWidget *parent) : QWidget(parent) {
     passwordEdit->setEchoMode(QLineEdit::Password);
     layout->addWidget(passwordEdit);
 
-    QLabel *registerLabel = new QLabel("Войти", this);
+    QPushButton *registerButton = new QPushButton("Войти", this);
     font.setPointSize(10);
-    registerLabel->setFont(font);
-    registerLabel->setAlignment(Qt::AlignCenter);
-    registerLabel->setTextFormat(Qt::RichText);
-    registerLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    registerLabel->setOpenExternalLinks(true);
-    layout->addWidget(registerLabel);
+    registerButton->setFont(font);
+    layout->addLayout(coverWithHLayout(registerButton));
 
     QPushButton *loginButton = new QPushButton("Регистрация", this);
     loginButton->setFixedWidth(130);
     loginButton->setFixedHeight(55);
     loginButton->setContentsMargins(0, 20, 0, 20);
-
-    QHBoxLayout *loginButtonLayout = new QHBoxLayout();
-    loginButtonLayout->addStretch();
-    loginButtonLayout->addWidget(loginButton);
-    loginButtonLayout->addStretch();
-    layout->addLayout(loginButtonLayout);
+    layout->addLayout(coverWithHLayout(loginButton));
 
     layout->addSpacerItem(new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding));
 }

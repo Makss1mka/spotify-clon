@@ -141,3 +141,16 @@ QByteArray MusicProvider::findByName(const QString&  name) {
 
     return QJsonDocument(musicArray).toJson();
 }
+
+QByteArray MusicProvider::find(const QString &keyStr) {
+    // QSqlQuery query;
+
+    // if(!query.exec("SELECT * FROM music WHERE name LIKE '%" + name + "%' ORDER BY listens DESC;")) {
+    //     throw ServiceUnavailableException(
+    //         "Method: MusicProvider::getByAuthor is unavailable",
+    //         "Music service is temporarily unavailable"
+    //     );
+    // }
+
+
+}

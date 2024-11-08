@@ -77,7 +77,7 @@ void MusicRouter::setupRoutes() {
         return response;
     });
 
-    this->addGetRoute("/find", [this](Request& request) -> QByteArray {
+    this->addGetRoute("/findByName", [this](Request& request) -> QByteArray {
         if(request.query.count("key") == 0) {
             throw BadRequestException(
                 "Invalid query format for finding musics",

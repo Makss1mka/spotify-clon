@@ -12,6 +12,7 @@ public:
     QByteArray getFile(const QString&  path);
     QByteArray getByAuthor(const QString&  author);
     QByteArray findByName(const QString&  name);
+    QByteArray find(const QString& keyStr);
     QByteArray getAll();
 };
 
