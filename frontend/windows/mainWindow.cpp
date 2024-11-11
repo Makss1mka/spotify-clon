@@ -1,9 +1,10 @@
 #include "../headers/windows/MainWindow.h"
 #include "../headers/utils/coverFunks.h"
 #include "../headers/components/Header.h"
-#include "../headers/components/Player.h"
+#include "../headers/components/Footer.h"
 #include "../headers/components/SideBar.h"
 #include "../headers/components/MainInteractSection.h"
+#include "../headers/utils/globalVariables.h"
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -21,12 +22,12 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     mainLayout->addWidget(new Header());
 
     QHBoxLayout* mainSectionLayout = new QHBoxLayout();
-    mainSectionLayout->addWidget(new SideBar(), 1);
-    mainSectionLayout->addWidget(new MainInteractSection(), 5);
+    mainSectionLayout->addWidget(new SideBar());
+    mainSectionLayout->addWidget(new MainInteractSection());
     mainSectionLayout->setSpacing(6);
     mainLayout->addLayout(mainSectionLayout);
 
-    mainLayout->addWidget(new Player());
+    mainLayout->addWidget(new Footer());
 
     this->setLayout(mainLayout);
 }

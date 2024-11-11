@@ -1,0 +1,77 @@
+[33mcommit 7133f623d8ca4a2feb8272346102571aeddc944a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Tue Nov 12 01:57:05 2024 +0300
+
+    Added new icons
+
+[33mcommit 06a022d39d065b5ca9e10b879cd85217ba00dc79[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Tue Nov 12 01:56:20 2024 +0300
+
+    Add supply for two new fields in db
+
+[33mcommit a18a347629463fbe88cbc613c89e89d4e905a3d2[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Fri Nov 8 16:55:59 2024 +0300
+
+    Setup frontend part, add header and player
+
+[33mcommit 263ca86a965e277cfce425aa3e14c76937d6bb59[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Wed Nov 6 10:45:34 2024 +0300
+
+    Added system of handling exceptions from routing
+
+[33mcommit 7b90dbddf607c741add31250b6d01f9fc2213939[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Mon Nov 4 20:01:42 2024 +0300
+
+    Added exception classes and Enum for status codes
+
+[33mcommit f909700f9bc8413295683e9947ce21cce041f624[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Mon Nov 4 10:23:05 2024 +0300
+
+    Add music service
+
+[33mcommit 3d4bf6ca9980bd9c2ee2ce1f64afe1bccf7fe630[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Sat Nov 2 00:09:09 2024 +0300
+
+    Change router vector to pointer router vector in router dispatcher
+
+[33mcommit 5ab53a3d2e5fdc24ee9f73a129a0d047d52b0003[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Fri Nov 1 15:21:54 2024 +0300
+
+    Added template to provider-router system, added realization of mu map container
+
+[33mcommit bad12c41873168513103c65e2add8756263aebba[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Thu Oct 31 17:09:17 2024 +0300
+
+    Create frontend part, add auth module
+
+[33mcommit 4d7e53325b51e2077320b4bed675bffbda3ee5cc[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Mon Oct 28 18:55:21 2024 +0300
+
+    Added envFile system
+
+[33mcommit f49ab83cd5291dc5960c7e8ff1f889a50a90463d[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Sun Oct 27 14:00:12 2024 +0300
+
+    Added router-provider system
+
+[33mcommit 6547150cb1433d1705ddedb0144d32d153454f1f[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Sun Oct 27 11:55:22 2024 +0300
+
+    Little project structure changes
+
+[33mcommit 5fa56edc2b385e8dcb6a773c10cf182d6af9b0c0[m
+Author: Maksim Goncharov <maksim_goncharov_2006@mail.ru>
+Date:   Sat Oct 26 17:30:51 2024 +0300
+
+    Create project

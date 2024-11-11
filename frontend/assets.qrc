@@ -45,5 +45,6 @@
         <file>assets/volume-active.png</file>
         <file>assets/picture.png</file>
         <file>assets/picture-active.png</file>
+        <file>assets/player-go.png</file>
     </qresource>
 </RCC>

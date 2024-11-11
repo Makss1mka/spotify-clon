@@ -1,4 +1,10 @@
-#include "../headers/components/Player.h"
+#include "../headers/components/Footer.h"
+#include "../headers/utils/globalVariables.h"
+#include "../headers/utils/Player.h"
+#include "../headers/utils/MusicClass.h"
+#include "../headers/utils/HttpClient.h"
+#include "../headers/components/HoverIconButton.h"
+#include "../headers/components/SoundButton.h"
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
@@ -9,55 +15,92 @@
 #include <QTimer>
 #include <QIcon>
 #include <QSize>
+#include <QMediaPlayer>
+#include <QFile>
 
-Player::Player(QWidget *parent) : QWidget(parent) {
+Footer::Footer(QWidget *parent) : QWidget(parent) {
     this->setFixedHeight(70);
 
-    // First inner section
-    musicImage = new QPushButton;
+    // --- First inner section
+
+    // Music image
+    musicImage = new HoverIconButton(":/assets/picture.png", ":/assets/picture-active.png");
     musicImage->setFixedSize(40, 40);
     musicImage->setIconSize(QSize(34, 34));
-    musicImage->setIcon(QIcon(":/assets/picture.png"));
 
+    // Music name label
     nameLabel = new QLabel("Test name");
     nameLabel->setStyleSheet("color: white; margin: 0px; padding: 0px;");
+
+    // Music author label
     authorLabel = new QLabel("Test author");
     authorLabel->setStyleSheet("font-size: 11px; color: #CDCDCD; padding: 0px;");
+
+    // Labels layout
     QVBoxLayout *textLayout = new QVBoxLayout;
     textLayout->setSpacing(0);
     textLayout->setContentsMargins(6, 8, 6, 8);
     textLayout->addWidget(nameLabel);
     textLayout->addWidget(authorLabel);
 
-    musicConfigButton = new QPushButton;
-    musicConfigButton->setIcon(QIcon(":/assets/check.png"));
+    // Check button
+    musicConfigButton = new HoverIconButton(":/assets/check.png", ":/assets/check-active.png");
     musicConfigButton->setFixedSize(22, 22);
     musicConfigButton->setStyleSheet("background: grey; border-radius: 11px;");
 
+    // First inner layout
     QHBoxLayout *firstInnerLayout = new QHBoxLayout;
     firstInnerLayout->addWidget(musicImage);
     firstInnerLayout->addLayout(textLayout);
     firstInnerLayout->addWidget(musicConfigButton);
 
-    // Second inner section
-    shuffleButton = new QPushButton;
-    shuffleButton->setIcon(QIcon(":/assets/shuffle.png"));
+    // --- Second inner section
+
+    // Shuffle Button
+    shuffleButton = new HoverIconButton(":/assets/shuffle.png", ":/assets/shuffle-active.png");
     shuffleButton->setStyleSheet("background: inherit");
-    backButton = new QPushButton;
-    backButton->setIcon(QIcon(":/assets/angle-left.png"));
+
+    // Back button
+    backButton = new HoverIconButton(":/assets/angle-left.png", ":/assets/angle-left-active.png");
     backButton->setStyleSheet("background: inherit");
-    nextButton = new QPushButton;
-    nextButton->setIcon(QIcon(":/assets/angle-right.png"));
+
+    // Next Button
+    nextButton = new HoverIconButton(":/assets/angle-right.png", ":/assets/angle-right-active.png");
     nextButton->setStyleSheet("background: inherit");
-    repeatButton = new QPushButton;
-    repeatButton->setIcon(QIcon(":/assets/repeat.png"));
+
+    // Repeat button
+    repeatButton = new HoverIconButton(":/assets/repeat.png", ":/assets/repeat-active.png");
     repeatButton->setStyleSheet("background: inherit");
+    repeatButton->connect(repeatButton, QPushButton::clicked, [this](){
+        if (Globals::player->isOnRepeat() == true) {
+            Globals::player->swapRepeating();
+            this->repeatButton->setNewActiveIconPath(":/assets/repeat-active.png");
+            this->repeatButton->setNewIconPath(":/assets/repeat.png");
+        } else {
+            Globals::player->pause();
+            this->repeatButton->setNewActiveIconPath();
+            this->repeatButton->setNewIconPath();
+            this->repeatButton->setIcon(QIcon(":/assets/player-stop.png"));
+        }
+    });
+
+    // Stop button
     stopButton = new QPushButton;
     stopButton->setIcon(QIcon(":/assets/player-stop.png"));
     stopButton->setIconSize(QSize(20, 20));
     stopButton->setFixedSize(30, 30);
-    stopButton->setStyleSheet("background: white; border-radius: 15px;");
+    stopButton->setStyleSheet("QPushButton { background: white; border-radius: 15px; }");
+    stopButton->connect(stopButton, QPushButton::clicked, [this](){
+        if (Globals::player->isPlayerPaused() == true) {
+            Globals::player->play();
+            this->stopButton->setIcon(QIcon(":/assets/player-go.png"));
+        } else {
+            Globals::player->pause();
+            this->stopButton->setIcon(QIcon(":/assets/player-stop.png"));
+        }
+    });
 
+    // Top layout
     QHBoxLayout *iconLayout = new QHBoxLayout;
     iconLayout->addStretch();
     iconLayout->addWidget(shuffleButton);
@@ -67,9 +110,11 @@ Player::Player(QWidget *parent) : QWidget(parent) {
     iconLayout->addWidget(repeatButton);
     iconLayout->addStretch();
 
+    // Time Labels
     startTime = new QLabel("00:00");
     endTime = new QLabel("00:00");
 
+    // Timeline music slider
     musicTimeline = new QSlider(Qt::Horizontal);
     musicTimeline->setFixedHeight(5);
     musicTimeline->setMinimumWidth(250);
@@ -79,26 +124,37 @@ Player::Player(QWidget *parent) : QWidget(parent) {
             "QSlider::handle:horizontal { background: transparent; }"
             "QSlider::sub-page:horizontal { background: #EDEDED; }");
 
-    timelineCircle = new QLabel;
-    timelineCircle->setFixedSize(14, 14);
-    timelineCircle->setStyleSheet("background: grey; border-radius: 7px;");
-    timelineCircle->hide();
-
+    // Bottom layout
     QHBoxLayout *timelineLayout = new QHBoxLayout;
     timelineLayout->addWidget(startTime);
     timelineLayout->addWidget(musicTimeline);
     timelineLayout->addWidget(endTime);
 
+    // Second inner layout
     QVBoxLayout *secondInnerLayout = new QVBoxLayout;
     secondInnerLayout->addLayout(iconLayout);
     secondInnerLayout->addLayout(timelineLayout);
 
-    // Third inner section
-    soundButton = new QPushButton;
-    soundButton->setIcon(QIcon(":/assets/sound.png"));
+    // --- Third inner section
+
+    // Sound button
+    soundButton = new SoundButton;
     soundButton->setFixedSize(40, 40);
     soundButton->setStyleSheet("background: inherit");
+    soundButton->connect(soundButton, QPushButton::clicked, [this](){
+        if (this->soundButton->isMuted == false) {
+            this->soundButton->previousVolumeLevel = Globals::player->getVolumeLevel();
+            this->soundButton->isMuted = true;
+            this->soundButton->swapActiveIcons();
+            Globals::player->setVolumeLevel(0);
+        } else {
+            this->soundButton->isMuted = false;
+            this->soundButton->swapActiveIcons();
+            Globals::player->setVolumeLevel(this->soundButton->previousVolumeLevel);
+        }
+    });
 
+    // Volume slider
     volumeSlider = new QSlider(Qt::Horizontal);
     volumeSlider->setFixedHeight(5);
     volumeSlider->setFixedWidth(60);
@@ -106,13 +162,14 @@ Player::Player(QWidget *parent) : QWidget(parent) {
             "QSlider::handle:horizontal { background: transparent; }" //white; width: 6px; height: 6px; margin: -4px 0; border-radius: 2.5px; }"
             "QSlider::sub-page:horizontal { background: #EDEDED; }");
 
+    // Third inner layout
     QHBoxLayout *thirdInnerLayout = new QHBoxLayout;
     thirdInnerLayout->addWidget(soundButton);
     thirdInnerLayout->addWidget(volumeSlider);
     thirdInnerLayout->setSpacing(0);
     thirdInnerLayout->setContentsMargins(3, 0, 0, 0);
 
-    // Main Template
+    // --- Main Template
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->addLayout(firstInnerLayout, 0);
     mainLayout->addStretch(1);
@@ -121,16 +178,4 @@ Player::Player(QWidget *parent) : QWidget(parent) {
     mainLayout->addLayout(thirdInnerLayout, 0);
 
     this->setLayout(mainLayout);
-
-    //timelineUpdateTimer = new QTimer(this);
-    //connect(timelineUpdateTimer, &QTimer::timeout, this, &Player::updateMusicTimeline);
-    //timelineUpdateTimer->start(1000);
-
-}
-
-void Player::updateMusicTimeline() {
-    int duration = 300;
-    int currentTime = musicTimeline->value();
-    int percentage = (currentTime * 100) / duration;
-    musicTimeline->setValue(percentage);
 }

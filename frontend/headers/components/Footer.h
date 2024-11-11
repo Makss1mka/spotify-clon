@@ -1,35 +1,38 @@
 #ifndef LITTLEPLAYER_H
 #define LITTLEPLAYER_H
 
+#include "./HoverIconButton.h"
+#include "./SoundButton.h"
 #include <QWidget>
 #include <QLabel>
 #include <QSlider>
 #include <QPushButton>
 #include <QTimer>
 
-class Player : public QWidget {
+class Footer : public QWidget {
     Q_OBJECT
 public:
-    explicit Player(QWidget *parent = nullptr);
+    explicit Footer(QWidget *parent = nullptr);
 private:
     void updateMusicTimeline();
 
-    QPushButton *musicImage;
+    HoverIconButton *musicImage;
     QLabel *nameLabel;
     QLabel *authorLabel;
-    QPushButton *musicConfigButton;
+    HoverIconButton *musicConfigButton;
 
-    QPushButton *shuffleButton;
-    QPushButton *backButton;
+    HoverIconButton *shuffleButton;
+    HoverIconButton *backButton;
     QPushButton *stopButton;
-    QPushButton *nextButton;
-    QPushButton *repeatButton;
+    HoverIconButton *nextButton;
+    HoverIconButton *repeatButton;
+    HoverIconButton* btn;
     QLabel *startTime;
     QLabel *endTime;
     QSlider *musicTimeline;
     QLabel *timelineCircle;
 
-    QPushButton *soundButton;
+    SoundButton *soundButton;
     QSlider *volumeSlider;
 
     QTimer *timelineUpdateTimer;

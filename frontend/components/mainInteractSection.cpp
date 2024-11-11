@@ -1,6 +1,13 @@
 #include "../headers/components/MainInteractSection.h"
+#include <QVBoxLayout>
 
 MainInteractSection::MainInteractSection(QWidget *parent) : QWidget(parent) {
-    this->setStyleSheet("backround: #A5A5A5; border-radius: 20px; ");
-    this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QWidget* mainWidget = new QWidget(this);
+    mainWidget->setStyleSheet("background: #272727; border-radius: 20px; width: 200px; height: 500px; ");
+    mainWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout->addStretch();
+
+    mainWidget->setLayout(mainLayout);
 }
