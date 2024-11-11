@@ -3,7 +3,6 @@
 #include "../headers/concepts/Request.h"
 #include "../headers/utils/exceptions.h"
 #include "../headers/utils/statusCodes.h"
-#include <QDebug>
 #include <QByteArray>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -11,6 +10,7 @@
 #include <QSqlQuery>
 #include <QString>
 #include <QFile>
+#include <vector>
 
 MusicProvider::MusicProvider() {}
 
@@ -33,6 +33,8 @@ QByteArray MusicProvider::getById(const QString& id) {
         musicData["author_id"] = query.value(3).toString();
         musicData["author_name"] = query.value(4).toString();
         musicData["duration"] = query.value(5).toInt();
+        musicData["janre"] = query.value(7).toString();
+        musicData["lang"] = query.value(8).toString();
 
         return QJsonDocument(musicData).toJson();
     } else {
@@ -79,6 +81,8 @@ QByteArray MusicProvider::getByAuthor(const QString&  authorName) {
         musicEntry["author_name"] = query.value(4).toString();
         musicEntry["duration"] = query.value(5).toInt();
         musicEntry["listens"] = query.value(6).toInt();
+        musicEntry["janre"] = query.value(7).toString();
+        musicEntry["lang"] = query.value(8).toString();
 
         musicArray.append(musicEntry);
     }
@@ -107,6 +111,8 @@ QByteArray MusicProvider::getAll() {
         musicEntry["author_name"] = query.value(4).toString();
         musicEntry["duration"] = query.value(5).toInt();
         musicEntry["listens"] = query.value(6).toInt();
+        musicEntry["janre"] = query.value(7).toString();
+        musicEntry["lang"] = query.value(8).toString();
 
         musicArray.append(musicEntry);
     }
@@ -135,6 +141,8 @@ QByteArray MusicProvider::findByName(const QString&  name) {
         musicEntry["author_name"] = query.value(4).toString();
         musicEntry["duration"] = query.value(5).toInt();
         musicEntry["listens"] = query.value(6).toInt();
+        musicEntry["janre"] = query.value(7).toString();
+        musicEntry["lang"] = query.value(8).toString();
 
         musicArray.append(musicEntry);
     }
@@ -152,5 +160,9 @@ QByteArray MusicProvider::find(const QString &keyStr) {
     //     );
     // }
 
+
+}
+
+QByteArray MusicProvider::recomend(std::vector<QString>& janres, std::vector<QString> authors, std::vector<QString> langs) {
 
 }

@@ -18,7 +18,6 @@ void MusicRouter::setupProviders() {
 
 void MusicRouter::setupRoutes() {
     this->addGetRoute("/getById", [this](Request &request) -> QByteArray {
-        qDebug() << "JOPA";
         if(request.query.count("id") == 0) {
             throw BadRequestException(
                 "Invalid query format for getting music",
@@ -90,7 +89,7 @@ void MusicRouter::setupRoutes() {
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: application/json\r\n"
-                              "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
+                        "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
                         "\r\n";
         response.append(data);
 

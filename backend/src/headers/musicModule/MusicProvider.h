@@ -14,6 +14,7 @@ public:
     QByteArray findByName(const QString&  name);
     QByteArray find(const QString& keyStr);
     QByteArray getAll();
+    QByteArray recomend(std::vector<QString>& janres, std::vector<QString> authors, std::vector<QString> langs);
 };
 
 #endif // MUSICPROVIDER_H
