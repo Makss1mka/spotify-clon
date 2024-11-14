@@ -49,3 +49,8 @@ QString Music::getJanres() {
 QString Music::getLang() {
     return lang;
 }
+
+QString Music::getAllData() {
+    return QString::number(id) + " " + name + " " + author + " " + QString::number(authorId) + " " + path
+        + " " + QString::number(listens) + " " + janres + " " + lang;
+}

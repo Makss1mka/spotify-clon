@@ -3,6 +3,7 @@
 
 #include "./HttpClient.h"
 #include "./Player.h"
+#include "../app.h"
 
 namespace Globals {
     extern Player* player;

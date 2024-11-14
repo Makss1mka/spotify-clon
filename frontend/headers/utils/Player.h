@@ -18,11 +18,12 @@ public:
     void popMusic();
     void clearQueue();
     void setPlaylist(std::vector<std::shared_ptr<Music>>& music);
+    std::shared_ptr<Music> getCurrentMusic();
 
     void setVolumeLevel(int value);
     void setPosition(int position);
-    void next();
-    void prev();
+    bool next();
+    bool prev();
     void pause();
     void play();
     bool isPlayerPaused();
@@ -40,6 +41,8 @@ private:
     QAudioOutput* outputDevice;
 
     std::vector<std::shared_ptr<Music>> musicQueue;
+signals:
+    void trackChanged();
 };
 
 #endif // PLAYER_H

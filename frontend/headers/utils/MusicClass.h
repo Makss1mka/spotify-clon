@@ -17,6 +17,7 @@ public:
     int getListens();
     QString getJanres();
     QString getLang();
+    QString getAllData();
 private:
     int id;
     QString name;

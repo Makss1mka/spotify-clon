@@ -11,7 +11,9 @@ CONFIG += c++20
 SOURCES += \
     components/HoverIconButton.cpp \
     components/HoverIconButtonWithStages.cpp \
+    components/MusicSlider.cpp \
     components/SoundButton.cpp \
+    components/VolumeSlider.cpp \
     components/authorCard.cpp \
     components/footer.cpp \
     components/header.cpp \
@@ -44,9 +46,11 @@ HEADERS += \
     headers/components/HoverIconButtonWithStages.h \
     headers/components/MainInteractSection.h \
     headers/components/MusicCard.h \
+    headers/components/MusicSlider.h \
     headers/components/SideBar.h \
     \
     headers/components/SoundButton.h \
+    headers/components/VolumeSlider.h \
     headers/utils/HttpClient.h \
     headers/utils/MusicClass.h \
     headers/utils/Player.h \

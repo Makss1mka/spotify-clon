@@ -15,24 +15,20 @@ Player::Player() : QObject(nullptr) {
     isPaused = true;
     currentQueueInd = -1;
     isCurrentLoaded = false;
-    volumeLevel = 50;
+    volumeLevel = 100;
     isRepeated = false;
 
     player = new QMediaPlayer();
     player->pause();
     outputDevice = new QAudioOutput();
-    outputDevice->setVolume(50);
+    outputDevice->setVolume(volumeLevel);
     player->setAudioOutput(outputDevice);
 
     player->connect(player, &QMediaPlayer::mediaStatusChanged, this, [this](QMediaPlayer::MediaStatus status){
-        qDebug() << "Popa" << status;
         if (status == QMediaPlayer::EndOfMedia) {
-            qDebug() << "Popa 2";
             if(isRepeated == false) {
-                qDebug() << "Popa 3";
                 next();
             } else {
-                qDebug() << "Popa 4";
                 setPosition(0);
             }
         }
@@ -42,11 +38,8 @@ Player::Player() : QObject(nullptr) {
         std::vector<std::shared_ptr<Music>> musics;
         for(int i = 0; i < response.bodyJsonArray.size(); i++) {
             musics.push_back(std::make_shared<Music>(response.bodyJsonArray[i].toObject()));
-            qDebug() << response.bodyJsonArray[i].toObject();
         }
         this->setPlaylist(musics);
-        this->next();
-        this->pause();
     });
 }
 
@@ -56,6 +49,7 @@ void Player::setPlaylist(std::vector<std::shared_ptr<Music>>& music) {
         isQueueFree = false;
         isCurrentLoaded = false;
         currentQueueInd = 0;
+        emit trackChanged();
     }
 }
 
@@ -79,7 +73,11 @@ void Player::setVolumeLevel(int value) {
 }
 
 void Player::setPosition(int position) {
-    player->setPosition(position);
+    if (position >= 0 && position <= 100) {
+        qint64 qPosition = static_cast<qint64>(musicQueue[currentQueueInd]->getDuration() * position * 10);
+
+        player->setPosition(qPosition);
+    }
 }
 
 void Player::clearQueue() {
@@ -91,32 +89,40 @@ void Player::clearQueue() {
     isCurrentLoaded = false;
 }
 
-void Player::next() {
-    if (currentQueueInd > musicQueue.size()) return;
+bool Player::next() {
+    if (currentQueueInd + 1 >= musicQueue.size()) return false;
 
-    currentQueueInd++;
+    if(currentQueueInd > 5) {
+        popMusic();
+    } else {
+        currentQueueInd++;
+    }
 
     player->setSource(QUrl("http://localhost:3000/music/getFile?path=" + musicQueue[currentQueueInd]->getPath()));
 
-    player->play();
-    isPaused = false;
-    isCurrentLoaded = true;
+    if (isPaused == false) play();
 
-    if(currentQueueInd > 7) popMusic();
+    // qDebug() << "======================" + currentQueueInd;
+    // for(auto music : this->musicQueue) {
+    //     qDebug() << music->getAllData();
+    // }
 
+    emit trackChanged();
+    return true;
     // логика по добавлению новых
 }
 
-void Player::prev() {
-    if (currentQueueInd <= 0) return;
+bool Player::prev() {
+    if (currentQueueInd <= 0) return false;
 
     currentQueueInd--;
 
     player->setSource(QUrl("http://localhost:3000/music/getFile?path=" + musicQueue[currentQueueInd]->getPath()));
 
-    player->play();
-    isPaused = false;
-    isCurrentLoaded = true;
+    if (isPaused == false) play();
+
+    emit trackChanged();
+    return true;
 }
 
 void Player::pause() {
@@ -149,4 +155,8 @@ bool Player::isOnRepeat() {
 
 void Player::swapRepeating() {
     isRepeated = !isRepeated;
+}
+
+std::shared_ptr<Music> Player::getCurrentMusic() {
+    return musicQueue[currentQueueInd];
 }
