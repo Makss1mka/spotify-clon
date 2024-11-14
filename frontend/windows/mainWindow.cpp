@@ -19,7 +19,7 @@
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
-    mainLayout->addWidget(new Header());
+    mainLayout->addWidget(new Header(this));
 
     QHBoxLayout* mainSectionLayout = new QHBoxLayout();
     mainSectionLayout->addWidget(new SideBar());
@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     mainSectionLayout->setSpacing(6);
     mainLayout->addLayout(mainSectionLayout);
 
-    mainLayout->addWidget(new Footer());
+    mainLayout->addWidget(new Footer(this));
 
     this->setLayout(mainLayout);
 }

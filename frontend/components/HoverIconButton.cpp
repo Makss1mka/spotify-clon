@@ -1,31 +1,31 @@
 #include "../headers/components/HoverIconButton.h"
+#include <QEnterEvent>
 #include <QPushButton>
 #include <QWidget>
 #include <QString>
 #include <QEvent>
 #include <QIcon>
-#include <QEnterEvent>
 
 HoverIconButton::HoverIconButton(const QIcon& icon, const QIcon& iconActive)
-    : QPushButton(nullptr), iconPath(icon), iconActivePath(iconActive) {
+    : QPushButton(nullptr), icon(icon), iconActive(iconActive) {
     setMouseTracking(true);
-    setIcon(iconPath);
+    setIcon(icon);
 }
 
 void HoverIconButton::enterEvent(QEnterEvent *event) {
-    setIcon(this->iconActivePath);
+    setIcon(this->iconActive);
     QPushButton::enterEvent(event);
 }
 
 void HoverIconButton::leaveEvent(QEvent *event) {
-    setIcon(this->iconPath);
+    setIcon(this->icon);
     QPushButton::leaveEvent(event);
 }
 
-void HoverIconButton::setNewActiveIconPath(const QString &newIconActivePath) {
-    iconActivePath = newIconActivePath;
+void HoverIconButton::setNewActiveIconPath(const QIcon& newIconActive) {
+    iconActive = newIconActive;
 }
 
-void HoverIconButton::setNewIconPath(const QString &newIconPath) {
-    iconPath = newIconPath;
+void HoverIconButton::setNewIconPath(const QIcon& newIcon) {
+    icon = newIcon;
 }

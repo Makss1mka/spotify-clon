@@ -12,31 +12,38 @@ HoverIconButtonWithStages::HoverIconButtonWithStages(const QIcon& icon, const QI
     : HoverIconButton(icon, iconActive), iconClicked(iconClicked), iconClickedActive(iconClickedActive) {
     setMouseTracking(true);
 
-    setIcon(QIcon(":/assets/sound.png"));
+    isClicked = false;
+    setIcon(icon);
 }
 
-void HoverIconButtonWithStages::swapActiveIcons() {
-    if (isMuted == true) {
-        setIcon(QIcon(":/assets/no-sound-active.png"));
+bool HoverIconButtonWithStages::isButtonClicked() {
+    return isClicked;
+}
+
+void HoverIconButtonWithStages::swapStage() {
+    isClicked = !isClicked;
+
+    if (isClicked == true) {
+        setIcon(iconClickedActive);
     } else {
-        setIcon(QIcon(":/assets/sound-active.png"));
+        setIcon(iconActive);
     }
 }
 
 void HoverIconButtonWithStages::enterEvent(QEnterEvent *event) {
-    if (isMuted == false) {
-        setIcon(QIcon(":/assets/sound-active.png"));
+    if (isClicked == false) {
+        setIcon(iconActive);
     } else {
-        setIcon(QIcon(":/assets/no-sound-active.png"));
+        setIcon(iconClickedActive);
     }
     QPushButton::enterEvent(event);
 }
 
 void HoverIconButtonWithStages::leaveEvent(QEvent *event) {
-    if (isMuted == false) {
-        setIcon();
+    if (isClicked == false) {
+        setIcon(icon);
     } else {
-        setIcon(QIcon(":/assets/no-sound.png"));
+        setIcon(iconClicked);
     }
     QPushButton::leaveEvent(event);
 }

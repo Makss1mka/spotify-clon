@@ -1,79 +1,98 @@
+#include "../headers/components/HoverIconButton.h"
+#include "../headers/utils/globalVariables.h"
 #include "../headers/components/Header.h"
 #include "../headers/utils/coverFunks.h"
+#include "../headers/app.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QSizePolicy>
 #include <QLineEdit>
 #include <QWidget>
 #include <QIcon>
-#include <QSizePolicy>
 #include <QSize>
 
 Header::Header(QWidget *parent) : QWidget(parent) {
     this->setFixedHeight(60);
-    //this->setStyleSheet("background-color: black");
 
-    // first section
-    QPushButton *leftAngleButton = new QPushButton;
-    leftAngleButton->setFixedSize(20, 20);
-    leftAngleButton->setIcon(QIcon(":/assets/angle-left.png"));
-    leftAngleButton->setStyleSheet("backround-color: inherit");
-    QPushButton *rightAngleButton = new QPushButton;
-    rightAngleButton->setFixedSize(20, 20);
-    rightAngleButton->setIcon(QIcon(":/assets/angle-right.png"));
-    rightAngleButton->setStyleSheet("backround-color: inherit");
+    // --- First inner section
 
+    // Back button
+    backButton = new HoverIconButton(QIcon(":/assets/angle-left.png"), QIcon(":/assets/angle-left-active.png"));
+    backButton->setFixedSize(20, 20);
+    backButton->setStyleSheet("backround: inherit");
+
+    // Next button
+    nextButton = new HoverIconButton(QIcon(":/assets/angle-right.png"), QIcon(":/assets/angle-right-active.png"));
+    nextButton->setFixedSize(20, 20);
+    nextButton->setStyleSheet("backround: inherit");
+
+    // Firxt inner layout
     QHBoxLayout *leftLayout = new QHBoxLayout;
-    leftLayout->addWidget(leftAngleButton);
-    leftLayout->addWidget(rightAngleButton);
+    leftLayout->addWidget(backButton);
+    leftLayout->addWidget(nextButton);
 
-    // second section
-    QPushButton *homeButton = new QPushButton;
-    homeButton->setIcon(QIcon(":/assets/home.png"));
+    // --- Second inner section
+
+    // Home button
+    homeButton = new HoverIconButton(QIcon(":/assets/home.png"), QIcon(":/assets/home-active.png"));
     homeButton->setFixedSize(40, 40);
-    homeButton->setStyleSheet("background-color: #272727; border-radius: 20px;");
+    homeButton->setStyleSheet("background: #272727; border-radius: 20px;");
 
-    QLineEdit *searchInputField = new QLineEdit;
+    // Search input field
+    searchInputField = new QLineEdit;
     searchInputField->setPlaceholderText("Что хотите послушать");
-    searchInputField->setStyleSheet("background-color: #272727; border-radius: 10px; color: white;");
-    QPushButton *searchButton = new QPushButton;
-    searchButton->setIcon(QIcon(":/assets/search.png"));
+    searchInputField->setStyleSheet("background: #272727; border-radius: 10px; color: white;");
+
+    // Search button
+    searchButton = new HoverIconButton(QIcon(":/assets/search.png"), QIcon(":/assets/search-active.png"));
     searchButton->setFixedSize(30, 30);
+
+    // Search layout
     QHBoxLayout *searchLayout = new QHBoxLayout;
     searchLayout->addLayout(coverWithVLayout(searchButton));
     searchLayout->addLayout(coverWithVLayout(searchInputField));
+
+    // Search bar widget
     QWidget *searchBar = new QWidget;
-    searchBar->setStyleSheet("background-color: #272727; border-radius: 15px;");
+    searchBar->setStyleSheet("background: #272727; border-radius: 15px;");
     searchBar->setLayout(searchLayout);
 
+    // Second inner layout
     QHBoxLayout *centerLayout = new QHBoxLayout;
     centerLayout->addWidget(homeButton);
     centerLayout->addWidget(searchBar);
 
-    // third section
-    QPushButton *userButton = new QPushButton;
-    userButton->setIcon(QIcon(":/assets/user.png"));
+    // --- Third inner section
+
+    // User button
+    userButton = new HoverIconButton(QIcon(":/assets/user.png"), QIcon(":/assets/user-active.png"));
     userButton->setFixedSize(40, 40);
-    userButton->setStyleSheet("background-color: #272727; border-radius: 20px;");
+    userButton->setStyleSheet("background: #272727; border-radius: 20px;");
 
-    QPushButton *collapseButton = new QPushButton;
-    collapseButton->setIcon(QIcon(":/assets/line.png"));
-    collapseButton->setStyleSheet("backround-color: inherit");
-    homeButton->setStyleSheet("background-color: #272727; border-radius: 20px;");
-    QPushButton *collapseInWindowButton = new QPushButton;
-    collapseInWindowButton->setIcon(QIcon(":/assets/square.png"));
-    collapseInWindowButton->setStyleSheet("backround-color: inherit");
-    QPushButton *exitButton = new QPushButton;
-    exitButton->setIcon(QIcon(":/assets/cross.png"));
-    exitButton->setStyleSheet("backround-color: inherit");
+    // Collapse button
+    collapseButton = new HoverIconButton(QIcon(":/assets/line.png"), QIcon(":/assets/line-active.png"));
+    collapseButton->setStyleSheet("background: inherit");
+    collapseButton->connect(collapseButton, &QPushButton::clicked, &App::showNormal);
 
+    // Collapse in window button
+    collapseInWindowButton = new HoverIconButton(QIcon(":/assets/square.png"), QIcon(":/assets/square-active.png"));
+    collapseInWindowButton->setStyleSheet("background: inherit");
+    collapseInWindowButton->connect(collapseInWindowButton, &QPushButton::clicked, &App::showMinimized);
+
+    // Exit button
+    exitButton = new HoverIconButton(QIcon(":/assets/cross.png"), QIcon(":/assets/cross-active.png"));
+    exitButton->setStyleSheet("background: inherit");
+    exitButton->connect(exitButton, &QPushButton::clicked, &App::close);
+
+    // Third inner layout
     QHBoxLayout *rightLayout = new QHBoxLayout;
     rightLayout->addWidget(userButton);
     rightLayout->addWidget(collapseButton);
     rightLayout->addWidget(collapseInWindowButton);
     rightLayout->addWidget(exitButton);
 
-    // main layout
+    // --- Main layout
     QHBoxLayout* mainLayout = new QHBoxLayout;
     mainLayout->addLayout(leftLayout);
     mainLayout->addStretch();

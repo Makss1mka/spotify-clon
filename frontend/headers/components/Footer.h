@@ -1,7 +1,10 @@
 #ifndef LITTLEPLAYER_H
 #define LITTLEPLAYER_H
 
+#include "./HoverIconButtonWithStages.h"
 #include "./HoverIconButton.h"
+#include "./VolumeSlider.h"
+#include "./MusicSlider.h"
 #include "./SoundButton.h"
 #include <QWidget>
 #include <QLabel>
@@ -14,26 +17,23 @@ class Footer : public QWidget {
 public:
     explicit Footer(QWidget *parent = nullptr);
 private:
-    void updateMusicTimeline();
-
     HoverIconButton *musicImage;
     QLabel *nameLabel;
     QLabel *authorLabel;
-    HoverIconButton *musicConfigButton;
 
-    HoverIconButton *shuffleButton;
+    HoverIconButtonWithStages *shuffleButton;
     HoverIconButton *backButton;
     QPushButton *stopButton;
     HoverIconButton *nextButton;
-    HoverIconButton *repeatButton;
+    HoverIconButtonWithStages *repeatButton;
     HoverIconButton* btn;
     QLabel *startTime;
     QLabel *endTime;
-    QSlider *musicTimeline;
+    MusicSlider *musicTimeline;
     QLabel *timelineCircle;
 
     SoundButton *soundButton;
-    QSlider *volumeSlider;
+    VolumeSlider *volumeSlider;
 
     QTimer *timelineUpdateTimer;
 };

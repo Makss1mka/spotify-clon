@@ -14,8 +14,8 @@ public:
     HoverIconButton(const QIcon& icon, const QIcon& iconActive);
     virtual ~HoverIconButton() = default;
 
-    void setNewIconPath(const QString &newIconPath);
-    void setNewActiveIconPath(const QString &newIconActivePath);
+    void setNewIconPath(const QIcon& newIcon);
+    void setNewActiveIconPath(const QIcon& newIconActive);
 protected:
     virtual void enterEvent(QEnterEvent *event) override;
     virtual void leaveEvent(QEvent *event) override;

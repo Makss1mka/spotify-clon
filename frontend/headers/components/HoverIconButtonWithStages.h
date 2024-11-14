@@ -2,6 +2,8 @@
 #define HOVERICONBUTTONWITHSTAGES_H
 
 #include "./HoverIconButton.h"
+#include <QEnterEvent>
+#include <QEvent>
 #include <QIcon>
 
 class HoverIconButtonWithStages : public HoverIconButton {
@@ -10,6 +12,8 @@ public:
     HoverIconButtonWithStages(const QIcon& icon, const QIcon& iconActive, const QIcon& iconClicked, const QIcon& iconClickedActive);
     virtual ~HoverIconButtonWithStages() = default;
 
+    bool isButtonClicked();
+    void swapStage();
     void swapActiveIcons();
 protected:
     virtual void enterEvent(QEnterEvent *event) override;

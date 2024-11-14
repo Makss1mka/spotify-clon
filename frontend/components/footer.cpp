@@ -3,8 +3,11 @@
 #include "../headers/utils/Player.h"
 #include "../headers/utils/MusicClass.h"
 #include "../headers/utils/HttpClient.h"
+#include "../headers/components/HoverIconButtonWithStages.h"
 #include "../headers/components/HoverIconButton.h"
 #include "../headers/components/SoundButton.h"
+#include "../headers/components/MusicSlider.h"
+#include "../headers/components/VolumeSlider.h"
 #include <QWidget>
 #include <QLabel>
 #include <QPushButton>
@@ -24,17 +27,17 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     // --- First inner section
 
     // Music image
-    musicImage = new HoverIconButton(":/assets/picture.png", ":/assets/picture-active.png");
+    musicImage = new HoverIconButton(QIcon(":/assets/picture.png"), QIcon(":/assets/picture-active.png"));
     musicImage->setFixedSize(40, 40);
     musicImage->setIconSize(QSize(34, 34));
 
-    // Music name label
+
+    // Music data labels
     nameLabel = new QLabel("Test name");
     nameLabel->setStyleSheet("color: white; margin: 0px; padding: 0px;");
-
-    // Music author label
     authorLabel = new QLabel("Test author");
     authorLabel->setStyleSheet("font-size: 11px; color: #CDCDCD; padding: 0px;");
+
 
     // Labels layout
     QVBoxLayout *textLayout = new QVBoxLayout;
@@ -43,46 +46,51 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     textLayout->addWidget(nameLabel);
     textLayout->addWidget(authorLabel);
 
-    // Check button
-    musicConfigButton = new HoverIconButton(":/assets/check.png", ":/assets/check-active.png");
-    musicConfigButton->setFixedSize(22, 22);
-    musicConfigButton->setStyleSheet("background: grey; border-radius: 11px;");
 
     // First inner layout
     QHBoxLayout *firstInnerLayout = new QHBoxLayout;
     firstInnerLayout->addWidget(musicImage);
     firstInnerLayout->addLayout(textLayout);
-    firstInnerLayout->addWidget(musicConfigButton);
+
 
     // --- Second inner section
 
     // Shuffle Button
-    shuffleButton = new HoverIconButton(":/assets/shuffle.png", ":/assets/shuffle-active.png");
+    shuffleButton = new HoverIconButtonWithStages(QIcon(":/assets/shuffle.png"), QIcon(":/assets/shuffle-active.png"),
+            QIcon(":/assets/no-shuffle.png"), QIcon(":/assets/no-shuffle-active.png"));
     shuffleButton->setStyleSheet("background: inherit");
+    shuffleButton->connect(shuffleButton, QPushButton::clicked, [this](){
+        this->shuffleButton->swapStage();
+    });
+
 
     // Back button
-    backButton = new HoverIconButton(":/assets/angle-left.png", ":/assets/angle-left-active.png");
+    backButton = new HoverIconButton(QIcon(":/assets/back.png"), QIcon(":/assets/back-active.png"));
     backButton->setStyleSheet("background: inherit");
+    backButton->connect(backButton, QPushButton::clicked, [this](){
+        if (Globals::player->prev() == false) return;
+        this->musicTimeline->setValue(0);
+    });
+
 
     // Next Button
-    nextButton = new HoverIconButton(":/assets/angle-right.png", ":/assets/angle-right-active.png");
+    nextButton = new HoverIconButton(QIcon(":/assets/next.png"), QIcon(":/assets/next-active.png"));
     nextButton->setStyleSheet("background: inherit");
+    nextButton->connect(nextButton, QPushButton::clicked, [this](){
+        if (Globals::player->next() == false) return;
+        this->musicTimeline->setValue(0);
+    });
+
 
     // Repeat button
-    repeatButton = new HoverIconButton(":/assets/repeat.png", ":/assets/repeat-active.png");
+    repeatButton = new HoverIconButtonWithStages(QIcon(":/assets/repeat.png"), QIcon(":/assets/repeat-active.png"),
+            QIcon(":/assets/repeat-once.png"), QIcon(":/assets/repeat-once-active.png"));
     repeatButton->setStyleSheet("background: inherit");
     repeatButton->connect(repeatButton, QPushButton::clicked, [this](){
-        if (Globals::player->isOnRepeat() == true) {
-            Globals::player->swapRepeating();
-            this->repeatButton->setNewActiveIconPath(":/assets/repeat-active.png");
-            this->repeatButton->setNewIconPath(":/assets/repeat.png");
-        } else {
-            Globals::player->pause();
-            this->repeatButton->setNewActiveIconPath();
-            this->repeatButton->setNewIconPath();
-            this->repeatButton->setIcon(QIcon(":/assets/player-stop.png"));
-        }
+        Globals::player->swapRepeating();
+        this->repeatButton->swapStage();
     });
+
 
     // Stop button
     stopButton = new QPushButton;
@@ -100,6 +108,7 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
         }
     });
 
+
     // Top layout
     QHBoxLayout *iconLayout = new QHBoxLayout;
     iconLayout->addStretch();
@@ -110,19 +119,36 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     iconLayout->addWidget(repeatButton);
     iconLayout->addStretch();
 
+
     // Time Labels
     startTime = new QLabel("00:00");
+    startTime->setStyleSheet("color: #EDEDED; padding: 0px;");
     endTime = new QLabel("00:00");
+    endTime->setStyleSheet("color: #EDEDED; padding: 0px;");
+    connect(Globals::player, &Player::trackChanged, [this](){
+        std::shared_ptr<Music> curMusic = Globals::player->getCurrentMusic();
+
+        this->authorLabel->setText(curMusic->getAuthor());
+        this->nameLabel->setText(curMusic->getName());
+
+        QString minutes = QString::number(curMusic->getDuration() / 60);
+        QString seconds = QString::number(curMusic->getDuration() % 60);
+        this->endTime->setText(minutes + ":" + ((seconds.length() == 1) ? "0" + seconds : seconds));
+        this->startTime->setText("00:00");
+    });
+
 
     // Timeline music slider
-    musicTimeline = new QSlider(Qt::Horizontal);
+    musicTimeline = new MusicSlider(Qt::Horizontal);
     musicTimeline->setFixedHeight(5);
-    musicTimeline->setMinimumWidth(250);
+    musicTimeline->setRange(0, 100);
+    musicTimeline->setMinimumWidth(100);
     musicTimeline->setMaximumWidth(700);
     musicTimeline->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    musicTimeline->setStyleSheet("QSlider::groove:horizontal { background: #A5A5A5; height: 5px; }"
+    musicTimeline->setStyleSheet("QSlider::groove:horizontal { margin: 2px; background: #A5A5A5; height: 5px; }"
             "QSlider::handle:horizontal { background: transparent; }"
             "QSlider::sub-page:horizontal { background: #EDEDED; }");
+
 
     // Bottom layout
     QHBoxLayout *timelineLayout = new QHBoxLayout;
@@ -130,10 +156,12 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     timelineLayout->addWidget(musicTimeline);
     timelineLayout->addWidget(endTime);
 
+
     // Second inner layout
     QVBoxLayout *secondInnerLayout = new QVBoxLayout;
     secondInnerLayout->addLayout(iconLayout);
     secondInnerLayout->addLayout(timelineLayout);
+
 
     // --- Third inner section
 
@@ -142,25 +170,27 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     soundButton->setFixedSize(40, 40);
     soundButton->setStyleSheet("background: inherit");
     soundButton->connect(soundButton, QPushButton::clicked, [this](){
-        if (this->soundButton->isMuted == false) {
-            this->soundButton->previousVolumeLevel = Globals::player->getVolumeLevel();
-            this->soundButton->isMuted = true;
-            this->soundButton->swapActiveIcons();
+        if (this->soundButton->isButtonClicked() == false) {
+            this->soundButton->setPreviousVolumeLevel(Globals::player->getVolumeLevel());
             Globals::player->setVolumeLevel(0);
+            this->volumeSlider->setValue(0);
         } else {
-            this->soundButton->isMuted = false;
-            this->soundButton->swapActiveIcons();
-            Globals::player->setVolumeLevel(this->soundButton->previousVolumeLevel);
+            Globals::player->setVolumeLevel(this->soundButton->getPreviousVolumeLevel());
+            this->volumeSlider->setValue(this->soundButton->getPreviousVolumeLevel());
         }
+        this->soundButton->swapStage();
     });
 
+
     // Volume slider
-    volumeSlider = new QSlider(Qt::Horizontal);
+    volumeSlider = new VolumeSlider(Qt::Horizontal);
+    volumeSlider->setValue(100);
     volumeSlider->setFixedHeight(5);
     volumeSlider->setFixedWidth(60);
     volumeSlider->setStyleSheet("QSlider::groove:horizontal { background: #A5A5A5; height: 5px; max-width: 80; }"
-            "QSlider::handle:horizontal { background: transparent; }" //white; width: 6px; height: 6px; margin: -4px 0; border-radius: 2.5px; }"
+            "QSlider::handle:horizontal { background: transparent; }"
             "QSlider::sub-page:horizontal { background: #EDEDED; }");
+
 
     // Third inner layout
     QHBoxLayout *thirdInnerLayout = new QHBoxLayout;
@@ -168,6 +198,7 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     thirdInnerLayout->addWidget(volumeSlider);
     thirdInnerLayout->setSpacing(0);
     thirdInnerLayout->setContentsMargins(3, 0, 0, 0);
+
 
     // --- Main Template
     QHBoxLayout *mainLayout = new QHBoxLayout;

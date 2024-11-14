@@ -1,24 +1,18 @@
 #ifndef SOUNDBUTTON_H
 #define SOUNDBUTTON_H
 
-#include "./HoverIconButton.h"
-#include <QEnterEvent>
-#include <QString>
-#include <QEvent>
+#include "./HoverIconButtonWithStages.h"
 
-class SoundButton : public HoverIconButton {
+class SoundButton : public HoverIconButtonWithStages {
     Q_OBJECT
 public:
     SoundButton();
     virtual ~SoundButton() = default;
 
-    bool isMuted;
-    int previousVolumeLevel;
-
-    void swapActiveIcons();
+    void setPreviousVolumeLevel(int previousVolumeLevel);
+    int getPreviousVolumeLevel();
 protected:
-    virtual void enterEvent(QEnterEvent *event) override;
-    virtual void leaveEvent(QEvent *event) override;
+    int previousVolumeLevel;
 };
 
 #endif // SOUNDBUTTON_H
