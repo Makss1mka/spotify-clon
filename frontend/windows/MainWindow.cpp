@@ -25,7 +25,11 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     mainSectionLayout->addWidget(new SideBar());
     mainSectionLayout->addWidget(new MainInteractSection());
     mainSectionLayout->setSpacing(6);
-    mainLayout->addLayout(mainSectionLayout);
+
+    QWidget* centralBlock = new QWidget(this);
+    centralBlock->setLayout(mainSectionLayout);
+    centralBlock->setStyleSheet(" width: 100%; height: 100%; backgtound: white; ");
+    mainLayout->addWidget(centralBlock);
 
     mainLayout->addWidget(new Footer(this));
 

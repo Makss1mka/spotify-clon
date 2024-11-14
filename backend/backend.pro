@@ -7,6 +7,9 @@ CONFIG += c++20 cmdline
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        src/userModule/UserProvider.cpp \
+        src/userModule/UserRouter.cpp \
+        \
         src/concepts/provider.cpp \
         src/concepts/request.cpp \
         src/concepts/response.cpp \
@@ -18,8 +21,6 @@ SOURCES += \
         src/adminModule/adminRouter.cpp \
         src/adminModule/adminProvider.cpp \
         \
-        src/authModule/authRouter.cpp \
-        src/authModule/authProvider.cpp \
         src/musicModule/musicProvider.cpp \
         src/musicModule/musicRouter.cpp \
         src/utils/envFile.cpp \
@@ -28,11 +29,12 @@ SOURCES += \
 
 
 HEADERS += \
-        src/headers/authModule/AuthProvider.h \
-        src/headers/authModule/AuthRouter.h \
         \
         src/headers/adminModule/AdminProvider.h \
         src/headers/adminModule/AdminRouter.h \
+        \
+        src/headers/userModule/UserProvider.h \
+        src/headers/userModule/UserRouter.h \
         \
         src/headers/concepts/Provider.h \
         src/headers/concepts/Request.h \

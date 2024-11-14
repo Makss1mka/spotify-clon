@@ -3,9 +3,9 @@
 
 #include "../concepts/Router.h"
 
-class AuthRouter : public Router {
+class UserRouter : public Router {
 public:
-    AuthRouter();
+    UserRouter();
 private:
     void setupProviders() override;
     void setupRoutes() override;

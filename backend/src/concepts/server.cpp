@@ -7,7 +7,7 @@
 #include "../headers/concepts/Request.h"
 #include "../headers/concepts/RouterDispatcher.h"
 #include "../headers/adminModule/AdminRouter.h"
-#include "../headers/authModule/AuthRouter.h"
+#include "../headers/userModule/UserRouter.h"
 #include "../headers/musicModule/MusicRouter.h"
 #include "../headers/utils/envFile.h"
 
@@ -21,7 +21,7 @@ Server::Server(int port) {
 
     if(!Server::openDbConnections()) throw "Cannot open DB connections";
     RouterDispatcher::getDispatcher().addRouter(std::make_shared<AdminRouter>());
-    RouterDispatcher::getDispatcher().addRouter(std::make_shared<AuthRouter>());
+    RouterDispatcher::getDispatcher().addRouter(std::make_shared<UserRouter>());
     RouterDispatcher::getDispatcher().addRouter(std::make_shared<MusicRouter>());
 }
 

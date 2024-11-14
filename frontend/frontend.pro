@@ -9,29 +9,30 @@ CONFIG += c++20
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    components/AuthorCard.cpp \
+    components/Footer.cpp \
+    components/Header.cpp \
     components/HoverIconButton.cpp \
     components/HoverIconButtonWithStages.cpp \
+    components/MainInteractSection.cpp \
+    components/MusicCard.cpp \
     components/MusicSlider.cpp \
+    components/SideBar.cpp \
     components/SoundButton.cpp \
     components/VolumeSlider.cpp \
-    components/authorCard.cpp \
-    components/footer.cpp \
-    components/header.cpp \
-    components/mainInteractSection.cpp \
-    components/musicCard.cpp \
-    components/sideBar.cpp \
     \
-    pages/searchPage.cpp \
+    pages/SearchPage.cpp \
     \
-    utils/globalVariables.cpp \
-    utils/httpClient.cpp \
-    utils/musicClass.cpp \
-    utils/player.cpp \
-    utils/coverFunks.cpp\
+    utils/CoverFunks.cpp \
+    utils/GlobalVariables.cpp \
+    utils/HttpClient.cpp \
+    utils/MusicClass.cpp \
+    utils/Player.cpp \
+    utils/UserClasses.cpp \
     \
-    windows/signUpWindow.cpp \
-    windows/logInWindow.cpp \
-    windows/mainWindow.cpp \
+    windows/LogInWindow.cpp \
+    windows/MainWindow.cpp \
+    windows/SignUpWindow.cpp \
     \
     main.cpp \
     app.cpp \
@@ -48,20 +49,21 @@ HEADERS += \
     headers/components/MusicCard.h \
     headers/components/MusicSlider.h \
     headers/components/SideBar.h \
-    \
     headers/components/SoundButton.h \
     headers/components/VolumeSlider.h \
+    \
     headers/utils/HttpClient.h \
     headers/utils/MusicClass.h \
     headers/utils/Player.h \
     headers/utils/globalVariables.h \
+    headers/utils/coverFunks.h \
+    headers/utils/UserClasses.h \
+    \
     headers/windows/MainWindow.h \
     headers/windows/LogInWindow.h \
     headers/windows/SignUpWindow.h \
     \
     headers/pages/SearchPage.h \
-    \
-    headers/utils/coverFunks.h
 
 FORMS += \
     app.ui
