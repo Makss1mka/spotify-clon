@@ -46,5 +46,14 @@
         <file>assets/picture.png</file>
         <file>assets/picture-active.png</file>
         <file>assets/player-go.png</file>
+        <file>assets/repeat-once.png</file>
+        <file>assets/repeat-once-active.png</file>
+        <file>assets/back.png</file>
+        <file>assets/back-active.png</file>
+        <file>assets/next.png</file>
+        <file>assets/next-active.png</file>
+        <file>assets/no-shuffle.png</file>
+        <file>assets/no-shuffle-active.png</file>
+        <file>assets/windowIcon.png</file>
     </qresource>
 </RCC>

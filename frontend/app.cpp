@@ -3,6 +3,7 @@
 #include "./headers/windows/SignUpWindow.h"
 #include "./headers/windows/LogInWindow.h"
 #include "./headers/windows/MainWindow.h"
+#include <QIcon>
 
 App::App(QWidget *parent)
     : QMainWindow(parent)
@@ -12,6 +13,8 @@ App::App(QWidget *parent)
     // LogInWindow *loginWindow = new LogInWindow(this);
     // this->setCentralWidget(loginWindow);
 
+    this->setWindowIcon(QIcon(":/assets/windowIcon.png"));
+    this->setWindowTitle("MusicBox");
     this->setMinimumSize(600, 500);
     this->setCentralWidget(new MainWindow(this));
     this->setStyleSheet("background-color: black; padding: 0; margin: 0");
