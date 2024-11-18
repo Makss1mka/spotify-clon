@@ -70,10 +70,11 @@ QByteArray UserProvider::authUser(const QString& login, const QString& email, co
     return jsonData;
 }
 
-void UserProvider::updateBasicInfo(int id, const QString& login, const QString& email, const QString& password, int role) {
+
+void UserProvider::updateBasicInfo(const QString& id, const QString& login, const QString& email, const QString& password, const QString& role) {
     QSqlQuery query;
     if(!query.exec("UPDATE userInfo SET login='" + login + "', email='" + email + "', "
-            "password='" + password + "', role=" + QString::number(role) + " WHERE id=" + QString::number(id) + ";")) {
+            "password='" + password + "', role=" + role + " WHERE id=" + id + ";")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::updateBasicInfo is unavailable",
             "User service is temporarily unavailable"
@@ -81,9 +82,10 @@ void UserProvider::updateBasicInfo(int id, const QString& login, const QString& 
     }
 }
 
-void addFavoriteAuthor(int authorId, int userId) {
+
+void UserProvider::addFavoriteAuthor(const QString& authorId, const QString& userId) {
     QSqlQuery query;
-    if(!query.exec("INSERT INTO user_author (author_id, user_id) VALUES (" + QString::number(authorId) + ", " + QString::number(userId) + ");")) {
+    if(!query.exec("INSERT INTO user_author (author_id, user_id) VALUES (" + authorId + ", " + userId + ");")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::addFavoriteAuthor is unavailable",
             "User service is temporarily unavailable"
@@ -91,9 +93,9 @@ void addFavoriteAuthor(int authorId, int userId) {
     }
 }
 
-void deleteFavoriteAuthor(int authorId, int userId) {
+void UserProvider::deleteFavoriteAuthor(const QString& authorId, const QString& userId) {
     QSqlQuery query;
-    if(!query.exec("DELETE FROM user_author WHERE user_id=" + QString::number(userId) + " and author_id=" + QString::number(authorId) + ";")) {
+    if(!query.exec("DELETE FROM user_author WHERE user_id=" + userId + " and author_id=" + authorId + ";")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::deleteFavoriteAuthor is unavailable",
             "User service is temporarily unavailable"
@@ -101,12 +103,12 @@ void deleteFavoriteAuthor(int authorId, int userId) {
     }
 }
 
-QByteArray getFavoriteAuthors(int userId) {
+QByteArray UserProvider::getFavoriteAuthors(const QString& userId) {
     QJsonArray resultArray;
     QJsonObject authoeEntry;
     QSqlQuery query;
 
-    if(!query.exec("SELECT authors.id, authors.name FROM user_author JOIN authors ON authors.id=user_author.author_id WHERE user_author.user_id=" + QString::number(userId) + ";")) {
+    if(!query.exec("SELECT authors.id, authors.name FROM user_author JOIN authors ON authors.id=user_author.author_id WHERE user_author.user_id=" + userId + ";")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::getFavoriteMusics is unavailable",
             "User service is temporarily unavailable"
@@ -117,15 +119,16 @@ QByteArray getFavoriteAuthors(int userId) {
         authoeEntry["id"] = query.value(0).toInt();
         authoeEntry["name"] = query.value(1).toString();
 
-        musicArray.append(authoeEntry);
+        resultArray.append(authoeEntry);
     }
 
     return QJsonDocument(resultArray).toJson();
 }
 
-void addFavoriteMusic(int musicId, int userId) {
+
+void UserProvider::addFavoriteMusic(const QString& musicId, const QString& userId) {
     QSqlQuery query;
-    if(!query.exec("INSERT INTO user_music (user_id, music_id) VALUES (" + QString::number(userId) + ", " + QString::number(musicId) + ");")) {
+    if(!query.exec("INSERT INTO user_music (user_id, music_id) VALUES (" + userId + ", " + musicId + ");")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::addFavoriteMusic is unavailable",
             "User service is temporarily unavailable"
@@ -133,9 +136,9 @@ void addFavoriteMusic(int musicId, int userId) {
     }
 }
 
-void deleteFavoriteMusic(int musicId, int userId) {
+void UserProvider::deleteFavoriteMusic(const QString& musicId, const QString& userId) {
     QSqlQuery query;
-    if(!query.exec("DELETE FROM user_music WHERE user_id=" + QString::number(userId) + " and music_id=" + QString::number(musicId) + ";")) {
+    if(!query.exec("DELETE FROM user_music WHERE user_id=" + userId + " and music_id=" + musicId + ";")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::deleteFavoriteAuthor is unavailable",
             "User service is temporarily unavailable"
@@ -143,13 +146,13 @@ void deleteFavoriteMusic(int musicId, int userId) {
     }
 }
 
-QByteArray getFavoriteMusics(int userId) {
+QByteArray UserProvider::getFavoriteMusics(const QString& userId) {
     QJsonArray resultArray;
     QJsonObject musicEntry;
     QSqlQuery query;
 
     if(!query.exec("SELECT music.id, music.name, music.file, music.author_id, music.author_name, music.duration, music.listens, music.janre, music.lang"
-        " FROM user_music JOIN music ON music.id=user_music.music_id WHERE user_music.user_id=" + QString::number(userId) + ";")) {
+        " FROM user_music JOIN music ON music.id=user_music.music_id WHERE user_music.user_id=" + userId + ";")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::getFavoriteMusics is unavailable",
             "User service is temporarily unavailable"
@@ -167,7 +170,7 @@ QByteArray getFavoriteMusics(int userId) {
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
 
-        musicArray.append(musicEntry);
+        resultArray.append(musicEntry);
     }
 
     return QJsonDocument(resultArray).toJson();

@@ -85,5 +85,134 @@ void UserRouter::setupRoutes() {
 
         return response;
     });
+
+
+
+    this->addPostRoute("/addFavMusic", [this](Request& request) -> QByteArray {
+        if(request.body.size() != 2 || request.body.count("user_id") == 0 || request.body.count("music_id") == 0) {
+            throw BadRequestException(
+                "Invalid body format for adding favorite music",
+                "Invalid body format for adding favorite music"
+            );
+        }
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+
+        userProvider->addFavoriteMusic(request.body["music_id"], request.body["user_id"]);
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: text/plain\r\n"
+                        "Content-Length: 33\r\n"
+                        "\r\n"
+                        "Music wa added to favorite";
+
+        return response;
+    });
+
+    this->addGetRoute("/getFavMusic", [this](Request& request) -> QByteArray {
+        if(request.query.size() != 1 || request.query.count("user_id") == 0) {
+            throw BadRequestException(
+                "Invalid query format for getting favorite music",
+                "Invalid query format for getting favorite music"
+            );
+        }
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+        QByteArray data = userProvider->getFavoriteMusics(request.query["user_id"]);
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: application/json\r\n"
+                        "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
+                        "\r\n";
+        response.append(data);
+
+        return response;
+    });
+
+    this->addDeleteRoute("/delFavMusic", [this](Request& request) -> QByteArray {
+        if(request.body.size() != 2 || request.body.count("user_id") == 0 || request.body.count("music_id") == 0) {
+            throw BadRequestException(
+                "Invalid body format for deleting favorite music",
+                "Invalid body format for deleting favorite music"
+            );
+        }
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+
+        userProvider->deleteFavoriteMusic(request.body["music_id"], request.body["user_id"]);
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: text/plain\r\n"
+                        "Content-Length: 33\r\n"
+                        "\r\n"
+                        "Music was deleted from favorite";
+
+        return response;
+    });
+
+
+
+
+    this->addPostRoute("/addFavAuthor", [this](Request& request) -> QByteArray {
+        if(request.body.size() != 2 || request.body.count("user_id") == 0 || request.body.count("author_id") == 0) {
+            throw BadRequestException(
+                "Invalid body format for adding favorite author",
+                "Invalid body format for adding favorite author"
+            );
+        }
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+
+        userProvider->addFavoriteAuthor(request.body["author_id"], request.body["user_id"]);
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: text/plain\r\n"
+                        "Content-Length: 33\r\n"
+                        "\r\n"
+                        "Author wa added to favorite";
+
+        return response;
+    });
+
+    this->addGetRoute("/getFavAuthor", [this](Request& request) -> QByteArray {
+        if(request.query.size() != 1 || request.query.count("user_id") == 0) {
+            throw BadRequestException(
+                "Invalid query format for getting favorite author",
+                "Invalid query format for getting favorite author"
+            );
+        }
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+        QByteArray data = userProvider->getFavoriteAuthors(request.query["user_id"]);
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: application/json\r\n"
+                        "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
+                        "\r\n";
+        response.append(data);
+
+        return response;
+    });
+
+    this->addDeleteRoute("/delFavAuthor", [this](Request& request) -> QByteArray {
+        if(request.body.size() != 2 || request.body.count("user_id") == 0 || request.body.count("author_id") == 0) {
+            throw BadRequestException(
+                "Invalid body format for deleting favorite author",
+                "Invalid body format for deleting favorite author"
+            );
+        }
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+
+        userProvider->deleteFavoriteAuthor(request.body["author_id"], request.body["user_id"]);
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: text/plain\r\n"
+                        "Content-Length: 33\r\n"
+                        "\r\n"
+                        "Author was deleted from favorite";
+
+        return response;
+    });
 }
 
