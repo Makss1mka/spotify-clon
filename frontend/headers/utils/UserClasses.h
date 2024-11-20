@@ -6,36 +6,46 @@
 #include <QString>
 #include <vector>
 
+class Author;
+
 class User {
-public:
-    User(QJsonObject jsonUser);
-
-    QString getName();
-    QString getEmail();
-    int getRole();
-
-    void setName(QString newName);
-    void setPassword(QString newPassword, QString oldPassword);
-    void setEmail(QString newEmail);
-    void setRole(int role);
-
-    void pushMusic(std::shared_ptr<Music>);
-    void deleteMusic(int id);
-    int getMusicsLength();
-    std::shared_ptr<Music> getMusicByInd(int ind);
-
-    void pushAuthor(std::shared_ptr<Music>);
-    void deleteAuthor(int id);
-    int getAuthorsLength();
-    std::shared_ptr<Music> getAuthorByInd(int ind);
 protected:
-    QString name;
-    QString password;
-    QString email;
-    int role;
+    User();
 
-    std::vector<std::shared_ptr<Music>> favoriteMusics;
-    std::vector<std::shared_ptr<Author>> favoriteAuthors;
+    static int id;
+    static QString name;
+    static QString password;
+    static QString email;
+    static int role;
+
+    static std::vector<std::shared_ptr<MusicObject>> favoriteMusics;
+    static std::vector<std::shared_ptr<AuthorObject>> favoriteAuthors;
+public:
+    User(const User&) = delete;
+    void operator=(const User&) = delete;
+
+    static void loadUser(QJsonObject jsonUser);
+    static void printInfo();
+
+    static int getId();
+    static QString getName();
+    static QString getEmail();
+    static int getRole();
+
+    static void setName(QString newName);
+    static void setPassword(QString newPassword, QString oldPassword);
+    static void setEmail(QString newEmail);
+    static void setRole(int newRole);
+
+    static void addMusic(std::shared_ptr<MusicObject> music);
+    static void deleteMusic(int id);
+    static int getMusicsLength();
+    static std::shared_ptr<MusicObject> getMusicByInd(int ind);
+
+    static void addAuthor(std::shared_ptr<AuthorObject> author);
+    static void deleteAuthor(int id);
+    static int getAuthorsLength();
+    static std::shared_ptr<AuthorObject> getAuthorByInd(int ind);
 };
 
 class Author : public User {

@@ -13,12 +13,14 @@ class Player : public QObject {
 public:
     Player();
 
-    void pushInTheEndMusic(std::shared_ptr<Music> music);
-    void pushNextMusic(std::shared_ptr<Music> music);
+    std::shared_ptr<MusicObject> test();
+
+    void pushInTheEndMusic(std::shared_ptr<MusicObject> music);
+    void pushNextMusic(std::shared_ptr<MusicObject> music);
     void popMusic();
     void clearQueue();
-    void setPlaylist(std::vector<std::shared_ptr<Music>>& music);
-    std::shared_ptr<Music> getCurrentMusic();
+    void setPlaylist(std::vector<std::shared_ptr<MusicObject>>& music);
+    std::shared_ptr<MusicObject> getCurrentMusic();
 
     void setVolumeLevel(int value);
     void setPosition(int position);
@@ -40,7 +42,7 @@ private:
     bool isRepeated;
     QAudioOutput* outputDevice;
 
-    std::vector<std::shared_ptr<Music>> musicQueue;
+    std::vector<std::shared_ptr<MusicObject>> musicQueue;
 signals:
     void trackChanged();
 };

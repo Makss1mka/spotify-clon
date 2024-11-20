@@ -4,6 +4,6 @@
 #include <QMediaPlayer>
 
 namespace Globals {
-    std::shared_ptr<HttpClient> httpClient = std::make_shared<HttpClient>();
+    HttpClient* httpClient = new HttpClient();
     Player* player = new Player();
 }

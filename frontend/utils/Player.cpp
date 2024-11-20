@@ -35,15 +35,15 @@ Player::Player() : QObject(nullptr) {
     });
 
     Globals::httpClient->sendGetRequest(QUrl("http://localhost:3000/admin/getAllMusicInfo"), [this](const HttpClient::Response& response){
-        std::vector<std::shared_ptr<Music>> musics;
+        std::vector<std::shared_ptr<MusicObject>> musics;
         for(int i = 0; i < response.bodyJsonArray.size(); i++) {
-            musics.push_back(std::make_shared<Music>(response.bodyJsonArray[i].toObject()));
+            musics.push_back(std::make_shared<MusicObject>(response.bodyJsonArray[i].toObject()));
         }
         this->setPlaylist(musics);
     });
 }
 
-void Player::setPlaylist(std::vector<std::shared_ptr<Music>>& music) {
+void Player::setPlaylist(std::vector<std::shared_ptr<MusicObject>>& music) {
     if (music.size() > 0) {
         musicQueue = music;
         isQueueFree = false;
@@ -53,11 +53,11 @@ void Player::setPlaylist(std::vector<std::shared_ptr<Music>>& music) {
     }
 }
 
-void Player::pushInTheEndMusic(std::shared_ptr<Music> music) {
+void Player::pushInTheEndMusic(std::shared_ptr<MusicObject> music) {
     this->musicQueue.push_back(music);
 }
 
-void Player::pushNextMusic(std::shared_ptr<Music> music) {
+void Player::pushNextMusic(std::shared_ptr<MusicObject> music) {
     this->musicQueue.insert(this->musicQueue.begin() + currentQueueInd + 1, music);
 }
 
@@ -101,11 +101,6 @@ bool Player::next() {
     player->setSource(QUrl("http://localhost:3000/music/getFile?path=" + musicQueue[currentQueueInd]->getPath()));
 
     if (isPaused == false) play();
-
-    // qDebug() << "======================" + currentQueueInd;
-    // for(auto music : this->musicQueue) {
-    //     qDebug() << music->getAllData();
-    // }
 
     emit trackChanged();
     return true;
@@ -157,6 +152,11 @@ void Player::swapRepeating() {
     isRepeated = !isRepeated;
 }
 
-std::shared_ptr<Music> Player::getCurrentMusic() {
+std::shared_ptr<MusicObject> Player::getCurrentMusic() {
     return musicQueue[currentQueueInd];
 }
+
+std::shared_ptr<MusicObject> Player::test() {
+    return musicQueue[6];
+}
+

@@ -7,7 +7,7 @@
 
 namespace Globals {
     extern Player* player;
-    extern std::shared_ptr<HttpClient> httpClient;
+    extern HttpClient* httpClient;
 }
 
 #endif // GLOBALVARIABLES_H
