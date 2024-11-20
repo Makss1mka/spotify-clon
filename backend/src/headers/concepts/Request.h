@@ -4,10 +4,13 @@
 #include <map>
 #include <QByteArray>
 #include <QString>
+#include <QJsonArray>
+#include <QJsonObject>
 
 class Request {
 public:
     static Request parseFromQByteArray(QByteArray rawReq);
+    static bool isInt(const QString& str);
 
     Request();
     void print();
@@ -16,7 +19,15 @@ public:
     QString url;
     std::map<QString, QString> query;
     std::map<QString, QString> headers;
-    std::map<QString, QString> body;
+
+    bool isBodyJsonObj = false;
+    QJsonObject bodyJsonObj;
+
+    bool isBodyJsonArray = false;
+    QJsonArray bodyJsonArray;
+
+    bool isBodyNoneJson = false;
+    QByteArray bodyNoneJson;
 };
 
 #endif // REQUEST_H

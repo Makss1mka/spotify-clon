@@ -1,8 +1,10 @@
 #include "../headers/concepts/Request.h"
-#include <QByteArray>
 #include <QByteArrayAlgorithms>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QByteArray>
 #include <QList>
-#include <QDebug>
 
 Request::Request() {}
 
@@ -15,10 +17,10 @@ void Request::print() {
     for(auto& [key, value] : headers) {
         qDebug() << "   " << key << " : " << value;
     }
-    qDebug() << "Body: ";
-    for(auto& [key, value] : body) {
-        qDebug() << "   " << key << " : " << value;
-    }
+
+    if (isBodyJsonArray == true) qDebug() << "Body: " << bodyJsonArray;
+    if (isBodyJsonObj == true) qDebug() << "Body: " << bodyJsonObj;
+    if (isBodyNoneJson == true) qDebug() << "Body: " << bodyNoneJson;
 }
 
 Request Request::parseFromQByteArray(QByteArray rawReq) {
@@ -62,11 +64,25 @@ Request Request::parseFromQByteArray(QByteArray rawReq) {
         return parsedReq;
     }
 
-    QList<QByteArray> splitedBody = splitedRawReq[tempInd + 1].mid(2, splitedRawReq[tempInd + 1].length() - 3).replace("\"", "").split(',');
-    for(auto &oneBodyPair : splitedBody) {
-        tempInd = oneBodyPair.indexOf(':');
-        parsedReq.body[oneBodyPair.mid(0, tempInd)] = oneBodyPair.mid(tempInd + 1);
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(splitedRawReq[tempInd + 1]);
+    if (!jsonDoc.isNull()) {
+        if (jsonDoc.isObject()) {
+            parsedReq.isBodyJsonObj = true;
+            parsedReq.bodyJsonObj = jsonDoc.object();
+        } else if (jsonDoc.isArray()) {
+            parsedReq.isBodyJsonArray = true;
+            parsedReq.bodyJsonArray = jsonDoc.array();
+        }
+    } else {
+        parsedReq.isBodyNoneJson = true;
+        parsedReq.bodyNoneJson = splitedRawReq[tempInd + 1];
     }
 
     return parsedReq;
+}
+
+bool Request::isInt(const QString& str) {
+    bool ok;
+    str.toInt(&ok);
+    return ok;
 }

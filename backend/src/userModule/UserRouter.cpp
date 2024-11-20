@@ -3,6 +3,7 @@
 #include "../headers/userModule/UserProvider.h"
 #include "../headers/userModule/UserRouter.h"
 #include "../headers/utils/exceptions.h"
+#include <QJsonDocument>
 #include <QByteArray>
 #include <QFile>
 #include <QString>
@@ -18,15 +19,25 @@ void UserRouter::setupProviders() {
 
 void UserRouter::setupRoutes() {
     this->addPostRoute("/reg", [this](Request& request) -> QByteArray {
-        if(request.body.size() != 3 || request.body.count("login") == 0 || request.body.count("password") == 0 || request.body.count("email") == 0) {
+        if(request.isBodyJsonObj == false || request.bodyJsonObj.size() != 3 || request.bodyJsonObj.contains("login") == false
+            || request.bodyJsonObj.contains("password") == false || request.bodyJsonObj.contains("email") == false) {
             throw BadRequestException(
                 "Invalid body format for registartion",
                 "Invalid body format for registartion"
             );
         }
+        if (request.bodyJsonObj.value("login").isString() == false || request.bodyJsonObj.value("password").isString() == false
+            || request.bodyJsonObj.value("email").isString() == false) {
+            throw BadRequestException(
+                "Invalid body format for registartion, unsupported types",
+                "Invalid body format for registartion, unsupported types"
+            );
+        }
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
-        QByteArray data = userProvider->registerUser(request.body["login"], request.body["password"], request.body["email"]);
+        QByteArray data = userProvider->registerUser(request.bodyJsonObj.value("login").toString(),
+                request.bodyJsonObj.value("email").toString(),
+                request.bodyJsonObj.value("password").toString());
 
         QByteArray response = "HTTP/1.1 201 Created\r\n"
                         "Content-Type: text/plain\r\n"
@@ -64,18 +75,29 @@ void UserRouter::setupRoutes() {
     });
 
     this->addUpdateRoute("/update", [this](Request& request) -> QByteArray {
-        if(request.query.size() != 5 || request.query.count("login") == 0 || request.query.count("email") == 0
-            || request.query.count("password") == 0 || request.query.count("role") == 0 || request.query.count("id") == 0) {
+        if(request.isBodyJsonObj == false || request.bodyJsonObj.size() != 4 || request.bodyJsonObj.contains("login") == false
+            || request.bodyJsonObj.contains("email") == false || request.bodyJsonObj.contains("password") == false
+            || request.bodyJsonObj.contains("id") == false) {
             throw BadRequestException(
                 "Invalid body format for update user info",
                 "Invalid body format for update user info"
             );
         }
+        if (request.bodyJsonObj.value("id").isDouble() == false
+            || request.bodyJsonObj.value("id").toInt() < 0 || request.bodyJsonObj.value("login").isString() == false
+            || request.bodyJsonObj.value("password").isString() == false || request.bodyJsonObj.value("email").isString() == false) {
+            throw BadRequestException(
+                "Invalid body format for update user info, unsupported types",
+                "Invalid body format for update user info, unsupported types"
+            );
+        }
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
 
-        userProvider->updateBasicInfo(request.query["id"], request.query["login"], request.query["email"],
-            request.query["password"], request.query["role"]);
+        userProvider->updateBasicInfo(request.bodyJsonObj.value("id").toInt(),
+                request.bodyJsonObj.value("login").toString(),
+                request.bodyJsonObj.value("email").toString(),
+                request.bodyJsonObj.value("password").toString());
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                             "Content-Type: text/plain\r\n"
@@ -89,7 +111,15 @@ void UserRouter::setupRoutes() {
 
 
     this->addPostRoute("/addFavMusic", [this](Request& request) -> QByteArray {
-        if(request.body.size() != 2 || request.body.count("user_id") == 0 || request.body.count("music_id") == 0) {
+        if(request.isBodyJsonObj == false || request.bodyJsonObj.size() != 2 || request.bodyJsonObj.contains("user_id") == false
+            || request.bodyJsonObj.contains("music_id") == false) {
+            throw BadRequestException(
+                "Invalid body format for update user info, unsupported types",
+                "Invalid body format for update user info, unsupported types"
+            );
+        }
+        if(request.bodyJsonObj.value("user_id").isDouble() == false || request.bodyJsonObj.value("music_id").isDouble() == false
+            || request.bodyJsonObj.value("user_id").toInt() < 0 || request.bodyJsonObj.value("music_id").toInt() < 0) {
             throw BadRequestException(
                 "Invalid body format for adding favorite music",
                 "Invalid body format for adding favorite music"
@@ -98,7 +128,8 @@ void UserRouter::setupRoutes() {
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
 
-        userProvider->addFavoriteMusic(request.body["music_id"], request.body["user_id"]);
+        userProvider->addFavoriteMusic(request.bodyJsonObj.value("music_id").toInt(),
+                request.bodyJsonObj.value("user_id").toInt());
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"
@@ -110,7 +141,7 @@ void UserRouter::setupRoutes() {
     });
 
     this->addGetRoute("/getFavMusic", [this](Request& request) -> QByteArray {
-        if(request.query.size() != 1 || request.query.count("user_id") == 0) {
+        if(request.query.size() != 1 || request.query.count("user_id") == 0 || Request::isInt(request.query["user_id"]) == false) {
             throw BadRequestException(
                 "Invalid query format for getting favorite music",
                 "Invalid query format for getting favorite music"
@@ -118,7 +149,7 @@ void UserRouter::setupRoutes() {
         }
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
-        QByteArray data = userProvider->getFavoriteMusics(request.query["user_id"]);
+        QByteArray data = QJsonDocument(userProvider->getFavoriteMusics(request.query["user_id"])).toJson();
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: application/json\r\n"
@@ -130,7 +161,9 @@ void UserRouter::setupRoutes() {
     });
 
     this->addDeleteRoute("/delFavMusic", [this](Request& request) -> QByteArray {
-        if(request.body.size() != 2 || request.body.count("user_id") == 0 || request.body.count("music_id") == 0) {
+        if(request.query.size() != 2 || request.query.count("user_id") == 0 || request.query.count("music_id") == 0
+            || Request::isInt(request.query["user_id"]) || Request::isInt(request.query["music_id"])
+            || request.query["user_id"].toInt() < 0 || request.query["music_id"].toInt() < 0) {
             throw BadRequestException(
                 "Invalid body format for deleting favorite music",
                 "Invalid body format for deleting favorite music"
@@ -139,7 +172,7 @@ void UserRouter::setupRoutes() {
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
 
-        userProvider->deleteFavoriteMusic(request.body["music_id"], request.body["user_id"]);
+        userProvider->deleteFavoriteMusic(request.query["music_id"], request.query["user_id"]);
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"
@@ -154,16 +187,25 @@ void UserRouter::setupRoutes() {
 
 
     this->addPostRoute("/addFavAuthor", [this](Request& request) -> QByteArray {
-        if(request.body.size() != 2 || request.body.count("user_id") == 0 || request.body.count("author_id") == 0) {
+        if(request.isBodyJsonObj == false || request.bodyJsonObj.size() != 2 || request.bodyJsonObj.contains("user_id") == false
+            || request.bodyJsonObj.contains("author_id") == false) {
             throw BadRequestException(
                 "Invalid body format for adding favorite author",
                 "Invalid body format for adding favorite author"
             );
         }
+        if(request.bodyJsonObj.value("user_id").isDouble() == false || request.bodyJsonObj.value("author_id").isDouble() == false
+            || request.bodyJsonObj.value("user_id").toInt() < 0 || request.bodyJsonObj.value("author_id").toInt() < 0) {
+            throw BadRequestException(
+                "Invalid body format for adding favorite author, unsupported types",
+                "Invalid body format for adding favorite author, unsupported types"
+            );
+        }
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
 
-        userProvider->addFavoriteAuthor(request.body["author_id"], request.body["user_id"]);
+        userProvider->addFavoriteAuthor(request.bodyJsonObj.value("author_id").toInt(),
+                request.bodyJsonObj.value("user_id").toInt());
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"
@@ -175,7 +217,7 @@ void UserRouter::setupRoutes() {
     });
 
     this->addGetRoute("/getFavAuthor", [this](Request& request) -> QByteArray {
-        if(request.query.size() != 1 || request.query.count("user_id") == 0) {
+        if(request.query.size() != 1 || request.query.count("user_id") == 0 || Request::isInt(request.query["user_id"]) == false) {
             throw BadRequestException(
                 "Invalid query format for getting favorite author",
                 "Invalid query format for getting favorite author"
@@ -183,7 +225,7 @@ void UserRouter::setupRoutes() {
         }
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
-        QByteArray data = userProvider->getFavoriteAuthors(request.query["user_id"]);
+        QByteArray data = QJsonDocument(userProvider->getFavoriteAuthors(request.query["user_id"])).toJson();
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: application/json\r\n"
@@ -195,7 +237,9 @@ void UserRouter::setupRoutes() {
     });
 
     this->addDeleteRoute("/delFavAuthor", [this](Request& request) -> QByteArray {
-        if(request.body.size() != 2 || request.body.count("user_id") == 0 || request.body.count("author_id") == 0) {
+        if(request.query.size() != 2 || request.query.count("user_id") == 0 || request.query.count("author_id") == 0
+            || Request::isInt(request.query["user_id"]) || Request::isInt(request.query["author_id"])
+            || request.query["user_id"].toInt() < 0 || request.query["author_id"].toInt() < 0) {
             throw BadRequestException(
                 "Invalid body format for deleting favorite author",
                 "Invalid body format for deleting favorite author"
@@ -204,7 +248,7 @@ void UserRouter::setupRoutes() {
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
 
-        userProvider->deleteFavoriteAuthor(request.body["author_id"], request.body["user_id"]);
+        userProvider->deleteFavoriteAuthor(request.query["author_id"], request.query["user_id"]);
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"

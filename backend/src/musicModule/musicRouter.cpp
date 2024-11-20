@@ -18,7 +18,7 @@ void MusicRouter::setupProviders() {
 
 void MusicRouter::setupRoutes() {
     this->addGetRoute("/getById", [this](Request &request) -> QByteArray {
-        if(request.query.count("id") == 0) {
+        if(request.query.size() != 1 || request.query.count("id") == 0 || Request::isInt(request.query["id"]) == false) {
             throw BadRequestException(
                 "Invalid query format for getting music",
                 "Invalid query format for getting music"
@@ -37,7 +37,7 @@ void MusicRouter::setupRoutes() {
     });
 
     this->addGetRoute("/getFile", [this](Request &request) -> QByteArray {
-        if(request.query.count("path") == 0) {
+        if(request.query.size() != 1 || request.query.count("path") == 0) {
             throw BadRequestException(
                 "Invalid query format for getting music file",
                 "Invalid query format for getting music file"
@@ -57,7 +57,7 @@ void MusicRouter::setupRoutes() {
     });
 
     this->addGetRoute("/getByAuthor", [this](Request& request) -> QByteArray {
-        if(request.query.count("author_name") == 0) {
+        if(request.query.size() != 1 || request.query.count("author_name") == 0) {
             throw BadRequestException(
                 "Invalid query format for getting musics by author",
                 "Invalid query format for getting musics by author"
@@ -77,7 +77,7 @@ void MusicRouter::setupRoutes() {
     });
 
     this->addGetRoute("/findByName", [this](Request& request) -> QByteArray {
-        if(request.query.count("key") == 0) {
+        if(request.query.size() != 1 || request.query.count("key") == 0) {
             throw BadRequestException(
                 "Invalid query format for finding musics",
                 "Invalid query format for finding musics"
