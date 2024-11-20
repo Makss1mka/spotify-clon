@@ -2,7 +2,7 @@
 #include <QJsonObject>
 #include <QString>
 
-Music::Music(const QJsonObject &musicObj) {
+MusicObject::MusicObject(const QJsonObject &musicObj) {
     id = musicObj.value("id").toInt();
     name = musicObj.value("name").toString();
     author = musicObj.value("author_name").toString();
@@ -14,43 +14,60 @@ Music::Music(const QJsonObject &musicObj) {
     lang = musicObj.value("lang").toString();
 }
 
-int Music::getId() {
+int MusicObject::getId() {
     return id;
 }
 
-QString Music::getName() {
+QString MusicObject::getName() {
     return name;
 }
 
-QString Music::getAuthor() {
+QString MusicObject::getAuthor() {
     return author;
 }
 
-int Music::getAuthorId() {
+int MusicObject::getAuthorId() {
     return authorId;
 }
 
-int Music::getDuration() {
+int MusicObject::getDuration() {
     return duration;
 }
 
-QString Music::getPath() {
+QString MusicObject::getPath() {
     return path;
 }
 
-int Music::getListens() {
+int MusicObject::getListens() {
     return listens;
 }
 
-QString Music::getJanres() {
+QString MusicObject::getJanres() {
     return janres;
 }
 
-QString Music::getLang() {
+QString MusicObject::getLang() {
     return lang;
 }
 
-QString Music::getAllData() {
+QString MusicObject::getAllData() {
     return QString::number(id) + " " + name + " " + author + " " + QString::number(authorId) + " " + path
         + " " + QString::number(listens) + " " + janres + " " + lang;
+}
+
+
+
+
+
+AuthorObject::AuthorObject(const QJsonObject &authorObj) {
+    id = authorObj.value("id").toInt();
+    name = authorObj.value("name").toString();
+}
+
+int AuthorObject::getId() {
+    return id;
+}
+
+QString AuthorObject::getName() {
+    return name;
 }

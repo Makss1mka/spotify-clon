@@ -4,9 +4,9 @@
 #include <QString>
 #include <QJsonObject>
 
-class Music {
+class MusicObject {
 public:
-    Music(const QJsonObject& musicObj);
+    MusicObject(const QJsonObject& musicObj);
 
     int getId();
     QString getName();
@@ -28,6 +28,17 @@ private:
     int listens;
     QString janres;
     QString lang;
+};
+
+class AuthorObject {
+public:
+    AuthorObject(const QJsonObject& authorObj);
+
+    int getId();
+    QString getName();
+private:
+    int id;
+    QString name;
 };
 
 #endif // MUSICCLASS_H
