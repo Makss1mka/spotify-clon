@@ -33,6 +33,27 @@ void HttpClient::sendPostRequest(const QUrl &url, const QJsonObject &json, std::
     });
 }
 
+void HttpClient::sendPutRequest(const QUrl &url, const QJsonObject &json, std::function<void(const Response&)> handler) {
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QNetworkReply *reply = manager->put(request, QJsonDocument(json).toJson());
+
+    reply->connect(reply, &QNetworkReply::finished, [this, reply, handler]() {
+        handler(parseResponse(reply));
+    });
+}
+
+void HttpClient::sendDeleteRequest(const QUrl &url, std::function<void(const Response&)> handler) {
+    QNetworkRequest request(url);
+
+    QNetworkReply *reply = manager->deleteResource(request);
+
+    reply->connect(reply, &QNetworkReply::finished, [this, reply, handler]() {
+        handler(parseResponse(reply));
+    });
+}
+
 HttpClient::Response HttpClient::parseResponse(QNetworkReply *reply) {
     Response response;
 
@@ -54,8 +75,8 @@ HttpClient::Response HttpClient::parseResponse(QNetworkReply *reply) {
             response.bodyJsonArray = jsonDoc.array();
         }
     } else {
-        response.isBodyString = true;
-        response.bodyString = reply->readAll();
+        response.isBodyNoneJson = true;
+        response.body = reply->readAll();
     }
     reply->deleteLater();
 

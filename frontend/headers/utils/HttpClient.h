@@ -24,12 +24,14 @@ public:
         bool isBodyJsonArray = false;
         QJsonArray bodyJsonArray;
 
-        bool isBodyString = false;
-        QByteArray bodyString;
+        bool isBodyNoneJson = false;
+        QByteArray body;
     };
 
     void sendGetRequest(const QUrl &url, std::function<void(const Response&)> handler);
     void sendPostRequest(const QUrl &url, const QJsonObject &json, std::function<void(const Response&)> handler);
+    void sendDeleteRequest(const QUrl &url, std::function<void(const Response&)> handler);
+    void sendPutRequest(const QUrl &url, const QJsonObject &json, std::function<void(const Response&)> handler);
 private:
     QNetworkAccessManager *manager;
 
