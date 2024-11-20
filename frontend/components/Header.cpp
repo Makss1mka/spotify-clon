@@ -20,12 +20,12 @@ Header::Header(QWidget *parent) : QWidget(parent) {
     // Back button
     backButton = new HoverIconButton(QIcon(":/assets/angle-left.png"), QIcon(":/assets/angle-left-active.png"));
     backButton->setFixedSize(20, 20);
-    backButton->setStyleSheet("backround: inherit");
+    backButton->setStyleSheet("background: inherit");
 
     // Next button
     nextButton = new HoverIconButton(QIcon(":/assets/angle-right.png"), QIcon(":/assets/angle-right-active.png"));
     nextButton->setFixedSize(20, 20);
-    nextButton->setStyleSheet("backround: inherit");
+    nextButton->setStyleSheet("background: inherit");
 
     // Firxt inner layout
     QHBoxLayout *leftLayout = new QHBoxLayout;

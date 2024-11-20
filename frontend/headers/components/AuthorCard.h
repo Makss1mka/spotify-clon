@@ -1,12 +1,19 @@
 #ifndef AUTHORCARD_H
 #define AUTHORCARD_H
 
-#include <QWidget>
+#include <QPushButton>
+#include <QLabel>
 
-class AuthorCard : public QWidget {
+class AuthorCard : public QPushButton {
     Q_OBJECT
 public:
     explicit AuthorCard(QWidget *parent = nullptr);
+private:
+    QLabel* picture;
+    QLabel* nameLabel;
+    QPushButton* playButton;
+
+
 };
 
 #endif // AUTHORCARD_H

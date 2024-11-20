@@ -126,7 +126,7 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     endTime = new QLabel("00:00");
     endTime->setStyleSheet("color: #EDEDED; padding: 0px;");
     connect(Globals::player, &Player::trackChanged, [this](){
-        std::shared_ptr<Music> curMusic = Globals::player->getCurrentMusic();
+        std::shared_ptr<MusicObject> curMusic = Globals::player->getCurrentMusic();
 
         this->authorLabel->setText(curMusic->getAuthor());
         this->nameLabel->setText(curMusic->getName());
