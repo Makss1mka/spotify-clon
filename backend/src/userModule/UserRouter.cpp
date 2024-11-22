@@ -133,9 +133,9 @@ void UserRouter::setupRoutes() {
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"
-                        "Content-Length: 33\r\n"
+                        "Content-Length: 27\r\n"
                         "\r\n"
-                        "Music wa added to favorite";
+                        "Music was added to favorite";
 
         return response;
     });
@@ -176,7 +176,7 @@ void UserRouter::setupRoutes() {
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"
-                        "Content-Length: 33\r\n"
+                        "Content-Length: 31\r\n"
                         "\r\n"
                         "Music was deleted from favorite";
 
@@ -209,9 +209,9 @@ void UserRouter::setupRoutes() {
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"
-                        "Content-Length: 33\r\n"
+                        "Content-Length: 29\r\n"
                         "\r\n"
-                        "Author wa added to favorite";
+                        "Author was added to favorite";
 
         return response;
     });
@@ -252,7 +252,7 @@ void UserRouter::setupRoutes() {
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"
-                        "Content-Length: 33\r\n"
+                        "Content-Length: 32\r\n"
                         "\r\n"
                         "Author was deleted from favorite";
 

@@ -161,9 +161,9 @@ void UserProvider::addFavoriteMusic(int musicId, int userId) {
     }
 
     if(!query.exec("INSERT INTO user_music (user_id, music_id) VALUES (" +  QString::number(userId) + ", " + QString::number(musicId) + ");")) {
-        throw ServiceUnavailableException(
-            "Method: UserProvider::addFavoriteMusic is unavailable",
-            "User service is temporarily unavailable"
+        throw BadRequestException(
+            "Query execution failed",
+            "Query execution failed"
         );
     }
 }
