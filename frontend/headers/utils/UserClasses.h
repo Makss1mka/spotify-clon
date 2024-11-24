@@ -38,12 +38,12 @@ public:
     static void setRole(int newRole);
 
     static void addMusic(std::shared_ptr<MusicObject> music);
-    static void deleteMusic(int id);
+    static void deleteMusic(int musicId);
     static int getMusicsLength();
     static std::shared_ptr<MusicObject> getMusicByInd(int ind);
 
     static void addAuthor(std::shared_ptr<AuthorObject> author);
-    static void deleteAuthor(int id);
+    static void deleteAuthor(int authorId);
     static int getAuthorsLength();
     static std::shared_ptr<AuthorObject> getAuthorByInd(int ind);
 };
