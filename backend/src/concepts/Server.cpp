@@ -9,7 +9,7 @@
 #include "../headers/adminModule/AdminRouter.h"
 #include "../headers/userModule/UserRouter.h"
 #include "../headers/musicModule/MusicRouter.h"
-#include "../headers/utils/envFile.h"
+#include "../headers/utils/EnvFile.h"
 
 Server::Server(int port) {
     if(this->listen(QHostAddress::Any, port)) {
@@ -27,10 +27,10 @@ Server::Server(int port) {
 
 bool Server::openDbConnections() {
     connection = std::make_shared<QSqlDatabase>(QSqlDatabase::addDatabase("QSQLITE"));
-    connection->setDatabaseName(env::get("USERS_INFO_DB", ":/.env"));
+    connection->setDatabaseName(Env::get("USERS_INFO_DB", ":/.env"));
 
     if(!connection->open()) {
-        qDebug() << "Cannot connect to database, db path: " << env::get("USERS_INFO_DB", ":/.env") << connection->lastError().text();
+        qDebug() << "Cannot connect to database, db path: " << Env::get("USERS_INFO_DB", ":/.env") << connection->lastError().text();
         return false;
     }
     return true;

@@ -4,7 +4,9 @@
 #include <QTextStream>
 #include <QString>
 
-QString env::get(QString key, QString envFilePath) {
+Env::Env() {}
+
+QString Env::get(QString key, QString envFilePath) {
     QFile file(envFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Cannot open env file with path: " << envFilePath;

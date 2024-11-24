@@ -1,5 +1,5 @@
 #include "../headers/musicModule/MusicProvider.h"
-#include "../headers/utils/envFile.h"
+#include "../headers/utils/EnvFile.h"
 #include "../headers/concepts/Request.h"
 #include "../headers/utils/exceptions.h"
 #include "../headers/utils/statusCodes.h"
@@ -46,7 +46,7 @@ QByteArray MusicProvider::getById(const QString& id) {
 }
 
 QByteArray MusicProvider::getFile(const QString&  path) {
-    QFile file(env::get("MUSIC_DIR", ":/.env") + path);
+    QFile file(Env::get("MUSIC_DIR", ":/.env") + path);
     if(file.open(QIODevice::ReadOnly)) {
         QByteArray fileContent = file.readAll();
         file.close();

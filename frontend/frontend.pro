@@ -4,9 +4,21 @@ greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 CONFIG += c++20
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+# Укажите путь к заголовочным файлам SFML
+INCLUDEPATH += $$PWD/external/sfml/include
+
+# Укажите путь к библиотекам SFML
+LIBS += -L$$PWD/external/sfml/lib
+
+# Подключите необходимые библиотеки SFML
+LIBS += -lsfml-audio -lsfml-system
+
+# Дополнительные системные библиотеки для Windows
+LIBS += -lopengl32 -lwinmm
+
+# Определите, где искать динамические библиотеки во время выполнения (для Windows)
+win32:CONFIG(release, debug|release): PATH += $$PWD/bin
+win32:CONFIG(debug, debug|release): PATH += $$PWD/bin
 
 SOURCES += \
     components/AuthorCard.cpp \
@@ -29,6 +41,7 @@ SOURCES += \
     utils/MusicClass.cpp \
     utils/Player.cpp \
     utils/UserClasses.cpp \
+    utils/EnvFile.cpp \
     \
     windows/LogInWindow.cpp \
     windows/MainWindow.cpp \
@@ -58,6 +71,7 @@ HEADERS += \
     headers/utils/globalVariables.h \
     headers/utils/coverFunks.h \
     headers/utils/UserClasses.h \
+    headers/utils/EnvFile.h \
     \
     headers/windows/MainWindow.h \
     headers/windows/LogInWindow.h \
@@ -68,6 +82,18 @@ HEADERS += \
 FORMS += \
     app.ui
 
+# win32 {
+#     debug {
+#         DESTDIR = $$OUT_PWD/debug
+#     }
+#     release {
+#         DESTDIR = $$OUT_PWD/release
+#     }
+#     QMAKE_POST_LINK += $$quote(copy /Y $$PWD/bin/sfml-audio-2.dll $$DESTDIR)$$escape_expand(\\n\\t)
+#     QMAKE_POST_LINK += $$quote(copy /Y $$PWD/bin/sfml-system-2.dll $$DESTDIR)$$escape_expand(\\n\\t)
+#     QMAKE_POST_LINK += $$quote(copy /Y $$PWD/bin/openal32.dll $$DESTDIR)$$escape_expand(\\n\\t)
+# }
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
@@ -75,3 +101,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     assets.qrc \
+
+windows: LIBS += -lgdi32 -lopengl32 -lwinmm

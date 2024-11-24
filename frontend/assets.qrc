@@ -55,5 +55,6 @@
         <file>assets/no-shuffle.png</file>
         <file>assets/no-shuffle-active.png</file>
         <file>assets/windowIcon.png</file>
+        <file>.env</file>
     </qresource>
 </RCC>
