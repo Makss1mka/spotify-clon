@@ -2,18 +2,19 @@
 #define PLAYER_H
 
 #include "./MusicClass.h"
+#include <SFML/Audio.hpp>
 #include <QMediaPlayer>
 #include <QAudioOutput>
 #include <QByteArray>
-#include <vector>
 #include <QObject>
+#include <QTimer>
+#include <vector>
+#include <QUrl>
 
 class Player : public QObject {
     Q_OBJECT
 public:
     Player();
-
-    std::shared_ptr<MusicObject> test();
 
     void pushInTheEndMusic(std::shared_ptr<MusicObject> music);
     void pushNextMusic(std::shared_ptr<MusicObject> music);
@@ -29,22 +30,31 @@ public:
     void pause();
     void play();
     bool isPlayerPaused();
+    bool isCurrentTrackLoaded();
     int getVolumeLevel();
     bool isOnRepeat();
     void swapRepeating();
 private:
+    void loadTrack(QUrl);
+
+    sf::Music music;
+    QTimer* checkTimer;
+    char* musicBuffer;
+    int bufferLength;
+    std::vector<std::shared_ptr<MusicObject>> musicQueue;
+
     bool isCurrentLoaded;
     bool isQueueFree;
-    QMediaPlayer* player;
     bool isPaused;
+    bool isRepeated;
     int currentQueueInd;
     int volumeLevel;
-    bool isRepeated;
-    QAudioOutput* outputDevice;
-
-    std::vector<std::shared_ptr<MusicObject>> musicQueue;
 signals:
+    void playbackFinished();
+    void playbackError();
     void trackChanged();
+private slots:
+    void checkStatus();
 };
 
 #endif // PLAYER_H

@@ -12,6 +12,7 @@ MusicObject::MusicObject(const QJsonObject &musicObj) {
     listens = musicObj.value("listens").toInt();
     janres = musicObj.value("janre").toString();
     lang = musicObj.value("lang").toString();
+    profilePath = musicObj.value("profile").toString();
 }
 
 int MusicObject::getId() {
@@ -50,6 +51,10 @@ QString MusicObject::getLang() {
     return lang;
 }
 
+QString MusicObject::getProfilePath() {
+    return profilePath;
+}
+
 QString MusicObject::getAllData() {
     return QString::number(id) + " " + name + " " + author + " " + QString::number(authorId) + " " + path
         + " " + QString::number(listens) + " " + janres + " " + lang;
@@ -62,6 +67,7 @@ QString MusicObject::getAllData() {
 AuthorObject::AuthorObject(const QJsonObject &authorObj) {
     id = authorObj.value("id").toInt();
     name = authorObj.value("name").toString();
+    profilePath = authorObj.value("profile").toString();
 }
 
 int AuthorObject::getId() {
@@ -70,4 +76,8 @@ int AuthorObject::getId() {
 
 QString AuthorObject::getName() {
     return name;
+}
+
+QString AuthorObject::getProfilePath() {
+    return profilePath;
 }

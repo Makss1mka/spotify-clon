@@ -17,6 +17,7 @@ public:
     int getListens();
     QString getJanres();
     QString getLang();
+    QString getProfilePath();
     QString getAllData();
 private:
     int id;
@@ -28,6 +29,7 @@ private:
     int listens;
     QString janres;
     QString lang;
+    QString profilePath;
 };
 
 class AuthorObject {
@@ -36,9 +38,11 @@ public:
 
     int getId();
     QString getName();
+    QString getProfilePath();
 private:
     int id;
     QString name;
+    QString profilePath;
 };
 
 #endif // MUSICCLASS_H
