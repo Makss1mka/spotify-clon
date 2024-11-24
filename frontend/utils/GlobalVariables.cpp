@@ -1,9 +1,6 @@
 #include "../headers/utils/globalVariables.h"
-#include "../headers/utils/HttpClient.h"
-#include "./headers/app.h"
-#include <QMediaPlayer>
+#include "./headers/utils/Player.h"
 
 namespace Globals {
-    HttpClient* httpClient = new HttpClient();
     Player* player = new Player();
 }

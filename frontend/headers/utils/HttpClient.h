@@ -11,7 +11,8 @@
 
 class HttpClient {
 public:
-    HttpClient();
+    HttpClient(const HttpClient&) = delete;
+    void operator=(const HttpClient&) = delete;
 
     class Response {
     public:
@@ -28,14 +29,16 @@ public:
         QByteArray body;
     };
 
-    void sendGetRequest(const QUrl &url, std::function<void(const Response&)> handler);
-    void sendPostRequest(const QUrl &url, const QJsonObject &json, std::function<void(const Response&)> handler);
-    void sendDeleteRequest(const QUrl &url, std::function<void(const Response&)> handler);
-    void sendPutRequest(const QUrl &url, const QJsonObject &json, std::function<void(const Response&)> handler);
+    static void sendGetRequest(const QUrl &url, std::function<void(Response*)> handler);
+    static void sendPostRequest(const QUrl &url, const QJsonObject &json, std::function<void(Response*)> handler);
+    static void sendDeleteRequest(const QUrl &url, std::function<void(Response*)> handler);
+    static void sendPutRequest(const QUrl &url, const QJsonObject &json, std::function<void(Response*)> handler);
 private:
-    QNetworkAccessManager *manager;
+    HttpClient();
 
-    Response parseResponse(QNetworkReply *reply);
+    static QNetworkAccessManager *manager;
+
+    static Response* parseResponse(QNetworkReply *reply);
 };
 
 #endif // HTTPCLIENT_H

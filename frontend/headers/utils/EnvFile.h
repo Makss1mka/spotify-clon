@@ -11,6 +11,6 @@ public:
     void operator=(const Env&) = delete;
 private:
     Env();
-}
+};
 
 #endif // ENVFILE_H

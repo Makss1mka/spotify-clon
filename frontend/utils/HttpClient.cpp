@@ -8,16 +8,15 @@
 #include <functional>
 #include <QUrl>
 
-HttpClient::HttpClient() {
-    manager = new QNetworkAccessManager();
-}
+QNetworkAccessManager* HttpClient::manager = new QNetworkAccessManager();
+HttpClient::HttpClient() {}
 
 void HttpClient::sendGetRequest(const QUrl &url, std::function<void(Response*)> handler) {
     QNetworkRequest request(url);
 
     QNetworkReply *reply = manager->get(request);
 
-    reply->connect(reply, &QNetworkReply::finished, [this, reply, handler]() {
+    reply->connect(reply, &QNetworkReply::finished, [reply, handler]() {
         handler(parseResponse(reply));
     });
 }
@@ -28,7 +27,7 @@ void HttpClient::sendPostRequest(const QUrl &url, const QJsonObject &json, std::
 
     QNetworkReply *reply = manager->post(request, QJsonDocument(json).toJson());
 
-    reply->connect(reply, &QNetworkReply::finished, [this, reply, handler]() {
+    reply->connect(reply, &QNetworkReply::finished, [reply, handler]() {
         Response* response = parseResponse(reply);
         handler(response);
     });
@@ -40,7 +39,7 @@ void HttpClient::sendPutRequest(const QUrl &url, const QJsonObject &json, std::f
 
     QNetworkReply *reply = manager->put(request, QJsonDocument(json).toJson());
 
-    reply->connect(reply, &QNetworkReply::finished, [this, reply, handler]() {
+    reply->connect(reply, &QNetworkReply::finished, [reply, handler]() {
         handler(parseResponse(reply));
     });
 }
@@ -50,7 +49,7 @@ void HttpClient::sendDeleteRequest(const QUrl &url, std::function<void(Response*
 
     QNetworkReply *reply = manager->deleteResource(request);
 
-    reply->connect(reply, &QNetworkReply::finished, [this, reply, handler]() {
+    reply->connect(reply, &QNetworkReply::finished, [reply, handler]() {
         handler(parseResponse(reply));
     });
 }
@@ -74,6 +73,9 @@ HttpClient::Response* HttpClient::parseResponse(QNetworkReply *reply) {
         } else if (jsonDoc.isArray()) {
             response->isBodyJsonArray = true;
             response->bodyJsonArray = jsonDoc.array();
+        } else {
+            response->isBodyNoneJson = true;
+            response->body = rawBody;
         }
     } else {
         response->isBodyNoneJson = true;
