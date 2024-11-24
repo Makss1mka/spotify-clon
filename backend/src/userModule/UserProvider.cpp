@@ -57,6 +57,7 @@ QByteArray UserProvider::authUser(const QString& login, const QString& email, co
         userData["login"] = query.value(1).toString();
         userData["role"] = query.value(3).toInt();
         userData["email"] = query.value(4).toString();
+        userData["profile"] = query.value(5).toString();
     } else {
         throw QueryException(
             "Invalid account credentials, login|password|email:" + login + ", " + password + ", " + email,
@@ -126,9 +127,9 @@ QJsonArray UserProvider::getFavoriteAuthors(const QString& userId) {
     QJsonObject authoeEntry;
     QSqlQuery query;
 
-    if(!query.exec("SELECT authors.id, authors.name FROM user_author JOIN authors ON authors.id=user_author.author_id WHERE user_author.user_id=" + userId + ";")) {
+    if(!query.exec("SELECT userInfo.id, userInfo.login, userInfo.picture FROM user_author JOIN userInfo ON userInfo.id=user_author.author_id WHERE user_author.user_id=" + userId + ";")) {
         throw ServiceUnavailableException(
-            "Method: UserProvider::getFavoriteMusics is unavailable",
+            "Method: UserProvider::getFavoriteAuthor is unavailable",
             "User service is temporarily unavailable"
         );
     }
@@ -136,6 +137,7 @@ QJsonArray UserProvider::getFavoriteAuthors(const QString& userId) {
     while(query.next()) {
         authoeEntry["id"] = query.value(0).toInt();
         authoeEntry["name"] = query.value(1).toString();
+        authoeEntry["profile"] = query.value(2).toString();
 
         resultArray.append(authoeEntry);
     }
@@ -183,7 +185,7 @@ QJsonArray UserProvider::getFavoriteMusics(const QString& userId) {
     QJsonObject musicEntry;
     QSqlQuery query;
 
-    if(!query.exec("SELECT music.id, music.name, music.file, music.author_id, music.author_name, music.duration, music.listens, music.janre, music.lang"
+    if(!query.exec("SELECT music.id, music.name, music.file, music.author_id, music.author_name, music.duration, music.listens, music.janre, music.lang, music.picture"
         " FROM user_music JOIN music ON music.id=user_music.music_id WHERE user_music.user_id=" + userId + ";")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::getFavoriteMusics is unavailable",
@@ -201,6 +203,7 @@ QJsonArray UserProvider::getFavoriteMusics(const QString& userId) {
         musicEntry["listens"] = query.value(6).toInt();
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
+        musicEntry["profile"] = query.value(9).toString();
 
         resultArray.append(musicEntry);
     }

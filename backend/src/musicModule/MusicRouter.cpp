@@ -3,6 +3,7 @@
 #include "../headers/musicModule/MusicProvider.h"
 #include "../headers/musicModule/MusicRouter.h"
 #include "../headers/utils/exceptions.h"
+#include "../headers/utils/envFile.h"
 #include <QByteArray>
 #include <QFile>
 #include <QString>
@@ -36,7 +37,7 @@ void MusicRouter::setupRoutes() {
         return response;
     });
 
-    this->addGetRoute("/getFile", [this](Request &request) -> QByteArray {
+    this->addGetRoute("/getAudio", [this](Request &request) -> QByteArray {
         if(request.query.size() != 1 || request.query.count("path") == 0) {
             throw BadRequestException(
                 "Invalid query format for getting music file",
@@ -45,10 +46,42 @@ void MusicRouter::setupRoutes() {
         }
 
         std::shared_ptr<MusicProvider> musicProvider = this->getProvider<MusicProvider>("musicProvider");
-        QByteArray data = musicProvider->getFile(request.query["path"]);
+        QByteArray data = musicProvider->getFile(Env::get("MUSIC_DIR", ":/.env") + request.query["path"]);
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: audio/mpeg\r\n"
+                        "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
+                        "\r\n";
+        response.append(data);
+
+        return response;
+    });
+
+    this->addGetRoute("/getProfile", [this](Request &request) -> QByteArray {
+        if(request.query.size() != 1 || request.query.count("path") == 0) {
+            throw BadRequestException(
+                "Invalid query format for getting profile picture",
+                "Invalid query format for getting profile picture"
+            );
+        }
+
+        QByteArray pictureType;
+        if(request.query["path"].split(".")[1] == "jpg") {
+            pictureType = "image/jpeg";
+        } else if (request.query["path"].split(".")[1] == "png") {
+            pictureType = "image/png";
+        } else {
+            throw BadRequestException(
+                "Invalid file format for getting profile picture",
+                "Invalid file format for getting profile picture"
+            );
+        }
+
+        std::shared_ptr<MusicProvider> musicProvider = this->getProvider<MusicProvider>("musicProvider");
+        QByteArray data = musicProvider->getFile(Env::get("PROFILES_DIR", ":/.env") + request.query["path"]);
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: " + pictureType + "\r\n"
                         "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
                         "\r\n";
         response.append(data);

@@ -27,6 +27,7 @@ QByteArray AdminProvider::getAllUserInfo() {
         user["login"] = query.value(1).toString();
         user["role"] = query.value(3).toInt();
         user["email"] = query.value(4).toString();
+        user["profile"] = query.value(5).toString();
         userArray.append(user);
     }
 

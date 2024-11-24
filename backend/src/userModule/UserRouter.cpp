@@ -112,14 +112,9 @@ void UserRouter::setupRoutes() {
 
     this->addPostRoute("/addFavMusic", [this](Request& request) -> QByteArray {
         if(request.isBodyJsonObj == false || request.bodyJsonObj.size() != 2 || request.bodyJsonObj.contains("user_id") == false
-            || request.bodyJsonObj.contains("music_id") == false) {
-            throw BadRequestException(
-                "Invalid body format for update user info, unsupported types",
-                "Invalid body format for update user info, unsupported types"
-            );
-        }
-        if(request.bodyJsonObj.value("user_id").isDouble() == false || request.bodyJsonObj.value("music_id").isDouble() == false
-            || request.bodyJsonObj.value("user_id").toInt() < 0 || request.bodyJsonObj.value("music_id").toInt() < 0) {
+            || request.bodyJsonObj.contains("music_id") == false || request.bodyJsonObj.value("user_id").isDouble() == false
+            || request.bodyJsonObj.value("music_id").isDouble() == false || request.bodyJsonObj.value("user_id").toInt() < 0
+            || request.bodyJsonObj.value("music_id").toInt() < 0) {
             throw BadRequestException(
                 "Invalid body format for adding favorite music",
                 "Invalid body format for adding favorite music"
@@ -162,11 +157,11 @@ void UserRouter::setupRoutes() {
 
     this->addDeleteRoute("/delFavMusic", [this](Request& request) -> QByteArray {
         if(request.query.size() != 2 || request.query.count("user_id") == 0 || request.query.count("music_id") == 0
-            || Request::isInt(request.query["user_id"]) || Request::isInt(request.query["music_id"])
+            || !Request::isInt(request.query["user_id"]) || !Request::isInt(request.query["music_id"])
             || request.query["user_id"].toInt() < 0 || request.query["music_id"].toInt() < 0) {
             throw BadRequestException(
-                "Invalid body format for deleting favorite music",
-                "Invalid body format for deleting favorite music"
+                "Invalid query format for deleting favorite music",
+                "Invalid query format for deleting favorite music"
             );
         }
 
@@ -209,7 +204,7 @@ void UserRouter::setupRoutes() {
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/plain\r\n"
-                        "Content-Length: 29\r\n"
+                        "Content-Length: 28\r\n"
                         "\r\n"
                         "Author was added to favorite";
 
@@ -238,7 +233,7 @@ void UserRouter::setupRoutes() {
 
     this->addDeleteRoute("/delFavAuthor", [this](Request& request) -> QByteArray {
         if(request.query.size() != 2 || request.query.count("user_id") == 0 || request.query.count("author_id") == 0
-            || Request::isInt(request.query["user_id"]) || Request::isInt(request.query["author_id"])
+            || !Request::isInt(request.query["user_id"]) || !Request::isInt(request.query["author_id"])
             || request.query["user_id"].toInt() < 0 || request.query["author_id"].toInt() < 0) {
             throw BadRequestException(
                 "Invalid body format for deleting favorite author",

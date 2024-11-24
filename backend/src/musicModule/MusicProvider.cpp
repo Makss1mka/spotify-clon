@@ -35,6 +35,7 @@ QByteArray MusicProvider::getById(const QString& id) {
         musicData["duration"] = query.value(5).toInt();
         musicData["janre"] = query.value(7).toString();
         musicData["lang"] = query.value(8).toString();
+        musicData["profile"] = query.value(9).toString();
 
         return QJsonDocument(musicData).toJson();
     } else {
@@ -46,15 +47,15 @@ QByteArray MusicProvider::getById(const QString& id) {
 }
 
 QByteArray MusicProvider::getFile(const QString&  path) {
-    QFile file(Env::get("MUSIC_DIR", ":/.env") + path);
+    QFile file(path);
     if(file.open(QIODevice::ReadOnly)) {
         QByteArray fileContent = file.readAll();
         file.close();
         return fileContent;
     } else {
         throw FileException(
-            "Cannot find music file, path: " + path,
-            "Cannot find music",
+            "Cannot find file, path: " + path,
+            "Cannot find file",
             StatusCode::NOT_FOUND
         );
     }
@@ -83,6 +84,7 @@ QByteArray MusicProvider::getByAuthor(const QString&  authorName) {
         musicEntry["listens"] = query.value(6).toInt();
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
+        musicEntry["profile"] = query.value(9).toString();
 
         musicArray.append(musicEntry);
     }
@@ -113,6 +115,7 @@ QByteArray MusicProvider::getAll() {
         musicEntry["listens"] = query.value(6).toInt();
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
+        musicEntry["profile"] = query.value(9).toString();
 
         musicArray.append(musicEntry);
     }
@@ -143,6 +146,7 @@ QByteArray MusicProvider::findByName(const QString&  name) {
         musicEntry["listens"] = query.value(6).toInt();
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
+        musicEntry["profile"] = query.value(9).toString();
 
         musicArray.append(musicEntry);
     }
