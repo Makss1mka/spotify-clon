@@ -38,6 +38,16 @@ QVBoxLayout* coverWithoutStretchVLayout(QWidget* widget) {
     return coverringLayout;
 }
 
+QHBoxLayout* coverWithLeftAlign(QWidget* widget) {
+    QHBoxLayout *coverringLayout = new QHBoxLayout();
+
+    coverringLayout->addWidget(widget);
+    coverringLayout->addStretch();
+
+    return coverringLayout;
+}
+
+
 QWidget* coverLayoutWithWidget(QBoxLayout* layout) {
     QWidget* coverringWidget = new QWidget();
 

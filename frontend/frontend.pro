@@ -33,6 +33,8 @@ SOURCES += \
     components/SoundButton.cpp \
     components/VolumeSlider.cpp \
     \
+    pages/AuthorPage.cpp \
+    pages/MusicPage.cpp \
     pages/SearchPage.cpp \
     \
     utils/CoverFunks.cpp \
@@ -65,6 +67,8 @@ HEADERS += \
     headers/components/SoundButton.h \
     headers/components/VolumeSlider.h \
     \
+    headers/pages/AuthorPage.h \
+    headers/pages/MusicPage.h \
     headers/utils/HttpClient.h \
     headers/utils/MusicClass.h \
     headers/utils/Player.h \

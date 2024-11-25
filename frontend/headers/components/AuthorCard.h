@@ -7,13 +7,15 @@
 class AuthorCard : public QPushButton {
     Q_OBJECT
 public:
-    explicit AuthorCard(QWidget *parent = nullptr);
+    explicit AuthorCard(std::shared_ptr<AuthorCard> author, QWidget *parent);
+    virtual ~AuthorCard() = default;
 private:
+    virtual void enterEvent(QEnterEvent *event) override;
+    virtual void leaveEvent(QEvent *event) override;
+
     QLabel* picture;
     QLabel* nameLabel;
-    QPushButton* playButton;
-
-
+    QPushButton* playButton;  
 };
 
 #endif // AUTHORCARD_H
