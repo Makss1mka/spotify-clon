@@ -32,13 +32,16 @@ public:
     bool isPlayerPaused();
     bool isCurrentTrackLoaded();
     int getVolumeLevel();
+    int getCurrentQueueInd();
     bool isOnRepeat();
     void swapRepeating();
 private:
     void loadTrack(QUrl);
+    void loadTrackFromBuffer();
 
     sf::Music music;
     QTimer* checkTimer;
+    QTimer* deviceCheckTimer;
     char* musicBuffer;
     int bufferLength;
     std::vector<std::shared_ptr<MusicObject>> musicQueue;
@@ -55,6 +58,7 @@ signals:
     void trackChanged();
 private slots:
     void checkStatus();
+    void checkDevices();
 };
 
 #endif // PLAYER_H

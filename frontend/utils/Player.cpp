@@ -1,5 +1,6 @@
 #include "../headers/utils/MusicClass.h"
 #include "../headers/utils/HttpClient.h"
+#include "../headers/utils/EnvFile.h"
 #include "../headers/utils/Player.h"
 #include <SFML/Audio.hpp>
 #include <QMediaPlayer>
@@ -18,19 +19,21 @@ Player::Player() : QObject(nullptr) {
     isRepeated = false;
     currentQueueInd = -1;
     volumeLevel = 100;
-    checkTimer = new QTimer();
-    musicBuffer = new char[1];
 
+    //deviceCheckTimer = new QTimer();
+    //deviceCheckTimer->connect(deviceCheckTimer, &QTimer::timeout, this, &Player::checkDevices);
+    checkTimer = new QTimer();
     checkTimer->connect(checkTimer, &QTimer::timeout, this, &Player::checkStatus);
     connect(this, &Player::playbackFinished, [this](){
         if(isRepeated == false) {
             next();
         } else {
-            setPosition(0);
+            loadTrackFromBuffer();
+            emit trackChanged();
         }
     });
 
-    HttpClient::sendGetRequest(QUrl("http://localhost:3000/admin/getAllMusicInfo"), [this](HttpClient::Response* response){
+    HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/admin/getAllMusicInfo"), [this](HttpClient::Response* response){
         std::vector<std::shared_ptr<MusicObject>> musics;
         for(int i = 0; i < response->bodyJsonArray.size(); i++) {
             musics.push_back(std::make_shared<MusicObject>(response->bodyJsonArray[i].toObject()));
@@ -45,6 +48,7 @@ void Player::setPlaylist(std::vector<std::shared_ptr<MusicObject>>& music) {
         isQueueFree = false;
         isCurrentLoaded = true;
         currentQueueInd = 0;
+        loadTrack(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
         emit trackChanged();
     }
 }
@@ -68,8 +72,8 @@ void Player::setVolumeLevel(int value) {
 }
 
 void Player::setPosition(int position) {
-    if (position >= 0 && position <= 100) {
-        music.setPlayingOffset(sf::milliseconds(static_cast<float>(musicQueue[currentQueueInd]->getDuration() * position * 10)));
+    if (position >= 0 && position <= musicQueue[currentQueueInd]->getDuration() * 1000) {
+        music.setPlayingOffset(sf::milliseconds(position * 10));
     }
 }
 
@@ -91,9 +95,7 @@ bool Player::next() {
         currentQueueInd++;
     }
 
-    loadTrack(QUrl("http://localhost:3000/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
-
-    if (isPaused) music.pause();
+    loadTrack(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
 
     emit trackChanged();
 
@@ -106,9 +108,7 @@ bool Player::prev() {
 
     currentQueueInd--;
 
-    loadTrack(QUrl("http://localhost:3000/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
-
-    if (isPaused == true) music.pause();
+    loadTrack(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
 
     emit trackChanged();
 
@@ -124,11 +124,8 @@ void Player::pause() {
 }
 
 void Player::play() {
-    if (isCurrentLoaded == false) {
-        //player->setSource(QUrl("http://localhost:3000/music/getFile?path=" + musicQueue[currentQueueInd]->getPath()));
-        isCurrentLoaded = true;
-    }
-    //player->play();
+    if (isCurrentLoaded == false) return;
+
     isPaused = false;
 
     music.play();
@@ -155,23 +152,42 @@ void Player::swapRepeating() {
 }
 
 std::shared_ptr<MusicObject> Player::getCurrentMusic() {
-    return musicQueue[currentQueueInd];
+    if (currentQueueInd >= 0 || currentQueueInd < musicQueue.size()) return musicQueue[currentQueueInd];
+}
+
+int Player::getCurrentQueueInd() {
+    return currentQueueInd;
 }
 
 void Player::loadTrack(QUrl url) {
     HttpClient::sendGetRequest(url, [this](HttpClient::Response* response){
         if(response->statusCode < 400) {
             checkTimer->stop();
-            music.stop();
 
             musicBuffer = response->body.data();
             bufferLength = response->body.size();
 
-            if(music.openFromMemory(musicBuffer, bufferLength)) music.play();
+            if(music.openFromMemory(musicBuffer, bufferLength)) {
+                music.play();
+                if (this->isPaused == true) music.pause();
 
-            checkTimer->start(100);
+                isCurrentLoaded = true;
+                checkTimer->start(100);
+            }
         }
     });
+}
+
+void Player::loadTrackFromBuffer() {
+    checkTimer->stop();
+
+    if(music.openFromMemory(musicBuffer, bufferLength)) {
+        music.play();
+        if (this->isPaused == true) music.pause();
+
+        isCurrentLoaded = true;
+        checkTimer->start(100);
+    }
 }
 
 void Player::checkStatus() {
@@ -180,3 +196,8 @@ void Player::checkStatus() {
         emit playbackFinished();
     }
 }
+
+void Player::checkDevices() {
+
+}
+

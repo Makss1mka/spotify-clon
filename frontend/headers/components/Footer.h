@@ -6,10 +6,10 @@
 #include "./VolumeSlider.h"
 #include "./MusicSlider.h"
 #include "./SoundButton.h"
-#include <QWidget>
-#include <QLabel>
-#include <QSlider>
 #include <QPushButton>
+#include <QWidget>
+#include <QSlider>
+#include <QLabel>
 #include <QTimer>
 
 class Footer : public QWidget {
@@ -17,7 +17,7 @@ class Footer : public QWidget {
 public:
     explicit Footer(QWidget *parent = nullptr);
 private:
-    HoverIconButton *musicImage;
+    QPushButton *musicImage;
     QLabel *nameLabel;
     QLabel *authorLabel;
 
@@ -34,8 +34,8 @@ private:
 
     SoundButton *soundButton;
     VolumeSlider *volumeSlider;
-
-    QTimer *timelineUpdateTimer;
+signals:
+    void trackChanged();
 };
 
 #endif // LITTLEPLAYER_H

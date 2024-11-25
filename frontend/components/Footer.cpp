@@ -1,25 +1,25 @@
-#include "../headers/components/Footer.h"
-#include "../headers/utils/globalVariables.h"
-#include "../headers/utils/Player.h"
-#include "../headers/utils/MusicClass.h"
-#include "../headers/utils/HttpClient.h"
 #include "../headers/components/HoverIconButtonWithStages.h"
 #include "../headers/components/HoverIconButton.h"
+#include "../headers/components/VolumeSlider.h"
 #include "../headers/components/SoundButton.h"
 #include "../headers/components/MusicSlider.h"
-#include "../headers/components/VolumeSlider.h"
-#include <QWidget>
-#include <QLabel>
+#include "../headers/components/Footer.h"
+#include "../headers/utils/globalVariables.h"
+#include "../headers/utils/MusicClass.h"
+#include "../headers/utils/HttpClient.h"
+#include "../headers/utils/EnvFile.h"
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QPixmap>
 #include <QSlider>
+#include <QWidget>
+#include <QPixmap>
+#include <QLabel>
 #include <QTimer>
 #include <QIcon>
 #include <QSize>
-#include <QMediaPlayer>
 #include <QFile>
+#include <QList>
 
 Footer::Footer(QWidget *parent) : QWidget(parent) {
     this->setFixedHeight(70);
@@ -27,9 +27,10 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     // --- First inner section
 
     // Music image
-    musicImage = new HoverIconButton(QIcon(":/assets/picture.png"), QIcon(":/assets/picture-active.png"));
-    musicImage->setFixedSize(40, 40);
-    musicImage->setIconSize(QSize(34, 34));
+    musicImage = new QPushButton;
+    musicImage->setIcon(QIcon(":/assets/picture.png"));
+    musicImage->setFixedSize(50, 50);
+    musicImage->setIconSize(QSize(50, 50));
 
 
     // Music data labels
@@ -99,6 +100,7 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     stopButton->setFixedSize(30, 30);
     stopButton->setStyleSheet("QPushButton { background: white; border-radius: 15px; }");
     stopButton->connect(stopButton, QPushButton::clicked, [this](){
+        if (Globals::player->isCurrentTrackLoaded() == false) return;
         if (Globals::player->isPlayerPaused() == true) {
             Globals::player->play();
             this->stopButton->setIcon(QIcon(":/assets/player-go.png"));
@@ -124,8 +126,33 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     startTime = new QLabel("00:00");
     startTime->setStyleSheet("color: #EDEDED; padding: 0px;");
     endTime = new QLabel("00:00");
-    endTime->setStyleSheet("color: #EDEDED; padding: 0px;");
+    endTime->setStyleSheet("color: #EDEDED; padding: 0px;");;
+
+    // Timeline music slider
+    musicTimeline = new MusicSlider();
+    musicTimeline->setFixedHeight(5);
+    musicTimeline->setRange(0, 10000);
+    musicTimeline->setMinimumWidth(100);
+    musicTimeline->setMaximumWidth(700);
+    musicTimeline->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    musicTimeline->setStyleSheet("QSlider::groove:horizontal { margin: 2px; background: #A5A5A5; height: 5px; }"
+            "QSlider::handle:horizontal { background: transparent; }"
+            "QSlider::sub-page:horizontal { background: #EDEDED; }");
+    endTime->connect(musicTimeline, &MusicSlider::secondChanged, [this](int currentMusicTimeLineValue){
+        int seconds = static_cast<int>(currentMusicTimeLineValue / 100);
+        int minutes = seconds / 60;
+        seconds = seconds % 60;
+
+        QString strMinutes = QString::number(minutes);
+        QString strSeconds = QString::number(seconds);
+        this->startTime->setText(strMinutes + ":" + ((strSeconds.length() == 1) ? "0" + strSeconds : strSeconds));
+    });
+
+
+    // Connect event of changing track to all necesary widgets
     connect(Globals::player, &Player::trackChanged, [this](){
+        if (Globals::player->isCurrentTrackLoaded() == false) return;
+
         std::shared_ptr<MusicObject> curMusic = Globals::player->getCurrentMusic();
 
         this->authorLabel->setText(curMusic->getAuthor());
@@ -135,19 +162,19 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
         QString seconds = QString::number(curMusic->getDuration() % 60);
         this->endTime->setText(minutes + ":" + ((seconds.length() == 1) ? "0" + seconds : seconds));
         this->startTime->setText("00:00");
+
+        this->musicTimeline->setRange(0, curMusic->getDuration() * 100);
+        this->musicTimeline->setValue(0);
+
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + Globals::player->getCurrentMusic()->getProfilePath()),
+            [this](HttpClient::Response* response){
+                if (response->statusCode < 400) {
+                    QPixmap pixmap;
+                    pixmap.loadFromData(response->body);
+                    this->musicImage->setIcon(QIcon(pixmap));
+                }
+            });
     });
-
-
-    // Timeline music slider
-    musicTimeline = new MusicSlider(Qt::Horizontal);
-    musicTimeline->setFixedHeight(5);
-    musicTimeline->setRange(0, 100);
-    musicTimeline->setMinimumWidth(100);
-    musicTimeline->setMaximumWidth(700);
-    musicTimeline->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    musicTimeline->setStyleSheet("QSlider::groove:horizontal { margin: 2px; background: #A5A5A5; height: 5px; }"
-            "QSlider::handle:horizontal { background: transparent; }"
-            "QSlider::sub-page:horizontal { background: #EDEDED; }");
 
 
     // Bottom layout
@@ -209,4 +236,8 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     mainLayout->addLayout(thirdInnerLayout, 0);
 
     this->setLayout(mainLayout);
+
+    if (Globals::player->getCurrentQueueInd() != -1) {
+        emit Globals::player->trackChanged();
+    }
 }
