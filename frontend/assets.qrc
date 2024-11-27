@@ -56,5 +56,7 @@
         <file>assets/no-shuffle-active.png</file>
         <file>assets/windowIcon.png</file>
         <file>.env</file>
+        <file>assets/dots.png</file>
+        <file>assets/dots-active.png</file>
     </qresource>
 </RCC>
