@@ -4,6 +4,7 @@
 #include "../concepts/Provider.h"
 #include "../concepts/Request.h"
 #include <QByteArray>
+#include <QString>
 
 class MusicProvider : public Provider {
 public:
@@ -14,7 +15,7 @@ public:
     QByteArray findByName(const QString&  name);
     QByteArray find(const QString& keyStr);
     QByteArray getAll();
-    QByteArray recomend(std::vector<QString>& janres, std::vector<QString> authors, std::vector<QString> langs);
+    QByteArray recomend(const QString& janre, const QString& author, const QString& lang, const QString& trackName);
 };
 
 #endif // MUSICPROVIDER_H

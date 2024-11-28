@@ -185,8 +185,14 @@ QJsonArray UserProvider::getFavoriteMusics(const QString& userId) {
     QJsonObject musicEntry;
     QSqlQuery query;
 
-    if(!query.exec("SELECT music.id, music.name, music.file, music.author_id, music.author_name, music.duration, music.listens, music.janre, music.lang, music.picture"
-        " FROM user_music JOIN music ON music.id=user_music.music_id WHERE user_music.user_id=" + userId + ";")) {
+
+
+
+    if(!query.exec("SELECT music.id, music.name, music.file, music.author_id, userInfo.login, music.duration, music.listens, "
+        "music.janre, music.lang, music.picture AS musicPic, userInfo.picture AS userPic FROM user_music "
+        "JOIN music ON user_music.music_id = music.id "
+        "JOIN userInfo ON music.author_id = userInfo.id "
+        "WHERE user_music.user_id=" + userId + ";")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::getFavoriteMusics is unavailable",
             "User service is temporarily unavailable"
@@ -204,6 +210,7 @@ QJsonArray UserProvider::getFavoriteMusics(const QString& userId) {
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
         musicEntry["profile"] = query.value(9).toString();
+        musicEntry["author_profile"] = query.value(10).toString();
 
         resultArray.append(musicEntry);
     }

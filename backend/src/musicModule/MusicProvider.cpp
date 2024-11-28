@@ -10,6 +10,7 @@
 #include <QSqlQuery>
 #include <QString>
 #include <QFile>
+#include <QList>
 #include <vector>
 
 MusicProvider::MusicProvider() {}
@@ -17,7 +18,8 @@ MusicProvider::MusicProvider() {}
 QByteArray MusicProvider::getById(const QString& id) {
     QSqlQuery query;
 
-    if(!query.exec("SELECT * FROM music WHERE id=" + id + ";")) {
+    if(!query.exec("SELECT music.id, music.name, music.file, userInfo.id, userInfo.login, music.duration, music.listens, "
+        "music.janre, music.lang, music.picture AS musicPic, userInfo.picture AS userPic FROM music JOIN userInfo on music.author_id=userInfo.id WHERE music.id=" + id + ";")) {
         throw ServiceUnavailableException(
             "Method: MusicProvider::getById is unavailable",
             "Music service is temporarily unavailable"
@@ -33,9 +35,11 @@ QByteArray MusicProvider::getById(const QString& id) {
         musicData["author_id"] = query.value(3).toString();
         musicData["author_name"] = query.value(4).toString();
         musicData["duration"] = query.value(5).toInt();
+        musicData["listens"] = query.value(6).toInt();
         musicData["janre"] = query.value(7).toString();
         musicData["lang"] = query.value(8).toString();
         musicData["profile"] = query.value(9).toString();
+        musicData["author_profile"] = query.value(10).toString();
 
         return QJsonDocument(musicData).toJson();
     } else {
@@ -64,7 +68,8 @@ QByteArray MusicProvider::getFile(const QString&  path) {
 QByteArray MusicProvider::getByAuthor(const QString&  authorName) {
     QSqlQuery query;
 
-    if(!query.exec("SELECT * FROM music WHERE author_name='" + authorName + "' ORDER BY listens DESC;")) {
+    if(!query.exec("SELECT music.id, music.name, music.file, userInfo.id, userInfo.login, music.duration, music.listens, "
+        "music.janre, music.lang, music.picture AS musicPic, userInfo.picture AS userPic FROM music JOIN userInfo on music.author_id=userInfo.id WHERE userInfo.login='" + authorName + "' ORDER BY listens DESC;")) {
         throw ServiceUnavailableException(
             "Method: MusicProvider::getByAuthor is unavailable",
             "Music service is temporarily unavailable"
@@ -85,6 +90,7 @@ QByteArray MusicProvider::getByAuthor(const QString&  authorName) {
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
         musicEntry["profile"] = query.value(9).toString();
+        musicEntry["author_profile"] = query.value(10).toString();
 
         musicArray.append(musicEntry);
     }
@@ -95,7 +101,8 @@ QByteArray MusicProvider::getByAuthor(const QString&  authorName) {
 QByteArray MusicProvider::getAll() {
     QSqlQuery query;
 
-    if(!query.exec("SELECT * FROM music ORDER BY listens DESC;")) {
+    if(!query.exec("SELECT music.id, music.name, music.file, userInfo.id, userInfo.login, music.duration, music.listens, "
+        "music.janre, music.lang, music.picture AS musicPic, userInfo.picture AS userPic FROM music JOIN userInfo on music.author_id=userInfo.id ORDER BY music.listens DESC;")) {
         throw ServiceUnavailableException(
             "Method: MusicProvider::getByAuthor is unavailable",
             "Music service is temporarily unavailable"
@@ -116,6 +123,7 @@ QByteArray MusicProvider::getAll() {
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
         musicEntry["profile"] = query.value(9).toString();
+        musicEntry["author_profile"] = query.value(10).toString();
 
         musicArray.append(musicEntry);
     }
@@ -126,7 +134,8 @@ QByteArray MusicProvider::getAll() {
 QByteArray MusicProvider::findByName(const QString&  name) {
     QSqlQuery query;
 
-    if(!query.exec("SELECT * FROM music WHERE name LIKE '%" + name + "%' ORDER BY listens DESC;")) {
+    if(!query.exec("SELECT music.id, music.name, music.file, userInfo.id, userInfo.login, music.duration, music.listens, music.janre, music.lang, "
+        "music.picture AS musicPic, userInfo.picture AS userPic FROM music JOIN userInfo on music.author_id=userInfo.id WHERE music.name LIKE '%" + name + "%' ORDER BY music.listens DESC;")) {
         throw ServiceUnavailableException(
             "Method: MusicProvider::getByAuthor is unavailable",
             "Music service is temporarily unavailable"
@@ -147,6 +156,7 @@ QByteArray MusicProvider::findByName(const QString&  name) {
         musicEntry["janre"] = query.value(7).toString();
         musicEntry["lang"] = query.value(8).toString();
         musicEntry["profile"] = query.value(9).toString();
+        musicEntry["author_profile"] = query.value(10).toString();
 
         musicArray.append(musicEntry);
     }
@@ -167,6 +177,157 @@ QByteArray MusicProvider::find(const QString &keyStr) {
 
 }
 
-QByteArray MusicProvider::recomend(std::vector<QString>& janres, std::vector<QString> authors, std::vector<QString> langs) {
+QByteArray MusicProvider::recomend(const QString& janre, const QString& author, const QString& lang, const QString& trackName) {
+    QList<QString> janres = janre.split(",");
+    std::vector<int> ids;
+    QSqlQuery query;
 
+    QJsonArray musicArray;
+    QJsonObject musicEntry;
+
+    QString requestTemplate = "SELECT music.id, music.name, music.file, userInfo.id, userInfo.login AS author, music.duration, music.listens, "
+            "music.janre AS janre, music.lang AS lang, music.picture AS musicPic, userInfo.picture AS userPic FROM music "
+            "JOIN userInfo ON music.author_id=userInfo.id WHERE music.name != '" + trackName + "' AND ";
+    QString requestSorting = " ORDER BY RANDOM();";
+
+    std::function<void(void)> addEntries = [&query, &musicArray, &musicEntry, &ids](){
+        while(query.next() && musicArray.size() <= 10) {
+            bool isExist = false;
+            for(int i = 0; i < ids.size(); i++) {
+                if (ids[i] == query.value(0).toInt()) {
+                    isExist = true;
+                    break;
+                }
+            }
+            if(isExist == true) continue;
+
+            musicEntry["id"] = query.value(0).toInt();
+            musicEntry["name"] = query.value(1).toString();
+            musicEntry["file"] = query.value(2).toString();
+            musicEntry["author_id"] = query.value(3).toString();
+            musicEntry["author_name"] = query.value(4).toString();
+            musicEntry["duration"] = query.value(5).toInt();
+            musicEntry["listens"] = query.value(6).toInt();
+            musicEntry["janre"] = query.value(7).toString();
+            musicEntry["lang"] = query.value(8).toString();
+            musicEntry["profile"] = query.value(9).toString();
+            musicEntry["author_profile"] = query.value(10).toString();
+
+            ids.push_back(query.value(0).toInt());
+            musicArray.append(musicEntry);
+        }
+    };
+
+    QString where = "";
+    for(int i = 0; i < janres.size(); i++) {
+        where += " janre LIKE '%" + janres[i] + ",%' AND ";
+    }
+
+    // FIRST STAGE
+    //qDebug() << " 111 " << requestTemplate + where + " lang = '" + lang + "' AND author != '" + author +  "' " + requestSorting;
+    if(!query.exec(requestTemplate + where + " lang = '" + lang + "' AND author != '" + author +  "' " + requestSorting)) {
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::recomend is unavailable",
+            "Music service is temporarily unavailable"
+        );
+    }
+
+    addEntries();
+    if (musicArray.size() >= 10) return QJsonDocument(musicArray).toJson();
+
+
+    // SECOND STAGE
+    ///qDebug() << " 222 " << requestTemplate + where + " lang = '" + lang +  "' " + requestSorting;
+    if(!query.exec(requestTemplate + where + " lang = '" + lang +  "' " + requestSorting)) {
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::recomend is unavailable",
+            "Music service is temporarily unavailable"
+            );
+    }
+
+    addEntries();
+    if (musicArray.size() >= 10) return QJsonDocument(musicArray).toJson();
+
+
+    // THIRD STAGE
+    //qDebug() << " 333 " << requestTemplate + where + " lang != '" + lang +  "' " + requestSorting;
+    if(!query.exec(requestTemplate + where + " lang != '" + lang +  "' " + requestSorting)) {
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::recomend is unavailable",
+            "Music service is temporarily unavailable"
+        );
+    }
+
+    addEntries();
+    if (musicArray.size() >= 10) return QJsonDocument(musicArray).toJson();
+
+
+    // FOURTH STAGE
+    for(int i = 0; i < janres.size(); i++) {
+        //qDebug() << " 444 " << requestTemplate + " janre LIKE '%" + janres[i] + ",%' AND " + " lang = '" + lang +  "' AND author != '" + author +  "' " + requestSorting;
+        if(!query.exec(requestTemplate + " janre LIKE '%" + janres[i] + ",%' AND " + " lang = '" + lang +  "' AND author != '" + author +  "' " + requestSorting)) {
+            throw ServiceUnavailableException(
+                "Method: MusicProvider::recomend is unavailable",
+                "Music service is temporarily unavailable"
+            );
+        }
+
+        addEntries();
+        if (musicArray.size() >= 10) return QJsonDocument(musicArray).toJson();
+    }
+
+
+    // FIFTH STAGE
+    for(int i = 0; i < janres.size(); i++) {
+        //qDebug() << " 555 " << requestTemplate + " janre LIKE '%" + janres[i] + ",%' AND " + " lang = '" + lang +  "' " + requestSorting;
+        if(!query.exec(requestTemplate + " janre LIKE '%" + janres[i] + ",%' AND " + " lang = '" + lang +  "' " + requestSorting)) {
+            throw ServiceUnavailableException(
+                "Method: MusicProvider::recomend is unavailable",
+                "Music service is temporarily unavailable"
+            );
+        }
+
+        addEntries();
+        if (musicArray.size() >= 10) return QJsonDocument(musicArray).toJson();
+    }
+
+    // SIXTH STAGE
+    for(int i = 0; i < janres.size(); i++) {
+        //qDebug() << " 666 " << requestTemplate + " janre LIKE '%" + janres[i] + ",%' " + requestSorting;
+        if(!query.exec(requestTemplate + " janre LIKE '%" + janres[i] + ",%' " + requestSorting)) {
+            throw ServiceUnavailableException(
+                "Method: MusicProvider::recomend is unavailable",
+                "Music service is temporarily unavailable"
+            );
+        }
+
+        addEntries();
+        if (musicArray.size() >= 10) return QJsonDocument(musicArray).toJson();
+    }
+
+    // SEVENTH STAGE
+    //qDebug() << " 777 " << requestTemplate + " author = '" + author +  "' " + requestSorting;
+    if(!query.exec(requestTemplate + " author = '" + author +  "' " + requestSorting)) {
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::recomend is unavailable",
+            "Music service is temporarily unavailable"
+        );
+    }
+
+    addEntries();
+    if (musicArray.size() >= 10) return QJsonDocument(musicArray).toJson();
+
+
+    // EIGHTTH STAGE
+    //qDebug() << " 888 " << requestTemplate + " lang = '" + lang +  "' " + requestSorting;
+    if(!query.exec(requestTemplate + " lang = '" + lang +  "' " + requestSorting)) {
+        throw ServiceUnavailableException(
+            "Method: MusicProvider::recomend is unavailable",
+            "Music service is temporarily unavailable"
+        );
+    }
+
+    addEntries();
+
+    return QJsonDocument(musicArray).toJson();
 }

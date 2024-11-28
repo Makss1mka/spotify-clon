@@ -7,6 +7,7 @@
 #include <QByteArray>
 #include <QFile>
 #include <QString>
+#include <functional>
 
 MusicRouter::MusicRouter() : Router("/music") {
     this->setupProviders();
@@ -128,5 +129,30 @@ void MusicRouter::setupRoutes() {
 
         return response;
     });
+
+    this->addGetRoute("/recomend", [this](Request& request) -> QByteArray {
+        if(request.query.size() != 4 || request.query.count("janre") == 0 || request.query.count("author") == 0
+            || request.query.count("lang") == 0 || request.query.count("track_name") == 0) {
+            throw BadRequestException(
+                "Invalid query format for recommend musics",
+                "Invalid query format for recommend musics"
+            );
+        }
+
+        std::shared_ptr<MusicProvider> musicProvider = this->getProvider<MusicProvider>("musicProvider");
+        QByteArray data = musicProvider->recomend(request.query["janre"].replace("%20", " "),
+                request.query["author"].replace("%20", " "),
+                request.query["lang"].replace("%20", " "),
+                request.query["track_name"].replace("%20", " "));
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: application/json\r\n"
+                        "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
+                        "\r\n";
+        response.append(data);
+
+        return response;
+    });
+
 }
 
