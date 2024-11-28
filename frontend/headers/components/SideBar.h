@@ -1,6 +1,7 @@
 #ifndef SIDEBARH_H
 #define SIDEBARH_H
 
+#include <QVBoxLayout>
 #include <QPushButton>
 #include <QWidget>
 #include <QLabel>
@@ -13,6 +14,10 @@ private:
     QLabel* label;
     QPushButton* musics;
     QPushButton* authors;
+    QVBoxLayout* scrollBarLayout;
+public slots:
+    void musicsClicked();
+    void authorsClicked();
 };
 
 #endif // SIDEBARH_H

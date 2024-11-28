@@ -1,3 +1,4 @@
+#include "../headers/components/AuthorCard.h"
 #include "../headers/components/MusicCard.h"
 #include "../headers/components/SideBar.h"
 #include "../headers/utils/UserClasses.h"
@@ -7,21 +8,26 @@
 #include <QHBoxLayout>
 #include <QSizePolicy>
 #include <QScrollArea>
+#include <QLayoutItem>
+#include <QPointer>
 #include <QLabel>
-#include <QListWidget>
+#include <QSize>
 
 SideBar::SideBar(QWidget *parent) : QWidget(parent) {
-    this->setStyleSheet("background: #272727; border-radius: 20px; height: 100%; width: 300px; max-width: 300px");
-    this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    //this->setStyleSheet("background: #121212; border-radius: 5px; width: 300px; max-width: 300px");
+    //this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
     label = new QLabel("Любимые: ");
-    label->setStyleSheet("background: inherit; padding: 0px; margin: 0px; color: #EDEDED;");
+    label->setStyleSheet("height: 20px; background: #121212; padding: 0px; margin: 0px 0px 0px 7px; color: #EDEDED;");
     musics = new QPushButton("Треки");
-    musics->setStyleSheet("QPushButton { background: inherit; padding: 0px; margin: 0px; color: #EDEDED; }"
+    musics->setStyleSheet("QPushButton { height: 20px; background: #121212; padding: 0px; margin: 0px; color: #EDEDED; }"
             "QPushButton:hover { text-decoration: underline; }");
+    musics->connect(musics, &QPushButton::clicked, this, SideBar::musicsClicked);
     authors = new QPushButton("Авторы");
-    authors->setStyleSheet("QPushButton { background: inherit; padding: 0px; margin: 0px; color: #EDEDED; }"
+    authors->setStyleSheet("QPushButton { height: 20px; background: #121212; padding: 0px; margin: 0px; color: #EDEDED; }"
             "QPushButton:hover { text-decoration: underline; }");
+    authors->connect(authors, &QPushButton::clicked, this, SideBar::authorsClicked);
+
 
     QHBoxLayout* navLayout = new QHBoxLayout();
     navLayout->addWidget(label);
@@ -29,22 +35,64 @@ SideBar::SideBar(QWidget *parent) : QWidget(parent) {
     navLayout->addWidget(authors);
     navLayout->addStretch();
 
-    //QWidget* scrollBar = new QWidget();
-    //QVBoxLayout* scrollBarLayout = new QVBoxLayout();
-    QListWidget* list = new QListWidget();
+    QWidget* scrollBar = new QWidget();
+    scrollBarLayout = new QVBoxLayout(scrollBar);
+    scrollBarLayout->setContentsMargins(2, 2, 2, 2);
+    scrollBarLayout->setAlignment(Qt::AlignTop);
     for(int i = 0; i < User::getMusicsLength(); i++) {
-        QListWidgetItem* listItem = new QListWidgetItem(list);
-
-        list->setItemWidget(listItem, new MusicCard(User::getMusicByInd(i)));
+        scrollBarLayout->addWidget(new MusicCard(User::getMusicByInd(i)));
     }
 
-    // QScrollArea* scrollArea = new QScrollArea();
-    // scrollArea->setWidget(scrollBar);
-    // scrollArea->setWidgetResizable(true);
-    // scrollArea->setStyleSheet("border: none;");
+    QScrollArea* scrollArea = new QScrollArea();
+    scrollArea->setWidget(scrollBar);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    scrollArea->setStyleSheet(
+        " QScrollArea { padding: 0px 0px 15px; height: 100%; border: none; } "
+        " QScrollBar:vertical { background: #121212; width: 0px; border: none; color: #121212; } "
+        " QScrollBar::handle:vertical { background: #A5A5A5; } "
+        " QScrollBar::handle:vertical:hover { background: #EDEDED; } "
+        " QScrollBar::sub-line:vertical { background: #121212; }"
+        " QScrollBar::add-line:vertical { background: #121212; } "
+    );
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(navLayout);
-    mainLayout->addWidget(list);
-    this->setLayout(mainLayout);
+    mainLayout->addWidget(scrollArea);
+    mainLayout->setAlignment(Qt::AlignTop);
+
+    QWidget* mainWidget = new QWidget(this);
+    mainWidget->setStyleSheet("background: #121212; padding: 5px, 0px; border-radius: 5px; width: 300px; max-width: 300px;");
+    mainWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mainWidget->setLayout(mainLayout);
+
+    this->setLayout(coverWithoutStretchVLayout(mainWidget));
 }
+
+void SideBar::musicsClicked() {
+    QLayoutItem *item;
+    while ((item = this->scrollBarLayout->takeAt(0)) != nullptr) {
+        delete item->widget();
+        delete item;
+    }
+
+    for(int i = 0; i < User::getMusicsLength(); i++) {
+        this->scrollBarLayout->addWidget(new MusicCard(User::getMusicByInd(i)));
+    }
+}
+
+void SideBar::authorsClicked() {
+    QLayoutItem *item;
+    while ((item = this->scrollBarLayout->takeAt(0)) != nullptr) {
+        delete item->widget();
+        delete item;
+    }
+
+    for(int i = 0; i < User::getAuthorsLength(); i++) {
+        this->scrollBarLayout->addWidget(new AuthorCard(User::getAuthorByInd(i)));
+    }
+}
+
+
+
