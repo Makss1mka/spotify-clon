@@ -31,14 +31,17 @@ AuthorCard::AuthorCard(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     profilePic->setIconSize(QSize(45, 45));
     profilePic->connect(profilePic, &QPushButton::clicked, this, &AuthorCard::trackProfileClicked);
     QPointer<AuthorCard> pointedThis = this;
-    HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + authorData->getProfilePath()),
-        [pointedThis](HttpClient::Response* response) {
-        if (response->statusCode < 400) {
-            QPixmap pixmap;
-            pixmap.loadFromData(response->body);
-            pointedThis->profilePic->setIcon(QIcon(pixmap));
-        }
-    });
+    if(authorData->getProfilePath() != "") {
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + authorData->getProfilePath()),
+            [pointedThis](HttpClient::Response* response) {
+            if (response->statusCode < 400) {
+                QPixmap pixmap;
+                pixmap.loadFromData(response->body);
+                pointedThis->profilePic->setIcon(QIcon(pixmap));
+            }
+        });
+    }
+
 
 
     label = new QLabel("Исполнитель:");

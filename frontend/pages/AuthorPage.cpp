@@ -32,15 +32,17 @@ AuthorPage::AuthorPage(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     profileBac->setFixedSize(160, 160);
     profileBac->setIconSize(QSize(160, 160));
     QPointer<AuthorPage> pointedThis = this;
-    HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + authorData->getProfilePath()),
-        [pointedThis](HttpClient::Response* response) {
-        if (response->statusCode < 400) {
-            if (!pointedThis) return;
-            QPixmap pixmap;
-            pixmap.loadFromData(response->body);
-            pointedThis->profileBac->setIcon(QIcon(pixmap));
-        }
-    });
+    if(this->authorData->getProfilePath() != "") {
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + authorData->getProfilePath()),
+            [pointedThis](HttpClient::Response* response) {
+            if (response->statusCode < 400) {
+                if (!pointedThis) return;
+                QPixmap pixmap;
+                pixmap.loadFromData(response->body);
+                pointedThis->profileBac->setIcon(QIcon(pixmap));
+            }
+        });
+    }
 
     type = new QLabel("Исполнитель");
     type->setStyleSheet("font-size: 10px; min-width: 0px; color: white; margin: 0px 0px 0px 20px; padding: 0px; font-weight: bold;");
@@ -65,6 +67,22 @@ AuthorPage::AuthorPage(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     playButton->setIcon(QIcon(":/assets/player-stop.png"));
     playButton->setIconSize(QSize(25, 25));
     playButton->setStyleSheet("QPushButton { background: green; border-radius: 22px; padding: 12px 8px; margin: 20px 0px 0px; }");
+    playButton->connect(playButton, &QPushButton::clicked, [this](){
+        HttpClient::sendGetRequest(
+            QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getByAuthor?author_name=" + this->authorData->getName()),
+            [this](HttpClient::Response* response){
+            if(response->statusCode < 400) {
+                std::vector<std::shared_ptr<MusicObject>> recMusic;
+
+                QJsonArray loadedMusic = response->bodyJsonArray;
+                for(int i = 0; i < loadedMusic.size(); i++) {
+                    recMusic.push_back(std::make_shared<MusicObject>(loadedMusic[i].toObject()));
+                }
+
+                Globals::player->setPlaylist(recMusic);
+            }
+        });
+    });
 
     loveButton = new HoverIconButtonWithStages(
         QIcon(":/assets/heart.png"),

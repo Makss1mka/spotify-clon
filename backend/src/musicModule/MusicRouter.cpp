@@ -99,7 +99,7 @@ void MusicRouter::setupRoutes() {
         }
 
         std::shared_ptr<MusicProvider> musicProvider = this->getProvider<MusicProvider>("musicProvider");
-        QByteArray data = musicProvider->getByAuthor(request.query["author_name"]);
+        QByteArray data = musicProvider->getByAuthor(request.query["author_name"].replace("%20", " "));
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: application/json\r\n"

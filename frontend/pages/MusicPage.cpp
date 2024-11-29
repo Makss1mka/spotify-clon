@@ -28,16 +28,17 @@ MusicPage::MusicPage(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     profile->setFixedSize(160, 160);
     profile->setIconSize(QSize(160, 160));
     QPointer<MusicPage> pointedThis = this;
-    HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + musicData->getProfilePath()),
-        [pointedThis](HttpClient::Response* response) {
-        if (response->statusCode < 400) {
-            if (!pointedThis) return;
-            QPixmap pixmap;
-            pixmap.loadFromData(response->body);
-            pointedThis->profile->setIcon(QIcon(pixmap));
-        }
-    });
-
+    if(this->musicData->getProfilePath() != "") {
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + musicData->getProfilePath()),
+            [pointedThis](HttpClient::Response* response) {
+            if (response->statusCode < 400) {
+                if (!pointedThis) return;
+                QPixmap pixmap;
+                pixmap.loadFromData(response->body);
+                pointedThis->profile->setIcon(QIcon(pixmap));
+            }
+        });
+    }
 
     type = new QLabel("Трек");
     type->setStyleSheet("font-size: 10px; min-width: 0px; color: white; margin: 0px 0px 0px 10px; padding: 0px; font-weight: bold;");
@@ -68,6 +69,28 @@ MusicPage::MusicPage(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     playButton->setIcon(QIcon(":/assets/player-stop.png"));
     playButton->setIconSize(QSize(25, 25));
     playButton->setStyleSheet("QPushButton { background: green; border-radius: 22px; padding: 12px 8px; margin: 20px 0px 0px; }");
+    playButton->connect(playButton, &QPushButton::clicked, [this](){
+        HttpClient::sendGetRequest(
+            QUrl(Env::get("SERVER_DOMEN", ":/.env") +
+                 "/music/recomend?janre=" + this->musicData->getJanres().mid(0, this->musicData->getJanres().size() - 1) +
+                 "&author=" + this->musicData->getAuthor() +
+                 "&lang=" + this->musicData->getLang() +
+                 "&track_name=" + this->musicData->getName() +
+                 "&limit=10"),
+            [this](HttpClient::Response* response){
+            if(response->statusCode < 400) {
+                std::vector<std::shared_ptr<MusicObject>> recMusic;
+                recMusic.push_back(this->musicData);
+
+                QJsonArray loadedMusic = response->bodyJsonArray;
+                for(int i = 0; i < loadedMusic.size(); i++) {
+                    recMusic.push_back(std::make_shared<MusicObject>(loadedMusic[i].toObject()));
+                }
+
+                Globals::player->setPlaylist(recMusic);
+            }
+        });
+    });
 
     loveButton = new HoverIconButtonWithStages(
         QIcon(":/assets/heart.png"),

@@ -34,15 +34,17 @@ MusicCard::MusicCard(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     profilePic->setIconSize(QSize(45, 45));
     profilePic->connect(profilePic, &QPushButton::clicked, this, &MusicCard::trackProfileClicked);
     QPointer<MusicCard> pointedThis = this;
-    HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + musicData->getProfilePath()),
-        [pointedThis](HttpClient::Response* response) {
-        if (response->statusCode < 400) {
-            if (!pointedThis) return;
-            QPixmap pixmap;
-            pixmap.loadFromData(response->body);
-            pointedThis->profilePic->setIcon(QIcon(pixmap));
-        }
-    });
+    if(musicData->getProfilePath() != "") {
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + musicData->getProfilePath()),
+            [pointedThis](HttpClient::Response* response) {
+            if (response->statusCode < 400) {
+                if (!pointedThis) return;
+                QPixmap pixmap;
+                pixmap.loadFromData(response->body);
+                pointedThis->profilePic->setIcon(QIcon(pixmap));
+            }
+        });
+    }
 
     nameLabel = new QPushButton(musicData->getName(), mainWidget);
     nameLabel->setStyleSheet("QPushButton { height: 13px; font-size: 13px; text-align: left; background: #121212; color: white; margin: 0px 0px 2px; padding: 0px; }"
