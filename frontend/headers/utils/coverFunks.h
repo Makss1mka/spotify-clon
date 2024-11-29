@@ -1,10 +1,10 @@
 #ifndef COVERFUNKS_H
 #define COVERFUNKS_H
 
-#include <QWidget>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QBoxLayout>
+#include <QWidget>
 
 QHBoxLayout* coverWithHLayout(QWidget* widget);
 QHBoxLayout* coverWithoutStretchHLayout(QWidget* widget);

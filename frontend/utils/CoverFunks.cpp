@@ -1,6 +1,6 @@
-#include <QWidget>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QWidget>
 
 QHBoxLayout* coverWithHLayout(QWidget* widget) {
     QHBoxLayout *coverringLayout = new QHBoxLayout();
@@ -46,7 +46,6 @@ QHBoxLayout* coverWithLeftAlign(QWidget* widget) {
 
     return coverringLayout;
 }
-
 
 QWidget* coverLayoutWithWidget(QBoxLayout* layout) {
     QWidget* coverringWidget = new QWidget();

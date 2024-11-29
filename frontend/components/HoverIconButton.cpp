@@ -14,11 +14,13 @@ HoverIconButton::HoverIconButton(const QIcon& icon, const QIcon& iconActive)
 
 void HoverIconButton::enterEvent(QEnterEvent *event) {
     setIcon(this->iconActive);
+    setCursor(Qt::PointingHandCursor);
     QPushButton::enterEvent(event);
 }
 
 void HoverIconButton::leaveEvent(QEvent *event) {
     setIcon(this->icon);
+    unsetCursor();
     QPushButton::leaveEvent(event);
 }
 

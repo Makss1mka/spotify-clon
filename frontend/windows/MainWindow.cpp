@@ -1,34 +1,32 @@
-#include "../headers/windows/MainWindow.h"
-#include "../headers/utils/coverFunks.h"
-#include "../headers/components/Header.h"
-#include "../headers/components/Footer.h"
-#include "../headers/components/SideBar.h"
 #include "../headers/components/MainInteractSection.h"
 #include "../headers/utils/globalVariables.h"
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
+#include "../headers/windows/MainWindow.h"
+#include "../headers/components/SideBar.h"
+#include "../headers/components/Header.h"
+#include "../headers/components/Footer.h"
+#include "../headers/utils/coverFunks.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include <QSpacerItem>
-#include <QFont>
 #include <QWidget>
-#include <QSizePolicy>
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
     mainLayout->addWidget(new Header(this));
 
+    SideBar* sideBar = new SideBar();
+    MainInteractSection* main = new MainInteractSection();
+
+    Globals::contentLoader->connectPageDist(main);
+    Globals::contentLoader->connectSideBar(sideBar);
+
     QHBoxLayout* mainSectionLayout = new QHBoxLayout();
-    mainSectionLayout->addWidget(new SideBar());
-    mainSectionLayout->addWidget(new MainInteractSection());
-    mainSectionLayout->setSpacing(6);
+    mainSectionLayout->addWidget(sideBar);
+    mainSectionLayout->addWidget(main);
+    mainSectionLayout->setSpacing(0);
 
     QWidget* centralBlock = new QWidget(this);
     centralBlock->setLayout(mainSectionLayout);
-    //centralBlock->setStyleSheet(" width: 100%; height: 100%; background: white; ");
     mainLayout->addWidget(centralBlock);
 
     mainLayout->addWidget(new Footer(this));

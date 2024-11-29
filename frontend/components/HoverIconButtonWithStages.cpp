@@ -36,6 +36,7 @@ void HoverIconButtonWithStages::enterEvent(QEnterEvent *event) {
     } else {
         setIcon(iconClickedActive);
     }
+    setCursor(Qt::PointingHandCursor);
     QPushButton::enterEvent(event);
 }
 
@@ -45,5 +46,6 @@ void HoverIconButtonWithStages::leaveEvent(QEvent *event) {
     } else {
         setIcon(iconClicked);
     }
+    unsetCursor();
     QPushButton::leaveEvent(event);
 }
