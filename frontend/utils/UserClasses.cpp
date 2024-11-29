@@ -86,31 +86,30 @@ void User::setRole(int newRole) {
 }
 
 void User::addMusic(std::shared_ptr<MusicObject> music) {
+    for(int i = 0; i < favoriteMusics.size(); i++) {
+        if (music->getId() == favoriteMusics[i]->getId()) return;
+    }
+    favoriteMusics.push_back(music);
+
     QJsonObject body;
     body["music_id"] = music->getId();
     body["user_id"] = id;
 
     HttpClient::sendPostRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/addFavMusic"), body, [favoriteMusics, music](HttpClient::Response* response){
-        if (response->statusCode < 400) {
-            for(int i = 0; i < favoriteMusics.size(); i++) {
-                if (music->getId() == favoriteMusics[i]->getId()) return;
-            }
-            favoriteMusics.push_back(music);
-        }
+
     });
 }
 
 void User::deleteMusic(int musicId) {
+    for(int i = 0; i < favoriteMusics.size(); i++) {
+        if (musicId == favoriteMusics[i]->getId()) {
+            favoriteMusics.erase(favoriteMusics.begin() + i);
+            return;
+        }
+    }
     HttpClient::sendDeleteRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/delFavMusic?user_id=" + QString::number(User::getId()) + "&music_id=" + QString::number(musicId)),
         [favoriteMusics, musicId](HttpClient::Response* response){
-        if (response->statusCode < 400) {
-            for(int i = 0; i < favoriteMusics.size(); i++) {
-                if (musicId == favoriteMusics[i]->getId()) {
-                    favoriteMusics.erase(favoriteMusics.begin() + i);
-                    return;
-                }
-            }
-        }
+
     });
 }
 
@@ -123,31 +122,31 @@ std::shared_ptr<MusicObject> User::getMusicByInd(int ind) {
 }
 
 void User::addAuthor(std::shared_ptr<AuthorObject> author) {
+    for(int i = 0; i < favoriteAuthors.size(); i++) {
+        if (author->getId() == favoriteAuthors[i]->getId()) return;
+    }
+    favoriteAuthors.push_back(author);
+
     QJsonObject body;
     body["author_id"] = author->getId();
     body["user_id"] = id;
 
     HttpClient::sendPostRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/addFavAuthor"), body, [favoriteAuthors, author](HttpClient::Response* response){
-        if (response->statusCode < 400) {
-            for(int i = 0; i < favoriteAuthors.size(); i++) {
-                if (author->getId() == favoriteAuthors[i]->getId()) return;
-            }
-            favoriteAuthors.push_back(author);
-        }
+
     });
 }
 
 void User::deleteAuthor(int authorId) {
+    for(int i = 0; i < favoriteAuthors.size(); i++) {
+        if (authorId == favoriteAuthors[i]->getId()) {
+            favoriteAuthors.erase(favoriteAuthors.begin() + i);
+            return;
+        }
+    }
+
     HttpClient::sendDeleteRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/delFavAuthor?user_id=" + QString::number(User::getId()) + "&author_id=" + QString::number(authorId)),
         [favoriteAuthors, authorId](HttpClient::Response* response){
-        if (response->statusCode < 400) {
-            for(int i = 0; i < favoriteAuthors.size(); i++) {
-                if (authorId == favoriteAuthors[i]->getId()) {
-                    favoriteAuthors.erase(favoriteAuthors.begin() + i);
-                    return;
-                }
-            }
-        }
+
     });
 }
 

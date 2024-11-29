@@ -12,6 +12,7 @@ public:
     QString getName();
     QString getAuthor();
     int getAuthorId();
+    QString getAuthorProfilePath();
     int getDuration();
     QString getPath();
     int getListens();
@@ -24,6 +25,7 @@ private:
     QString name;
     QString author;
     int authorId;
+    QString authorProfilePath;
     int duration;
     QString path;
     int listens;
