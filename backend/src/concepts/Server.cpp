@@ -22,20 +22,6 @@ Server::Server(int port) {
         exit(1);
     }
 
-    // -----------------------------------
-    // Map<QString, QString> map;
-    // map.set("key1", "value1");
-    // map.set("key2", "anotherValue2");
-    // map.set("keychik3", "EPvalue3");
-    // map.set("key4ik4", "SUIvalue4");
-    // map.set("keey5", "value5");
-    // Map<QString, QString>::ConstRevrseIterator iter = map.constReverseBegin();
-    // qDebug() << " AAA - " << (*(++iter)).key << " - " << (*iter).value;
-    // qDebug() << "item - " << (*(++iter)).key << " - " << (*(iter)).value;
-    // qDebug() << "item - " << (*(++iter)).key << " - " << (*(iter)).value;
-    // -----------------------------------
-
-
     if(!Server::openDbConnections()) throw "Cannot open DB connections";
     RouterDispatcher::getDispatcher().addRouter(std::make_shared<AdminRouter>());
     RouterDispatcher::getDispatcher().addRouter(std::make_shared<UserRouter>());

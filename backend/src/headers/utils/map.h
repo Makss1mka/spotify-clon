@@ -237,6 +237,19 @@ public:
     ConstRevrseIterator constReverseEnd() {
         return ConstRevrseIterator(pairs.begin());
     }
+
+    bool iterSearch(Iterator iter, T searchingKey) {
+        try {
+            while(true) {
+                if((*iter).key == searchingKey) {
+                    return true;
+                }
+                iter++;
+            }
+        } catch (...) {
+            return false;
+        }
+    }
 };
 
 #endif // MAP_H
