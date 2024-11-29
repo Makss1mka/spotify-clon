@@ -14,6 +14,7 @@
 #include <QSize>
 
 SideBar::SideBar(QWidget *parent) : QWidget(parent) {
+    this->currentStage = 1;
     //this->setStyleSheet("background: #121212; border-radius: 5px; width: 300px; max-width: 300px");
     //this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
@@ -70,7 +71,13 @@ SideBar::SideBar(QWidget *parent) : QWidget(parent) {
     this->setLayout(coverWithoutStretchVLayout(mainWidget));
 }
 
+int SideBar::getCurrentStage() {
+    return this->currentStage;
+}
+
 void SideBar::musicsClicked() {
+    this->currentStage = 1;
+
     QLayoutItem *item;
     while ((item = this->scrollBarLayout->takeAt(0)) != nullptr) {
         delete item->widget();
@@ -83,6 +90,8 @@ void SideBar::musicsClicked() {
 }
 
 void SideBar::authorsClicked() {
+    this->currentStage = 2;
+
     QLayoutItem *item;
     while ((item = this->scrollBarLayout->takeAt(0)) != nullptr) {
         delete item->widget();

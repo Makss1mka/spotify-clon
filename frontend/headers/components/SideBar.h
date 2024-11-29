@@ -10,7 +10,11 @@ class SideBar : public QWidget {
     Q_OBJECT
 public:
     explicit SideBar(QWidget *parent = nullptr);
+
+    int getCurrentStage();
 private:
+    int currentStage;
+
     QLabel* label;
     QPushButton* musics;
     QPushButton* authors;
