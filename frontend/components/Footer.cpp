@@ -4,7 +4,10 @@
 #include "../headers/components/SoundButton.h"
 #include "../headers/components/MusicSlider.h"
 #include "../headers/components/Footer.h"
+#include "../headers/pages/AuthorPage.h"
+#include "../headers/pages/MusicPage.h"
 #include "../headers/utils/globalVariables.h"
+#include "../headers/utils/UserClasses.h"
 #include "../headers/utils/MusicClass.h"
 #include "../headers/utils/HttpClient.h"
 #include "../headers/utils/EnvFile.h"
@@ -31,13 +34,28 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     musicImage->setIcon(QIcon(":/assets/picture.png"));
     musicImage->setFixedSize(50, 50);
     musicImage->setIconSize(QSize(50, 50));
-
+    musicImage->connect(musicImage, &QPushButton::clicked, [this](){
+        Globals::contentLoader->loadPage(new MusicPage(Globals::player->getCurrentMusic()));
+    });
 
     // Music data labels
-    nameLabel = new QLabel("Test name");
-    nameLabel->setStyleSheet("color: white; margin: 0px; padding: 0px;");
-    authorLabel = new QLabel("Test author");
-    authorLabel->setStyleSheet("font-size: 11px; color: #CDCDCD; padding: 0px;");
+    nameLabel = new QPushButton("Test name");
+    nameLabel->setStyleSheet("QPushButton { text-align: left; width: 200px; color: white; margin: 0px; padding: 0px; } "
+            "QPushButton:hover { text-decoration: underline; }");
+    nameLabel->connect(nameLabel, &QPushButton::clicked, [this](){
+        Globals::contentLoader->loadPage(new MusicPage(Globals::player->getCurrentMusic()));
+    });
+    authorLabel = new QPushButton("Test author");
+    authorLabel->setStyleSheet("QPushButton { text-align: left; width: 200px; font-size: 11px; color: #CDCDCD; padding: 0px; } "
+            "QPushButton:hover { text-decoration: underline; }");
+    authorLabel->connect(authorLabel, &QPushButton::clicked, [this](){
+        QJsonObject authorObject;
+        authorObject["id"] = Globals::player->getCurrentMusic()->getAuthorId();
+        authorObject["name"] = Globals::player->getCurrentMusic()->getAuthor();
+        authorObject["profile"] = Globals::player->getCurrentMusic()->getAuthorProfilePath();
+
+        Globals::contentLoader->loadPage(new AuthorPage(std::make_shared<AuthorObject>(authorObject)));
+    });
 
 
     // Labels layout
@@ -124,9 +142,11 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
 
     // Time Labels
     startTime = new QLabel("00:00");
-    startTime->setStyleSheet("color: #EDEDED; padding: 0px;");
+    startTime->setAlignment(Qt::AlignRight);
+    startTime->setStyleSheet("max-width: 30px; color: #EDEDED; padding: 0px;");
     endTime = new QLabel("00:00");
-    endTime->setStyleSheet("color: #EDEDED; padding: 0px;");;
+    endTime->setAlignment(Qt::AlignLeft);
+    endTime->setStyleSheet("max-width: 30px; color: #EDEDED; padding: 0px;");;
 
     // Timeline music slider
     musicTimeline = new MusicSlider();
@@ -182,6 +202,7 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     timelineLayout->addWidget(startTime);
     timelineLayout->addWidget(musicTimeline);
     timelineLayout->addWidget(endTime);
+    timelineLayout->setAlignment(Qt::AlignCenter);
 
 
     // Second inner layout
@@ -229,10 +250,11 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
 
     // --- Main Template
     QHBoxLayout *mainLayout = new QHBoxLayout;
+    firstInnerLayout->setAlignment(Qt::AlignLeft);
+    secondInnerLayout->setAlignment(Qt::AlignCenter);
+    thirdInnerLayout->setAlignment(Qt::AlignRight);
     mainLayout->addLayout(firstInnerLayout, 0);
-    mainLayout->addStretch(1);
     mainLayout->addLayout(secondInnerLayout, 2);
-    mainLayout->addStretch(1);
     mainLayout->addLayout(thirdInnerLayout, 0);
 
     this->setLayout(mainLayout);

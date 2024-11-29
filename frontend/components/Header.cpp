@@ -2,7 +2,10 @@
 #include "../headers/utils/globalVariables.h"
 #include "../headers/components/Header.h"
 #include "../headers/utils/coverFunks.h"
+#include "../headers/pages/SearchPage.h"
 #include "../headers/app.h"
+#include <QRegularExpressionValidator>
+#include <QRegularExpression>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -43,10 +46,16 @@ Header::Header(QWidget *parent) : QWidget(parent) {
     searchInputField = new QLineEdit;
     searchInputField->setPlaceholderText("Что хотите послушать");
     searchInputField->setStyleSheet("background: #272727; border-radius: 10px; color: white;");
+    QRegularExpression regExp("[A-Za-z0-9]*");
+    QRegularExpressionValidator validator(regExp, searchInputField);
+    searchInputField->setValidator(&validator);
 
     // Search button
     searchButton = new HoverIconButton(QIcon(":/assets/search.png"), QIcon(":/assets/search-active.png"));
     searchButton->setFixedSize(30, 30);
+    searchButton->connect(searchButton, &QPushButton::clicked, [this](){
+        Globals::contentLoader->loadPage(new SearchPage(this->searchInputField->text()));
+    });
 
     // Search layout
     QHBoxLayout *searchLayout = new QHBoxLayout;

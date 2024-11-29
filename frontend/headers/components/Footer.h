@@ -18,8 +18,8 @@ public:
     explicit Footer(QWidget *parent = nullptr);
 private:
     QPushButton *musicImage;
-    QLabel *nameLabel;
-    QLabel *authorLabel;
+    QPushButton *nameLabel;
+    QPushButton *authorLabel;
 
     HoverIconButtonWithStages *shuffleButton;
     HoverIconButton *backButton;
