@@ -5,27 +5,30 @@
 #include "../components/AuthorCard.h"
 #include "../components/MusicCard.h"
 #include <QPushButton>
+#include <QVBoxLayout>
 #include <QWidget>
 #include <QLabel>
 
 class MusicPage : public QWidget {
     Q_OBJECT
 public:
-    explicit MusicPage(QWidget *parent = nullptr);
+    explicit MusicPage(std::shared_ptr<MusicObject> musicData, QWidget *parent = nullptr);
 private:
-    QLabel* profilePicture;
+    QPushButton* profile;
     QLabel* type;
     QLabel* name;
     QLabel* metaData;
     QPushButton* playButton;
-    HoverIconButtonWithStages* loveButthon;
+    HoverIconButtonWithStages* loveButton;
     QPushButton* optionsButton;
+    std::shared_ptr<MusicObject> musicData;
 
     AuthorCard* authorCard;
 
+    QVBoxLayout* thirdInnerLayout;
+
     QLabel* recsLabel;
     QLabel* subRecsLabel;
-    std::vector<MusicCard*> recs;
 };
 
 #endif // MUSICPAGE_H
