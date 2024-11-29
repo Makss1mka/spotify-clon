@@ -57,6 +57,6 @@ void Router::getRouterInfo() {
 }
 
 void Router::addProvider(const std::string& key, std::shared_ptr<Provider> provider) {
-    providers[key] = provider;
+    providers.set(key, provider);
 }
 

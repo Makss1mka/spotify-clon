@@ -7,7 +7,7 @@
 #include <functional>
 #include "Request.h"
 #include "Provider.h"
-#include "../utils/map.h"
+#include "../utils/Map.h"
 
 class Router {
 public:
@@ -27,7 +27,7 @@ public:
 
     template<typename T>
     std::shared_ptr<T> getProvider(const std::string& key) {
-        return std::dynamic_pointer_cast<T>(this->providers[key]);
+        return std::dynamic_pointer_cast<T>(this->providers.get(key));
     }
 protected:
     std::string urlPrefix;
@@ -42,7 +42,7 @@ protected:
     };
 
     std::vector<Route> routes;
-    std::map<std::string, std::shared_ptr<Provider>> providers;
+    Map<std::string, std::shared_ptr<Provider>> providers;
 };
 
 #endif // ROUTER_H

@@ -3,6 +3,7 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QTcpSocket>
+#include "../headers/utils/Map.h"
 #include "../headers/concepts/Server.h"
 #include "../headers/concepts/Request.h"
 #include "../headers/concepts/RouterDispatcher.h"
@@ -11,6 +12,8 @@
 #include "../headers/musicModule/MusicRouter.h"
 #include "../headers/utils/EnvFile.h"
 
+#include <QString>
+
 Server::Server(int port) {
     if(this->listen(QHostAddress::Any, port)) {
         qDebug() << "Server started on " << port << " port";
@@ -18,6 +21,20 @@ Server::Server(int port) {
         qWarning() << "Server starting error";
         exit(1);
     }
+
+    // -----------------------------------
+    // Map<QString, QString> map;
+    // map.set("key1", "value1");
+    // map.set("key2", "anotherValue2");
+    // map.set("keychik3", "EPvalue3");
+    // map.set("key4ik4", "SUIvalue4");
+    // map.set("keey5", "value5");
+    // Map<QString, QString>::ConstRevrseIterator iter = map.constReverseBegin();
+    // qDebug() << " AAA - " << (*(++iter)).key << " - " << (*iter).value;
+    // qDebug() << "item - " << (*(++iter)).key << " - " << (*(iter)).value;
+    // qDebug() << "item - " << (*(++iter)).key << " - " << (*(iter)).value;
+    // -----------------------------------
+
 
     if(!Server::openDbConnections()) throw "Cannot open DB connections";
     RouterDispatcher::getDispatcher().addRouter(std::make_shared<AdminRouter>());

@@ -6,6 +6,7 @@
 #include <QString>
 #include <QJsonArray>
 #include <QJsonObject>
+#include "../utils/Map.h"
 
 class Request {
 public:
@@ -18,7 +19,7 @@ public:
     QString method;
     QString url;
     std::map<QString, QString> query;
-    std::map<QString, QString> headers;
+    Map<QString, QString> headers;
 
     bool isBodyJsonObj = false;
     QJsonObject bodyJsonObj;

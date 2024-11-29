@@ -22,7 +22,6 @@ SOURCES += \
         \
         src/main.cpp \
         \
-        \
         src/utils/EnvFile.cpp \
         src/utils/exceptions.cpp \
         src/utils/statusCodes.cpp
@@ -47,7 +46,7 @@ HEADERS += \
         src/headers/musicModule/MusicRouter.h \
         \
         src/headers/utils/EnvFile.h \
-        src/headers/utils/map.h \
+        src/headers/utils/Map.h \
         src/headers/utils/exceptions.h \
         src/headers/utils/statusCodes.h
 

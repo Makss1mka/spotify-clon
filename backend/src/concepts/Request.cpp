@@ -4,7 +4,10 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QByteArray>
+#include <QUrlQuery>
 #include <QList>
+#include <QPair>
+#include <QUrl>
 
 Request::Request() {}
 
@@ -42,10 +45,12 @@ Request Request::parseFromQByteArray(QByteArray rawReq) {
 
     parsedReq.url = splitedRawUrl[0];
 
-    if(splitedRawUrl.length() > 1) {
-        for(auto& oneQueryPair : splitedRawUrl[1].split('&')) {
-            QList<QByteArray> splitedOneQueryPair = oneQueryPair.split('=');
-            parsedReq.query[splitedOneQueryPair[0]] = splitedOneQueryPair[1];
+    if (splitedRawUrl.size() > 1) {
+        QUrlQuery query = QUrlQuery(splitedRawUrl[1]);
+
+        QList<QPair<QString, QString>> items = query.queryItems();
+        for(const QPair<QString, QString> &item : items) {
+            parsedReq.query[item.first] = item.second;
         }
     }
 
@@ -54,7 +59,7 @@ Request Request::parseFromQByteArray(QByteArray rawReq) {
     QByteArray oneHeaderPair = splitedRawReq[tempInd];
     while (oneHeaderPair != "\n") {
         QList<QByteArray> splitedOneHeaderPair = oneHeaderPair.mid(1).split(':');
-        parsedReq.headers[splitedOneHeaderPair[0]] = splitedOneHeaderPair[1].mid(1);
+        parsedReq.headers.set(splitedOneHeaderPair[0], splitedOneHeaderPair[1].mid(1));
 
         oneHeaderPair = splitedRawReq[++tempInd];
     }
