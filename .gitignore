@@ -1,2 +1,5 @@
 /backend/build
+/backend/db/music/*
+/backend/db/profilePics/*
+/backend/db/users.sqlite3
 /frontend/build
