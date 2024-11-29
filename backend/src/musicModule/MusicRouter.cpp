@@ -131,8 +131,9 @@ void MusicRouter::setupRoutes() {
     });
 
     this->addGetRoute("/recomend", [this](Request& request) -> QByteArray {
-        if(request.query.size() != 4 || request.query.count("janre") == 0 || request.query.count("author") == 0
-            || request.query.count("lang") == 0 || request.query.count("track_name") == 0) {
+        if(request.query.size() != 5 || request.query.count("janre") == 0 || request.query.count("author") == 0
+            || request.query.count("lang") == 0 || request.query.count("track_name") == 0
+            || request.query.count("limit") == 0 || Request::isInt(request.query["limit"]) == false) {
             throw BadRequestException(
                 "Invalid query format for recommend musics",
                 "Invalid query format for recommend musics"
@@ -140,7 +141,8 @@ void MusicRouter::setupRoutes() {
         }
 
         std::shared_ptr<MusicProvider> musicProvider = this->getProvider<MusicProvider>("musicProvider");
-        QByteArray data = musicProvider->recomend(request.query["janre"].replace("%20", " "),
+        QByteArray data = musicProvider->recomend(request.query["limit"].toInt(),
+                request.query["janre"].replace("%20", " "),
                 request.query["author"].replace("%20", " "),
                 request.query["lang"].replace("%20", " "),
                 request.query["track_name"].replace("%20", " "));
@@ -154,5 +156,24 @@ void MusicRouter::setupRoutes() {
         return response;
     });
 
+    this->addGetRoute("/find", [this](Request& request) -> QByteArray {
+        if(request.query.size() != 1 || request.query.count("key") == 0) {
+            throw BadRequestException(
+                "Invalid query format for finding",
+                "Invalid query format for finding"
+            );
+        }
+
+        std::shared_ptr<MusicProvider> musicProvider = this->getProvider<MusicProvider>("musicProvider");
+        QByteArray data = musicProvider->find(request.query["key"].replace("%20", " "));
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                "Content-Type: application/json\r\n"
+                "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
+                "\r\n";
+        response.append(data);
+
+        return response;
+    });
 }
 

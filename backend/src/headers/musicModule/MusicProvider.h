@@ -15,7 +15,7 @@ public:
     QByteArray findByName(const QString&  name);
     QByteArray find(const QString& keyStr);
     QByteArray getAll();
-    QByteArray recomend(const QString& janre, const QString& author, const QString& lang, const QString& trackName);
+    QByteArray recomend(int limit, const QString& janre, const QString& author, const QString& lang, const QString& trackName);
 };
 
 #endif // MUSICPROVIDER_H

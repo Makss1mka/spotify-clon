@@ -185,9 +185,6 @@ QJsonArray UserProvider::getFavoriteMusics(const QString& userId) {
     QJsonObject musicEntry;
     QSqlQuery query;
 
-
-
-
     if(!query.exec("SELECT music.id, music.name, music.file, music.author_id, userInfo.login, music.duration, music.listens, "
         "music.janre, music.lang, music.picture AS musicPic, userInfo.picture AS userPic FROM user_music "
         "JOIN music ON user_music.music_id = music.id "
@@ -203,7 +200,7 @@ QJsonArray UserProvider::getFavoriteMusics(const QString& userId) {
         musicEntry["id"] = query.value(0).toInt();
         musicEntry["name"] = query.value(1).toString();
         musicEntry["file"] = query.value(2).toString();
-        musicEntry["author_id"] = query.value(3).toString();
+        musicEntry["author_id"] = query.value(3).toInt();
         musicEntry["author_name"] = query.value(4).toString();
         musicEntry["duration"] = query.value(5).toInt();
         musicEntry["listens"] = query.value(6).toInt();
