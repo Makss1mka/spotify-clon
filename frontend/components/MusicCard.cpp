@@ -4,6 +4,7 @@
 #include "../headers/utils/coverFunks.h"
 #include "../headers/utils/HttpClient.h"
 #include "../headers/utils/MusicClass.h"
+#include "../headers/pages/AuthorPage.h"
 #include "../headers/pages/MusicPage.h"
 #include "../headers/utils/EnvFile.h"
 #include <QSizePolicy>
@@ -11,6 +12,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QEnterEvent>
+#include <QJsonObject>
 #include <QPointer>
 #include <QWidget>
 #include <QPixmap>
@@ -34,12 +36,12 @@ MusicCard::MusicCard(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     QPointer<MusicCard> pointedThis = this;
     HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + musicData->getProfilePath()),
         [pointedThis](HttpClient::Response* response) {
-            if (response->statusCode < 400) {
-                if (!pointedThis) return;
-                QPixmap pixmap;
-                pixmap.loadFromData(response->body);
-                pointedThis->profilePic->setIcon(QIcon(pixmap));
-            }
+        if (response->statusCode < 400) {
+            if (!pointedThis) return;
+            QPixmap pixmap;
+            pixmap.loadFromData(response->body);
+            pointedThis->profilePic->setIcon(QIcon(pixmap));
+        }
     });
 
     nameLabel = new QPushButton(musicData->getName(), mainWidget);
@@ -76,11 +78,16 @@ MusicCard::MusicCard(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
 }
 
 void MusicCard::trackNameClicked() {
-    Globals::mainInteractSection->loadPage(new MusicPage(musicData));
+    Globals::contentLoader->loadPage(new MusicPage(musicData));
 }
 
 void MusicCard::trackAuthorClicked() {
+    QJsonObject authorObject;
+    authorObject["id"] = musicData->getAuthorId();
+    authorObject["name"] = musicData->getAuthor();
+    authorObject["profile"] = musicData->getAuthorProfilePath();
 
+    Globals::contentLoader->loadPage(new AuthorPage(std::make_shared<AuthorObject>(authorObject)));
 }
 
 void MusicCard::trackProfileClicked() {

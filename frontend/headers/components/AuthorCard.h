@@ -21,7 +21,6 @@ private:
 
     std::shared_ptr<AuthorObject> authorData;
 public slots:
-    void trackNameClicked();
     void trackAuthorClicked();
     void trackProfileClicked();
 };

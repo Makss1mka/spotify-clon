@@ -1,4 +1,6 @@
 #include "../headers/components/AuthorCard.h"
+#include "../headers/utils/globalVariables.h"
+#include "../headers/pages/AuthorPage.h"
 #include "../headers/utils/coverFunks.h"
 #include "../headers/utils/HttpClient.h"
 #include "../headers/utils/MusicClass.h"
@@ -17,6 +19,7 @@
 #include <QIcon>
 
 AuthorCard::AuthorCard(std::shared_ptr<AuthorObject> authorData, QWidget *parent) : QWidget(parent) {
+    this->authorData = authorData;
     this->setStyleSheet("margin: 0px; padding: 0px; max-height: 80px; max-width: 290px");
     setMouseTracking(true);
 
@@ -30,14 +33,12 @@ AuthorCard::AuthorCard(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     QPointer<AuthorCard> pointedThis = this;
     HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + authorData->getProfilePath()),
         [pointedThis](HttpClient::Response* response) {
-            if (response->statusCode < 400) {
-                QPixmap pixmap;
-                pixmap.loadFromData(response->body);
-                pixmap = pixmap.scaled(45, 45, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-                pointedThis->profilePic->setIcon(QIcon(pixmap));
-                pointedThis->profilePic->setIconSize(QSize(45, 45));
-            }
-        });
+        if (response->statusCode < 400) {
+            QPixmap pixmap;
+            pixmap.loadFromData(response->body);
+            pointedThis->profilePic->setIcon(QIcon(pixmap));
+        }
+    });
 
 
     label = new QLabel("Исполнитель:");
@@ -47,7 +48,7 @@ AuthorCard::AuthorCard(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     nameLabel = new QPushButton(authorData->getName(), mainWidget);
     nameLabel->setStyleSheet("QPushButton { height: 13px; font-size: 13px; text-align: left; background: #121212; color: white; padding: 0px; }"
             "QPushButton:hover { text-decoration: underline; }");
-    nameLabel->connect(nameLabel, &QPushButton::clicked, this, &AuthorCard::trackNameClicked);
+    nameLabel->connect(nameLabel, &QPushButton::clicked, this, &AuthorCard::trackAuthorClicked);
 
 
     QVBoxLayout *textLayout = new QVBoxLayout();
@@ -68,12 +69,8 @@ AuthorCard::AuthorCard(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     this->setLayout(coverWithoutStretchHLayout(mainWidget));
 }
 
-void AuthorCard::trackNameClicked() {
-
-}
-
 void AuthorCard::trackAuthorClicked() {
-
+    Globals::contentLoader->loadPage(new AuthorPage(authorData));
 }
 
 void AuthorCard::trackProfileClicked() {
