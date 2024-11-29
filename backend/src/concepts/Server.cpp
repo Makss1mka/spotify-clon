@@ -1,18 +1,16 @@
-#include <QFile>
-#include <QCoreApplication>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QTcpSocket>
-#include "../headers/utils/Map.h"
-#include "../headers/concepts/Server.h"
-#include "../headers/concepts/Request.h"
 #include "../headers/concepts/RouterDispatcher.h"
+#include "../headers/musicModule/MusicRouter.h"
 #include "../headers/adminModule/AdminRouter.h"
 #include "../headers/userModule/UserRouter.h"
-#include "../headers/musicModule/MusicRouter.h"
+#include "../headers/concepts/Request.h"
+#include "../headers/concepts/Server.h"
 #include "../headers/utils/EnvFile.h"
-
-#include <QString>
+#include "../headers/utils/Map.h"
+#include <QCoreApplication>
+#include <QSqlDatabase>
+#include <QTcpSocket>
+#include <QSqlError>
+#include <QFile>
 
 Server::Server(int port) {
     if(this->listen(QHostAddress::Any, port)) {
