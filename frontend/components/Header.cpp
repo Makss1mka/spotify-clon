@@ -82,17 +82,17 @@ Header::Header(QWidget *parent) : QWidget(parent) {
     // Collapse button
     collapseButton = new HoverIconButton(QIcon(":/assets/line.png"), QIcon(":/assets/line-active.png"));
     collapseButton->setStyleSheet("background: inherit");
-    collapseButton->connect(collapseButton, &QPushButton::clicked, &App::showNormal);
+    collapseButton->connect(collapseButton, &QPushButton::clicked, []{Globals::widgetManager->collapseApp();});
 
     // Collapse in window button
     collapseInWindowButton = new HoverIconButton(QIcon(":/assets/square.png"), QIcon(":/assets/square-active.png"));
     collapseInWindowButton->setStyleSheet("background: inherit");
-    collapseInWindowButton->connect(collapseInWindowButton, &QPushButton::clicked, &App::showMinimized);
+    collapseInWindowButton->connect(collapseInWindowButton, &QPushButton::clicked, []{Globals::widgetManager->collapseInWindowApp();});
 
     // Exit button
     exitButton = new HoverIconButton(QIcon(":/assets/cross.png"), QIcon(":/assets/cross-active.png"));
     exitButton->setStyleSheet("background: inherit");
-    exitButton->connect(exitButton, &QPushButton::clicked, &App::close);
+    exitButton->connect(exitButton, &QPushButton::clicked, []{Globals::widgetManager->closeApp();});
 
     // Third inner layout
     QHBoxLayout *rightLayout = new QHBoxLayout;
