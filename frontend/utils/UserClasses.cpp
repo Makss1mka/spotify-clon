@@ -104,7 +104,7 @@ void User::deleteMusic(int musicId) {
     for(int i = 0; i < favoriteMusics.size(); i++) {
         if (musicId == favoriteMusics[i]->getId()) {
             favoriteMusics.erase(favoriteMusics.begin() + i);
-            return;
+            break;
         }
     }
     HttpClient::sendDeleteRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/delFavMusic?user_id=" + QString::number(User::getId()) + "&music_id=" + QString::number(musicId)),
@@ -140,7 +140,7 @@ void User::deleteAuthor(int authorId) {
     for(int i = 0; i < favoriteAuthors.size(); i++) {
         if (authorId == favoriteAuthors[i]->getId()) {
             favoriteAuthors.erase(favoriteAuthors.begin() + i);
-            return;
+            break;
         }
     }
 

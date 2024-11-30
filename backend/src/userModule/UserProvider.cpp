@@ -90,7 +90,7 @@ void UserProvider::updateBasicInfo(int id, const QString& login, const QString& 
 
 void UserProvider::addFavoriteAuthor(int authorId, int userId) {
     QSqlQuery query;
-    if(!query.exec("SELECT name FROM authors WHERE id=" + QString::number(authorId) + ";")) {
+    if(!query.exec("SELECT login FROM userInfo WHERE id=" + QString::number(authorId) + ";")) {
         throw ServiceUnavailableException(
             "Method: UserProvider::addFavoriteAuthor is unavailable",
             "User service is temporarily unavailable"
