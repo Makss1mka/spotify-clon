@@ -80,7 +80,7 @@ MusicCard::MusicCard(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
 }
 
 void MusicCard::trackNameClicked() {
-    Globals::contentLoader->loadPage(new MusicPage(musicData));
+    Globals::widgetManager->loadPage(new MusicPage(musicData));
 }
 
 void MusicCard::trackAuthorClicked() {
@@ -89,7 +89,7 @@ void MusicCard::trackAuthorClicked() {
     authorObject["name"] = musicData->getAuthor();
     authorObject["profile"] = musicData->getAuthorProfilePath();
 
-    Globals::contentLoader->loadPage(new AuthorPage(std::make_shared<AuthorObject>(authorObject)));
+    Globals::widgetManager->loadPage(new AuthorPage(std::make_shared<AuthorObject>(authorObject)));
 }
 
 void MusicCard::trackProfileClicked() {

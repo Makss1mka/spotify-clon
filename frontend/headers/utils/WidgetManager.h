@@ -1,13 +1,13 @@
-#ifndef CONTENTLOADER_H
-#define CONTENTLOADER_H
+#ifndef WIDGETMANAGER_H
+#define WIDGETMANAGER_H
 
 #include "../components/MainInteractSection.h"
 #include "../components/SideBar.h"
 #include <QWidget>
 
-class ContentLoader {
+class WidgetManager {
 public:
-    explicit ContentLoader();
+    explicit WidgetManager();
     //virtual ~ContentLoader() = default;
 
     static const int RELOAD_MUSICS;
@@ -22,4 +22,4 @@ private:
     SideBar* sideBar;
 };
 
-#endif // CONTENTLOADER_H
+#endif // WIDGETMANAGER_H

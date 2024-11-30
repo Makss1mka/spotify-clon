@@ -192,7 +192,7 @@ QByteArray MusicProvider::find(const QString &keyStr) {
         }
     }
 
-    qDebug() << " find 111 " << requestTemplate + likeTracksTemplates + sorting;
+    //qDebug() << " find 111 " << requestTemplate + likeTracksTemplates + sorting;
     if(!query.exec(requestTemplate + likeTracksTemplates + sorting)) {
         throw ServiceUnavailableException(
             "Method: MusicProvider::find is unavailable",

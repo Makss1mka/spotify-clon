@@ -1,7 +1,7 @@
 #include "../headers/components/HoverIconButtonWithStages.h"
 #include "../headers/components/HoverIconButton.h"
 #include "../headers/utils/globalVariables.h"
-#include "../headers/utils/ContentLoader.h"
+#include "../headers/utils/WidgetManager.h"
 #include "../headers/utils/UserClasses.h"
 #include "../headers/utils/coverFunks.h"
 #include "../headers/utils/HttpClient.h"
@@ -107,7 +107,7 @@ MusicPage::MusicPage(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
             User::deleteMusic(this->musicData->getId());
         }
         this->loveButton->swapStage();
-        Globals::contentLoader->reloadSideBar(ContentLoader::RELOAD_MUSICS);
+        Globals::widgetManager->reloadSideBar(WidgetManager::RELOAD_MUSICS);
     });
     for(int i = 0; i < User::getMusicsLength(); i++) {
         if (User::getMusicByInd(i)->getId() == musicData->getId()) {

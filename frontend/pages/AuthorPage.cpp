@@ -2,7 +2,7 @@
 #include "../headers/components/HoverIconButton.h"
 #include "../headers/utils/globalVariables.h"
 #include "../headers/components/MusicCard.h"
-#include "../headers/utils/ContentLoader.h"
+#include "../headers/utils/WidgetManager.h"
 #include "../headers/utils/UserClasses.h"
 #include "../headers/utils/MusicClass.h"
 #include "../headers/utils/coverFunks.h"
@@ -99,7 +99,7 @@ AuthorPage::AuthorPage(std::shared_ptr<AuthorObject> authorData, QWidget *parent
             User::deleteAuthor(this->authorData->getId());
         }
         this->loveButton->swapStage();
-        Globals::contentLoader->reloadSideBar(ContentLoader::RELOAD_AUTHORS);
+        Globals::widgetManager->reloadSideBar(WidgetManager::RELOAD_AUTHORS);
     });
     for(int i = 0; i < User::getAuthorsLength(); i++) {
         if (User::getAuthorByInd(i)->getId() == this->authorData->getId()) {

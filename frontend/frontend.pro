@@ -37,7 +37,6 @@ SOURCES += \
     pages/MusicPage.cpp \
     pages/SearchPage.cpp \
     \
-    utils/ContentLoader.cpp \
     utils/CoverFunks.cpp \
     utils/GlobalVariables.cpp \
     utils/HttpClient.cpp \
@@ -46,6 +45,7 @@ SOURCES += \
     utils/UserClasses.cpp \
     utils/EnvFile.cpp \
     \
+    utils/WidgetManager.cpp \
     windows/LogInWindow.cpp \
     windows/MainWindow.cpp \
     windows/SignUpWindow.cpp \
@@ -70,10 +70,10 @@ HEADERS += \
     \
     headers/pages/AuthorPage.h \
     headers/pages/MusicPage.h \
-    headers/utils/ContentLoader.h \
     headers/utils/HttpClient.h \
     headers/utils/MusicClass.h \
     headers/utils/Player.h \
+    headers/utils/WidgetManager.h \
     headers/utils/globalVariables.h \
     headers/utils/coverFunks.h \
     headers/utils/UserClasses.h \

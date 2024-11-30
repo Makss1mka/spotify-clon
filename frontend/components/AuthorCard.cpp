@@ -73,7 +73,7 @@ AuthorCard::AuthorCard(std::shared_ptr<AuthorObject> authorData, QWidget *parent
 }
 
 void AuthorCard::trackAuthorClicked() {
-    Globals::contentLoader->loadPage(new AuthorPage(authorData));
+    Globals::widgetManager->loadPage(new AuthorPage(authorData));
 }
 
 void AuthorCard::trackProfileClicked() {

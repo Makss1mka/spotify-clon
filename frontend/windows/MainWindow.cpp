@@ -17,8 +17,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     SideBar* sideBar = new SideBar();
     MainInteractSection* main = new MainInteractSection();
 
-    Globals::contentLoader->connectPageDist(main);
-    Globals::contentLoader->connectSideBar(sideBar);
+    Globals::widgetManager->connectPageDist(main);
+    Globals::widgetManager->connectSideBar(sideBar);
 
     QHBoxLayout* mainSectionLayout = new QHBoxLayout();
     mainSectionLayout->addWidget(sideBar);

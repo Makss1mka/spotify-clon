@@ -2,11 +2,11 @@
 #define GLOBALVARIABLES_H
 
 #include "../components/MainInteractSection.h"
-#include "./ContentLoader.h"
+#include "./WidgetManager.h"
 #include "./Player.h"
 
 namespace Globals {
-    extern ContentLoader* contentLoader;
+    extern WidgetManager* widgetManager;
     extern Player* player;
 }
 

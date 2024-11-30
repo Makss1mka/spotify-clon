@@ -35,7 +35,7 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     musicImage->setFixedSize(50, 50);
     musicImage->setIconSize(QSize(50, 50));
     musicImage->connect(musicImage, &QPushButton::clicked, [this](){
-        Globals::contentLoader->loadPage(new MusicPage(Globals::player->getCurrentMusic()));
+        Globals::widgetManager->loadPage(new MusicPage(Globals::player->getCurrentMusic()));
     });
 
     // Music data labels
@@ -43,7 +43,7 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
     nameLabel->setStyleSheet("QPushButton { text-align: left; width: 200px; color: white; margin: 0px; padding: 0px; } "
             "QPushButton:hover { text-decoration: underline; }");
     nameLabel->connect(nameLabel, &QPushButton::clicked, [this](){
-        Globals::contentLoader->loadPage(new MusicPage(Globals::player->getCurrentMusic()));
+        Globals::widgetManager->loadPage(new MusicPage(Globals::player->getCurrentMusic()));
     });
     authorLabel = new QPushButton("Test author");
     authorLabel->setStyleSheet("QPushButton { text-align: left; width: 200px; font-size: 11px; color: #CDCDCD; padding: 0px; } "
@@ -54,7 +54,7 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
         authorObject["name"] = Globals::player->getCurrentMusic()->getAuthor();
         authorObject["profile"] = Globals::player->getCurrentMusic()->getAuthorProfilePath();
 
-        Globals::contentLoader->loadPage(new AuthorPage(std::make_shared<AuthorObject>(authorObject)));
+        Globals::widgetManager->loadPage(new AuthorPage(std::make_shared<AuthorObject>(authorObject)));
     });
 
 

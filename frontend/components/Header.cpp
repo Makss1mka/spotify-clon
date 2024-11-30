@@ -54,7 +54,7 @@ Header::Header(QWidget *parent) : QWidget(parent) {
     searchButton = new HoverIconButton(QIcon(":/assets/search.png"), QIcon(":/assets/search-active.png"));
     searchButton->setFixedSize(30, 30);
     searchButton->connect(searchButton, &QPushButton::clicked, [this](){
-        Globals::contentLoader->loadPage(new SearchPage(this->searchInputField->text()));
+        Globals::widgetManager->loadPage(new SearchPage(this->searchInputField->text()));
     });
 
     // Search layout
