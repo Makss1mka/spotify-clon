@@ -18,7 +18,7 @@ public:
     Map() {}
     ~Map() {}
 
-    const K& get(const T& key) {
+    const K& get(const T& key) const {
         for(auto &pair : pairs) {
             if(pair.key == key) return pair.value;
         }
@@ -34,7 +34,7 @@ public:
         pairs.push_back(Pair(key, value));
     }
 
-    int count(const T& key) {
+    int count(const T& key) const {
         for(auto &pair : pairs) {
             if(pair.key == key) return 1;
         }
