@@ -1,12 +1,15 @@
-#include "../headers/concepts/router.h"
-#include "../headers/concepts/Request.h"
 #include "../headers/userModule/UserProvider.h"
 #include "../headers/userModule/UserRouter.h"
 #include "../headers/utils/exceptions.h"
+#include "../headers/concepts/Request.h"
+#include "../headers/concepts/router.h"
+    #include "../headers/concepts/JWT.h"
+    #include "../headers/utils/envFile.h"
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QByteArray>
-#include <QFile>
 #include <QString>
+#include <QFile>
 
 UserRouter::UserRouter() : Router("/user") {
     this->setupRoutes();
@@ -48,21 +51,30 @@ void UserRouter::setupRoutes() {
         return response;
     });
 
-    this->addGetRoute("/auth", [this](Request& request) -> QByteArray {
-        if(request.query.size() != 2 || !(request.query.count("login") == 0 ^ request.query.count("email") == 0) || request.query.count("password") == 0) {
+    this->addPostRoute("/auth", [this](Request& request) -> QByteArray {
+        if(request.isBodyJsonObj == false || request.bodyJsonObj.size() != 2 || !(request.bodyJsonObj.contains("login") == false
+            ^ request.bodyJsonObj.contains("email") == false) || request.bodyJsonObj.contains("password") == false) {
             throw BadRequestException(
-                "Invalid body format for authorization",
-                "Invalid body format for authorization"
+                "Invalid body format for authorization via credits",
+                "Invalid body format for authorization via credits"
+            );
+        }
+        if ((request.bodyJsonObj.contains("login") == true && request.bodyJsonObj.value("login").isString() == false)
+            || (request.bodyJsonObj.contains("email") == true && request.bodyJsonObj.value("email").isString() == false)
+            || request.bodyJsonObj.value("password").isString() == false) {
+            throw BadRequestException(
+                "Invalid body format for authorization via credits, unsupported types",
+                "Invalid body format for authorization via credits, unsupported types"
             );
         }
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
         QByteArray data;
 
-        if (request.query.count("login") == 0) {
-            data = userProvider->authUser("", request.query["email"], request.query["password"]);
+        if (request.bodyJsonObj.contains("login") == false) {
+            data = userProvider->authUser("", request.bodyJsonObj.value("email").toString(), request.bodyJsonObj.value("password").toString());
         } else {
-            data = userProvider->authUser(request.query["login"], "", request.query["password"]);
+            data = userProvider->authUser(request.bodyJsonObj.value("login").toString(), "", request.bodyJsonObj.value("password").toString());
         }
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
@@ -70,6 +82,25 @@ void UserRouter::setupRoutes() {
                         "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
                         "\r\n";
         response.append(data);
+
+        return response;
+    });
+
+    this->addGetRoute("/authViaToken", [this](Request& request) -> QByteArray {
+        // getAndVerify()
+    });
+
+    this->addGetRoute("/refreshToken", [this](Request& request) -> QByteArray {
+        JWT::verifyTokenAndThrow(request, Env::get("SECRET", ":/.env"));
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+        QByteArray newToken = userProvider->refreshToken(request.headers.get("Authorization").toUtf8());
+
+        QByteArray response = "HTTP/1.1 201 Created\r\n"
+                    "Content-Type: application/json\r\n"
+                    "Content-Length: " + QByteArray::number(newToken.size()) + "\r\n"
+                    "\r\n";
+        response.append(newToken);
 
         return response;
     });

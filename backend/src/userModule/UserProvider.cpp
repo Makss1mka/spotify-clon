@@ -1,14 +1,16 @@
 #include "../headers/userModule/UserProvider.h"
-#include "../headers/utils/EnvFile.h"
-#include "../headers/concepts/Request.h"
-#include "../headers/utils/exceptions.h"
 #include "../headers/utils/statusCodes.h"
-#include <QDebug>
-#include <QJsonArray>
-#include <QJsonObject>
+#include "../headers/utils/exceptions.h"
+#include "../headers/concepts/Request.h"
+#include "../headers/utils/EnvFile.h"
+#include "../headers/concepts/JWT.h"
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QByteArray>
 #include <QSqlQuery>
 #include <QString>
+#include <QDebug>
 
 UserProvider::UserProvider() {}
 
@@ -58,6 +60,14 @@ QByteArray UserProvider::authUser(const QString& login, const QString& email, co
         userData["role"] = query.value(3).toInt();
         userData["email"] = query.value(4).toString();
         userData["profile"] = query.value(5).toString();
+
+        if(login != "") {
+            userData["token"] = QString::fromUtf8(JWT::creaateToken(login, query.value(0).toInt(), Env::get("SECRET", ":/.env"), 3600));
+            userData["refreshToken"] = QString::fromUtf8(JWT::creaateToken(login, query.value(0).toInt(), Env::get("SECRET", ":/.env"), 1000000));
+        } else {
+            userData["token"] = QString::fromUtf8(JWT::creaateToken(email, query.value(0).toInt(), Env::get("SECRET", ":/.env"), 3600));
+            userData["refreshToken"] = QString::fromUtf8(JWT::creaateToken(email, query.value(0).toInt(), Env::get("SECRET", ":/.env"), 1000000));
+        }
     } else {
         throw QueryException(
             "Invalid account credentials, login|password|email:" + login + ", " + password + ", " + email,
@@ -75,6 +85,17 @@ QByteArray UserProvider::authUser(const QString& login, const QString& email, co
     return jsonData;
 }
 
+QByteArray UserProvider::refreshToken(const QByteArray& refreshToken) {
+    QString username = JWT::getUsernameFromToken(refreshToken);
+    int id = JWT::getUserIdFromToken(refreshToken);
+
+    QByteArray newToken = JWT::creaateToken(username, id, Env::get("SECRET", ":/.env"), 3600);
+
+    QJsonObject data;
+    data["newToken"] = QString::fromUtf8(newToken);
+
+    return QJsonDocument(data).toJson();;
+}
 
 void UserProvider::updateBasicInfo(int id, const QString& login, const QString& email, const QString& password) {
     QSqlQuery query;
