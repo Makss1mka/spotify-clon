@@ -9,6 +9,7 @@ CONFIG += c++20 cmdline
 SOURCES += \
         src/adminModule/AdminProvider.cpp \
         src/adminModule/AdminRouter.cpp \
+        src/concepts/JWT.cpp \
         src/concepts/Provider.cpp \
         src/concepts/Request.cpp \
         src/concepts/Response.cpp \
@@ -32,6 +33,7 @@ HEADERS += \
         src/headers/adminModule/AdminProvider.h \
         src/headers/adminModule/AdminRouter.h \
         \
+        src/headers/concepts/JWT.h \
         src/headers/userModule/UserProvider.h \
         src/headers/userModule/UserRouter.h \
         \
