@@ -11,6 +11,7 @@ public:
     UserProvider();
     QByteArray registerUser(const QString& login, const QString& email, const QString& password);
     QByteArray authUser(const QString& login, const QString& email, const QString& password);
+    QByteArray authUserViaToken(int id);
     QByteArray refreshToken(const QByteArray& refreshToken);
     void updateBasicInfo(int id, const QString& login, const QString& email, const QString& password);
 

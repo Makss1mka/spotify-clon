@@ -34,7 +34,7 @@ bool JWT::verifyToken(const QByteArray& token, const QString& secret) {
     if (parts.size() != 3) return false;
 
     if (sign(parts[0] + "." + parts[1], secret) != parts[2]) return false;
-    qDebug() << "JOPA";
+
     QByteArray payloadJson = QByteArray::fromBase64(parts[1], QByteArray::Base64UrlEncoding);
     QJsonObject obj = QJsonDocument::fromJson(payloadJson).object();
     if (obj.contains("exp")) {

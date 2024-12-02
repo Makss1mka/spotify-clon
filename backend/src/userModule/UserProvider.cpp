@@ -39,7 +39,7 @@ QByteArray UserProvider::registerUser(const QString& login, const QString& email
                 "User service is temporarily unavailable"
             );
         }
-        return "User was successfuly created";
+        return authUser(login, email, password);
     }
 }
 
@@ -74,6 +74,34 @@ QByteArray UserProvider::authUser(const QString& login, const QString& email, co
             "Invalid account credentials",
             StatusCode::UNAUTHORIZED
         );
+    }
+
+    userData["favAuthors"] = getFavoriteAuthors(query.value(0).toString());
+    userData["favMusics"] = getFavoriteMusics(query.value(0).toString());
+
+    QJsonDocument jsonDoc(userData);
+    QByteArray jsonData = jsonDoc.toJson();
+
+    return jsonData;
+}
+
+QByteArray UserProvider::authUserViaToken(int id) {
+    QJsonObject userData;
+
+    QSqlQuery query;
+    if(!query.exec("SELECT * FROM userInfo WHERE id=" + QString::number(id) + ";")) {
+        throw ServiceUnavailableException(
+            "Method: UserProvider::authUserViaToken is unavailable",
+            "User service is temporarily unavailable"
+        );
+    }
+
+    if(query.next()) {
+        userData["id"] = query.value(0).toInt();
+        userData["login"] = query.value(1).toString();
+        userData["role"] = query.value(3).toInt();
+        userData["email"] = query.value(4).toString();
+        userData["profile"] = query.value(5).toString();
     }
 
     userData["favAuthors"] = getFavoriteAuthors(query.value(0).toString());

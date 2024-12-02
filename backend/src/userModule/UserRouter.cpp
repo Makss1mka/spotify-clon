@@ -43,7 +43,7 @@ void UserRouter::setupRoutes() {
                 request.bodyJsonObj.value("password").toString());
 
         QByteArray response = "HTTP/1.1 201 Created\r\n"
-                        "Content-Type: text/plain\r\n"
+                        "Content-Type: application/json\r\n"
                         "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
                         "\r\n";
         response.append(data);
@@ -87,7 +87,18 @@ void UserRouter::setupRoutes() {
     });
 
     this->addGetRoute("/authViaToken", [this](Request& request) -> QByteArray {
-        // getAndVerify()
+        JWT::verifyTokenAndThrow(request, Env::get("SECRET", ":/.env"));
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+        QByteArray data = userProvider->authUserViaToken(JWT::getUserIdFromToken(request.headers.get("Authorization").toUtf8()));
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                    "Content-Type: application/json\r\n"
+                    "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
+                    "\r\n";
+        response.append(data);
+
+        return response;
     });
 
     this->addGetRoute("/refreshToken", [this](Request& request) -> QByteArray {
@@ -96,7 +107,7 @@ void UserRouter::setupRoutes() {
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
         QByteArray newToken = userProvider->refreshToken(request.headers.get("Authorization").toUtf8());
 
-        QByteArray response = "HTTP/1.1 201 Created\r\n"
+        QByteArray response = "HTTP/1.1 200 Ok\r\n"
                     "Content-Type: application/json\r\n"
                     "Content-Length: " + QByteArray::number(newToken.size()) + "\r\n"
                     "\r\n";
