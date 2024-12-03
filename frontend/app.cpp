@@ -1,17 +1,11 @@
-#include "ui_mainwindow.h"
+//#include "ui_mainwindow.h"
 #include "./headers/utils/globalVariables.h"
-#include "./headers/windows/SignUpWindow.h"
-#include "./headers/windows/LogInWindow.h"
-#include "./headers/windows/MainWindow.h"
 #include "headers/app.h"
 #include <QMouseEvent>
 #include <QIcon>
 #include <QRect>
 
-App::App(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
+App::App(QWidget* renderingMainWindow, QWidget *parent) : QMainWindow(parent) {
     Globals::widgetManager->connectApp(this);
 
     // this->setFixedSize(300, 400);
@@ -21,13 +15,14 @@ App::App(QWidget *parent)
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setWindowIcon(QIcon(":/assets/windowIcon.png"));
     this->setWindowTitle("MusicBox");
-    this->setMinimumSize(600, 500);
-    this->setCentralWidget(new MainWindow(this));
+    this->setCentralWidget(renderingMainWindow);
     this->setStyleSheet("background-color: black; padding: 0; margin: 0");
 }
 
-App::~App() {
-    delete ui;
+App::~App() {}
+
+void App::changeRenderingWidget(QWidget *newRenderingMainWindow) {
+    this->setCentralWidget(newRenderingMainWindow);
 }
 
 void App::mousePressEvent(QMouseEvent *event) {

@@ -46,3 +46,7 @@ void WidgetManager::collapseInWindowApp() {
 void WidgetManager::connectApp(App* app) {
     this->app = app;
 }
+
+void WidgetManager::loadWindow(QWidget *window) {
+    this->app->changeRenderingWidget(window);
+}

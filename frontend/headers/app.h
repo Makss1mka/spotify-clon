@@ -8,22 +8,17 @@
 #include <QPoint>
 #include <QEvent>
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class MainWindow;
-}
-QT_END_NAMESPACE
-
 class App : public QMainWindow {
     Q_OBJECT
 public:
-    App(QWidget *parent = nullptr);
+    App(QWidget* renderingMainWindow, QWidget *parent = nullptr);
     ~App();
+
+    void changeRenderingWidget(QWidget* newRenderingMainWindow);
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
 private:
-    Ui::MainWindow *ui;
     QPoint m_dragPosition;
 };
 

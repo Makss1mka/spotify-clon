@@ -19,6 +19,7 @@ public:
     void connectApp(App* app);
 
     void loadPage(QWidget *pageWidget);
+    void loadWindow(QWidget* window);
     void reloadSideBar(int code);
     void closeApp();
     void collapseApp();
