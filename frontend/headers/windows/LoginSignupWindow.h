@@ -1,12 +1,28 @@
-#ifndef LOGINWINDOW_H
-#define LOGINWINDOW_H
+#ifndef LOGINSIGNUPWINDOW_H
+#define LOGINSIGNUPWINDOW_H
 
+#include <QVBoxLayout>
 #include <QWidget>
+#include <QString>
+#include <QLabel>
 
-class LogInWindow : public QWidget {
+class LoginSignupWindow : public QWidget {
     Q_OBJECT
 public:
-    explicit LogInWindow(QWidget *parent = nullptr);
+    explicit LoginSignupWindow(QWidget *parent = nullptr);
+
+    void renderLoginWindow();
+    void renderSignupWindow();
+
+    QVBoxLayout* mainLayout;
+    QLabel* incorrectEdits;
+private:
+    bool isPasswordValid(QString password);
+    bool isLoginValid(QString login);
+    bool isEmailValid(QString email);
+public slots:
+    void loginClicked(QString credits, QString password);
+    void signupClicked(QString login, QString password, QString email);
 };
 
-#endif // LOGINWINDOW_H
+#endif // LOGINSIGNUPWINDOW_H
