@@ -32,7 +32,7 @@ AuthorCard::AuthorCard(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     profilePic->connect(profilePic, &QPushButton::clicked, this, &AuthorCard::trackProfileClicked);
     QPointer<AuthorCard> pointedThis = this;
     if(authorData->getProfilePath() != "") {
-        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + authorData->getProfilePath()),
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN") + "/music/getProfile?path=" + authorData->getProfilePath()),
             [pointedThis](HttpClient::Response* response) {
             if (response->statusCode < 400) {
                 QPixmap pixmap;

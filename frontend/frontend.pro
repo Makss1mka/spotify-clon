@@ -46,9 +46,8 @@ SOURCES += \
     utils/EnvFile.cpp \
     \
     utils/WidgetManager.cpp \
-    windows/LogInWindow.cpp \
+    windows/LoginSignupWindow.cpp \
     windows/MainWindow.cpp \
-    windows/SignUpWindow.cpp \
     \
     main.cpp \
     app.cpp \
@@ -79,9 +78,8 @@ HEADERS += \
     headers/utils/UserClasses.h \
     headers/utils/EnvFile.h \
     \
+    headers/windows/LoginSignupWindow.h \
     headers/windows/MainWindow.h \
-    headers/windows/LogInWindow.h \
-    headers/windows/SignUpWindow.h \
     \
     headers/pages/SearchPage.h \
 

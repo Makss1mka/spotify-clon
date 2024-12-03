@@ -10,6 +10,8 @@
 #include <QWidget>
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
+    this->setMinimumSize(600, 500);
+
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
     mainLayout->addWidget(new Header(this));

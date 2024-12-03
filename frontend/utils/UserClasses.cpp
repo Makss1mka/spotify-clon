@@ -11,6 +11,8 @@ QString User::name = "";
 QString User::email = "";
 QString User::password = "";
 int User::role = 0;
+QString User::token = "";
+QString User::refreshToken = "";
 std::vector<std::shared_ptr<AuthorObject>> User::favoriteAuthors;
 std::vector<std::shared_ptr<MusicObject>> User::favoriteMusics;
 User::User() {}
@@ -95,7 +97,7 @@ void User::addMusic(std::shared_ptr<MusicObject> music) {
     body["music_id"] = music->getId();
     body["user_id"] = id;
 
-    HttpClient::sendPostRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/addFavMusic"), body, [favoriteMusics, music](HttpClient::Response* response){
+    HttpClient::sendPostRequest(QUrl(Env::get("SERVER_DOMEN") + "/user/addFavMusic"), body, [favoriteMusics, music](HttpClient::Response* response){
 
     });
 }
@@ -107,7 +109,7 @@ void User::deleteMusic(int musicId) {
             break;
         }
     }
-    HttpClient::sendDeleteRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/delFavMusic?user_id=" + QString::number(User::getId()) + "&music_id=" + QString::number(musicId)),
+    HttpClient::sendDeleteRequest(QUrl(Env::get("SERVER_DOMEN") + "/user/delFavMusic?user_id=" + QString::number(User::getId()) + "&music_id=" + QString::number(musicId)),
         [favoriteMusics, musicId](HttpClient::Response* response){
 
     });
@@ -131,7 +133,7 @@ void User::addAuthor(std::shared_ptr<AuthorObject> author) {
     body["author_id"] = author->getId();
     body["user_id"] = id;
 
-    HttpClient::sendPostRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/addFavAuthor"), body, [favoriteAuthors, author](HttpClient::Response* response){
+    HttpClient::sendPostRequest(QUrl(Env::get("SERVER_DOMEN") + "/user/addFavAuthor"), body, [favoriteAuthors, author](HttpClient::Response* response){
 
     });
 }
@@ -144,7 +146,7 @@ void User::deleteAuthor(int authorId) {
         }
     }
 
-    HttpClient::sendDeleteRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/delFavAuthor?user_id=" + QString::number(User::getId()) + "&author_id=" + QString::number(authorId)),
+    HttpClient::sendDeleteRequest(QUrl(Env::get("SERVER_DOMEN") + "/user/delFavAuthor?user_id=" + QString::number(User::getId()) + "&author_id=" + QString::number(authorId)),
         [favoriteAuthors, authorId](HttpClient::Response* response){
 
     });
@@ -157,4 +159,22 @@ int User::getAuthorsLength() {
 std::shared_ptr<AuthorObject> User::getAuthorByInd(int ind) {
     return User::favoriteAuthors[ind];
 }
+
+void User::setToken(QString newToken) {
+    token = newToken;
+}
+
+void User::setRefreshToken(QString newRefreshToken) {
+    refreshToken = newRefreshToken;
+}
+
+QString User::getToken() {
+    return User::token;
+}
+
+QString User::getRefreshToken() {
+    return refreshToken;
+}
+
+
 

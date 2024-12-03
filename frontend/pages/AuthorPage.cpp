@@ -33,7 +33,7 @@ AuthorPage::AuthorPage(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     profileBac->setIconSize(QSize(160, 160));
     QPointer<AuthorPage> pointedThis = this;
     if(this->authorData->getProfilePath() != "") {
-        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + authorData->getProfilePath()),
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN") + "/music/getProfile?path=" + authorData->getProfilePath()),
             [pointedThis](HttpClient::Response* response) {
             if (response->statusCode < 400) {
                 if (!pointedThis) return;
@@ -69,7 +69,7 @@ AuthorPage::AuthorPage(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     playButton->setStyleSheet("QPushButton { background: green; border-radius: 22px; padding: 12px 8px; margin: 20px 0px 0px; }");
     playButton->connect(playButton, &QPushButton::clicked, [this](){
         HttpClient::sendGetRequest(
-            QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getByAuthor?author_name=" + this->authorData->getName()),
+            QUrl(Env::get("SERVER_DOMEN") + "/music/getByAuthor?author_name=" + this->authorData->getName()),
             [this](HttpClient::Response* response){
             if(response->statusCode < 400) {
                 std::vector<std::shared_ptr<MusicObject>> recMusic;
@@ -129,7 +129,7 @@ AuthorPage::AuthorPage(std::shared_ptr<AuthorObject> authorData, QWidget *parent
     thirdInnerLayout->setContentsMargins(0, 0, 0, 0);
     thirdInnerLayout->setAlignment(Qt::AlignTop);
     HttpClient::sendGetRequest(
-        QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getByAuthor?author_name=" + this->authorData->getName()),
+        QUrl(Env::get("SERVER_DOMEN") + "/music/getByAuthor?author_name=" + this->authorData->getName()),
         [this](HttpClient::Response* response){
             if(response->statusCode < 400) {
                 for(int i = 0; i < response->bodyJsonArray.size(); i++) {

@@ -38,8 +38,8 @@ SearchPage::SearchPage(const QString& key, QWidget *parent) : QWidget(parent) {
     mainLayout->addLayout(topTextLayout);
     mainLayout->addLayout(resultLayout);
 
-    qDebug() << Env::get("SERVER_DOMEN", ":/.env") + "/music/find?key=" + key;
-    HttpClient::sendGetRequest(Env::get("SERVER_DOMEN", ":/.env") + "/music/find?key=" + key, [this](HttpClient::Response* response){
+    qDebug() << Env::get("SERVER_DOMEN") + "/music/find?key=" + key;
+    HttpClient::sendGetRequest(Env::get("SERVER_DOMEN") + "/music/find?key=" + key, [this](HttpClient::Response* response){
         if (response->statusCode < 400) {
             QJsonArray musicsArray = response->bodyJsonObj.value("musics").toArray();
             QJsonArray authorsArray = response->bodyJsonObj.value("authors").toArray();

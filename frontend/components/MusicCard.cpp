@@ -35,7 +35,7 @@ MusicCard::MusicCard(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     profilePic->connect(profilePic, &QPushButton::clicked, this, &MusicCard::trackProfileClicked);
     QPointer<MusicCard> pointedThis = this;
     if(musicData->getProfilePath() != "") {
-        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + musicData->getProfilePath()),
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN") + "/music/getProfile?path=" + musicData->getProfilePath()),
             [pointedThis](HttpClient::Response* response) {
             if (response->statusCode < 400) {
                 if (!pointedThis) return;

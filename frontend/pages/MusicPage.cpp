@@ -29,7 +29,7 @@ MusicPage::MusicPage(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     profile->setIconSize(QSize(160, 160));
     QPointer<MusicPage> pointedThis = this;
     if(this->musicData->getProfilePath() != "") {
-        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + musicData->getProfilePath()),
+        HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN") + "/music/getProfile?path=" + musicData->getProfilePath()),
             [pointedThis](HttpClient::Response* response) {
             if (response->statusCode < 400) {
                 if (!pointedThis) return;
@@ -71,7 +71,7 @@ MusicPage::MusicPage(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     playButton->setStyleSheet("QPushButton { background: green; border-radius: 22px; padding: 12px 8px; margin: 20px 0px 0px; }");
     playButton->connect(playButton, &QPushButton::clicked, [this](){
         HttpClient::sendGetRequest(
-            QUrl(Env::get("SERVER_DOMEN", ":/.env") +
+            QUrl(Env::get("SERVER_DOMEN") +
                  "/music/recomend?janre=" + this->musicData->getJanres().mid(0, this->musicData->getJanres().size() - 1) +
                  "&author=" + this->musicData->getAuthor() +
                  "&lang=" + this->musicData->getLang() +
@@ -140,7 +140,7 @@ MusicPage::MusicPage(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     thirdInnerLayout->setContentsMargins(0, 0, 0, 0);
     thirdInnerLayout->setAlignment(Qt::AlignTop);
     HttpClient::sendGetRequest(
-        QUrl(Env::get("SERVER_DOMEN", ":/.env") +
+        QUrl(Env::get("SERVER_DOMEN") +
             "/music/recomend?janre=" + musicData->getJanres().mid(0, musicData->getJanres().size() - 1) +
             "&author=" + musicData->getAuthor() +
             "&lang=" + musicData->getLang() +

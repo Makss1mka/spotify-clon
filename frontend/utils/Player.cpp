@@ -34,7 +34,7 @@ Player::Player() : QObject(nullptr) {
         }
     });
 
-    HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/user/getFavMusic?user_id=" + QString::number(User::getId())), [this](HttpClient::Response* response){
+    HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN") + "/user/getFavMusic?user_id=" + QString::number(User::getId())), [this](HttpClient::Response* response){
         std::vector<std::shared_ptr<MusicObject>> musics;
         for(int i = 0; i < response->bodyJsonArray.size(); i++) {
             musics.push_back(std::make_shared<MusicObject>(response->bodyJsonArray[i].toObject()));
@@ -49,7 +49,7 @@ void Player::setPlaylist(std::vector<std::shared_ptr<MusicObject>>& music) {
         isQueueFree = false;
         isCurrentLoaded = true;
         currentQueueInd = 0;
-        loadTrack(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
+        loadTrack(QUrl(Env::get("SERVER_DOMEN") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
         emit trackChanged();
     }
 }
@@ -96,13 +96,13 @@ bool Player::next() {
         currentQueueInd++;
     }
 
-    loadTrack(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
+    loadTrack(QUrl(Env::get("SERVER_DOMEN") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
 
     emit trackChanged();
 
     if (currentQueueInd >= musicQueue.size() - 3) {
         HttpClient::sendGetRequest(
-            QUrl(Env::get("SERVER_DOMEN", ":/.env") +
+            QUrl(Env::get("SERVER_DOMEN") +
                  "/music/recomend?janre=" + this->musicQueue[this->currentQueueInd + 2]->getJanres().mid(0, this->musicQueue[this->currentQueueInd + 2]->getJanres().size() - 1) +
                  "&author=" + this->musicQueue[this->currentQueueInd + 2]->getAuthor() +
                  "&lang=" + this->musicQueue[this->currentQueueInd + 2]->getLang() +
@@ -126,7 +126,7 @@ bool Player::prev() {
 
     currentQueueInd--;
 
-    loadTrack(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
+    loadTrack(QUrl(Env::get("SERVER_DOMEN") + "/music/getAudio?path=" + musicQueue[currentQueueInd]->getPath()));
 
     emit trackChanged();
 

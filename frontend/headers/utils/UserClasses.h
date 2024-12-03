@@ -18,6 +18,9 @@ protected:
     static QString email;
     static int role;
 
+    static QString token;
+    static QString refreshToken;
+
     static std::vector<std::shared_ptr<MusicObject>> favoriteMusics;
     static std::vector<std::shared_ptr<AuthorObject>> favoriteAuthors;
 public:
@@ -31,11 +34,15 @@ public:
     static QString getName();
     static QString getEmail();
     static int getRole();
+    static QString getToken();
+    static QString getRefreshToken();
 
     static void setName(QString newName);
     static void setPassword(QString newPassword, QString oldPassword);
     static void setEmail(QString newEmail);
     static void setRole(int newRole);
+    static void setToken(QString newToken);
+    static void setRefreshToken(QString newRefreshToken);
 
     static void addMusic(std::shared_ptr<MusicObject> music);
     static void deleteMusic(int musicId);

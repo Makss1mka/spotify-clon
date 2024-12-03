@@ -187,8 +187,8 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
         this->musicTimeline->setValue(0);
 
         if(Globals::player->getCurrentMusic()->getProfilePath() != "") {
-            HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN", ":/.env") + "/music/getProfile?path=" + Globals::player->getCurrentMusic()->getProfilePath()),
-                [this](HttpClient::Response* response){
+            HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN") + "/music/getProfile?path=" + Globals::player->getCurrentMusic()->getProfilePath()),
+                [this](HttpClient::Response* response) {
                 if (response->statusCode < 400) {
                     QPixmap pixmap;
                     pixmap.loadFromData(response->body);
