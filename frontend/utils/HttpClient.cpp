@@ -11,8 +11,10 @@
 QNetworkAccessManager* HttpClient::manager = new QNetworkAccessManager();
 HttpClient::HttpClient() {}
 
-void HttpClient::sendGetRequest(const QUrl &url, std::function<void(Response*)> handler) {
+void HttpClient::sendGetRequest(const QUrl &url, std::function<void(Response*)> handler, const QString& token) {
     QNetworkRequest request(url);
+
+    if(token != "") request.setRawHeader("authorization", token.toUtf8());
 
     QNetworkReply *reply = manager->get(request);
 
@@ -21,9 +23,11 @@ void HttpClient::sendGetRequest(const QUrl &url, std::function<void(Response*)> 
     });
 }
 
-void HttpClient::sendPostRequest(const QUrl &url, const QJsonObject &json, std::function<void(Response*)> handler) {
+void HttpClient::sendPostRequest(const QUrl &url, const QJsonObject &json, std::function<void(Response*)> handler, const QString& token) {
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    if(token != "") request.setRawHeader("Authorization", token.toUtf8());
 
     QNetworkReply *reply = manager->post(request, QJsonDocument(json).toJson());
 
@@ -33,9 +37,11 @@ void HttpClient::sendPostRequest(const QUrl &url, const QJsonObject &json, std::
     });
 }
 
-void HttpClient::sendPutRequest(const QUrl &url, const QJsonObject &json, std::function<void(Response*)> handler) {
+void HttpClient::sendPutRequest(const QUrl &url, const QJsonObject &json, std::function<void(Response*)> handler, const QString& token) {
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    if(token != "") request.setRawHeader("Authorization", token.toUtf8());
 
     QNetworkReply *reply = manager->put(request, QJsonDocument(json).toJson());
 
@@ -44,8 +50,10 @@ void HttpClient::sendPutRequest(const QUrl &url, const QJsonObject &json, std::f
     });
 }
 
-void HttpClient::sendDeleteRequest(const QUrl &url, std::function<void(Response*)> handler) {
+void HttpClient::sendDeleteRequest(const QUrl &url, std::function<void(Response*)> handler, const QString& token) {
     QNetworkRequest request(url);
+
+    if(token != "") request.setRawHeader("Authorization", token.toUtf8());
 
     QNetworkReply *reply = manager->deleteResource(request);
 
