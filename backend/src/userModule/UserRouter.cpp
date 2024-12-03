@@ -90,7 +90,7 @@ void UserRouter::setupRoutes() {
         JWT::verifyTokenAndThrow(request, Env::get("SECRET", ":/.env"));
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
-        QByteArray data = userProvider->authUserViaToken(JWT::getUserIdFromToken(request.headers.get("Authorization").toUtf8()));
+        QByteArray data = userProvider->authUserViaToken(JWT::getUserIdFromToken(request.headers.get("authorization").toUtf8()));
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                     "Content-Type: application/json\r\n"
@@ -105,7 +105,7 @@ void UserRouter::setupRoutes() {
         JWT::verifyTokenAndThrow(request, Env::get("SECRET", ":/.env"));
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
-        QByteArray newToken = userProvider->refreshToken(request.headers.get("Authorization").toUtf8());
+        QByteArray newToken = userProvider->refreshToken(request.headers.get("authorization").toUtf8());
 
         QByteArray response = "HTTP/1.1 200 Ok\r\n"
                     "Content-Type: application/json\r\n"

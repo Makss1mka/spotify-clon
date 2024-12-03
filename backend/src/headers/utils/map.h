@@ -1,6 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "./exceptions.h"
 #include <vector>
 
 template<typename T, typename K>
@@ -22,7 +23,10 @@ public:
         for(auto &pair : pairs) {
             if(pair.key == key) return pair.value;
         }
-        throw "Key " + key + " out of map keys";
+        throw BadRequestException(
+            "Cannot find in map",
+            "Cannot find in map"
+        );
     }
 
     void set(const T& key, const K& value) {

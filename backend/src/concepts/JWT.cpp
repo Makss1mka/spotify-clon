@@ -51,14 +51,14 @@ bool JWT::verifyToken(const QByteArray& token, const QString& secret) {
 }
 
 void JWT::verifyTokenAndThrow(const Request& request, const QString& secret) {
-    if (request.headers.count("Authorization") == 0) {
+    if (request.headers.count("authorization") == 0) {
         throw BadRequestException(
             "Request without token",
             "Request without token"
         );
     }
 
-    if (JWT::verifyToken(request.headers.get("Authorization").toUtf8(), secret) == false) {
+    if (JWT::verifyToken(request.headers.get("authorization").toUtf8(), secret) == false) {
         throw QueryException(
             "Invalid token",
             "Invalid token",
@@ -75,7 +75,7 @@ QString JWT::getUsernameFromToken(const QByteArray& token) {
     QJsonDocument doc = QJsonDocument::fromJson(payloadJson);
     QJsonObject obj = doc.object();
 
-    return obj["username"].toString();
+    return obj["credits"].toString();
 }
 
 int JWT::getUserIdFromToken(const QByteArray& token) {
