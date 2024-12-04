@@ -1,33 +1,46 @@
-//#include "ui_mainwindow.h"
 #include "./headers/utils/globalVariables.h"
 #include "headers/app.h"
 #include <QMouseEvent>
+#include <QLayoutItem>
+#include <QVBoxLayout>
+#include <QWidget>
 #include <QIcon>
+#include <QSize>
 #include <QRect>
 
 App::App(QWidget* renderingMainWindow, QWidget *parent) : QMainWindow(parent) {
     Globals::widgetManager->connectApp(this);
 
-    // this->setFixedSize(300, 400);
-    // LogInWindow *loginWindow = new LogInWindow(this);
-    // this->setCentralWidget(loginWindow);
+    appMainLayout = new QVBoxLayout();
+    QWidget* mainWidget = new QWidget();
+    mainWidget->setLayout(appMainLayout);
 
     this->setWindowFlag(Qt::FramelessWindowHint);
     this->setWindowIcon(QIcon(":/assets/windowIcon.png"));
     this->setWindowTitle("MusicBox");
-    this->setCentralWidget(renderingMainWindow);
-    this->setStyleSheet("background-color: black; padding: 0; margin: 0");
+    this->setCentralWidget(mainWidget);
+    this->changeRenderingWidget(renderingMainWindow);
+    this->setStyleSheet("background-color: black; padding: 0px; margin: 0px;");
 }
 
 App::~App() {}
 
 void App::changeRenderingWidget(QWidget *newRenderingMainWindow) {
-    this->setCentralWidget(newRenderingMainWindow);
+    QLayoutItem *item;
+    while ((item = this->appMainLayout->takeAt(0)) != nullptr) {
+        delete item->widget();
+        delete item;
+    }
+
+    this->appMainLayout->addWidget(newRenderingMainWindow);
+    this->showNormal();
+    this->setFixedSize(QSize(newRenderingMainWindow->width(), newRenderingMainWindow->height()));
 }
 
 void App::mousePressEvent(QMouseEvent *event) {
     QRect draggableArea(0, 0, width(), 30);
     if (draggableArea.contains(event->pos())) {
+        this->showNormal();
         m_dragPosition = event->globalPosition().toPoint() - frameGeometry().topLeft();
         event->accept();
     }

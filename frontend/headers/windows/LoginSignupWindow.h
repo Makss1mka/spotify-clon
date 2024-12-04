@@ -13,13 +13,12 @@ public:
 
     void renderLoginWindow();
     void renderSignupWindow();
+    static bool isPasswordValid(QString password);
+    static bool isLoginValid(QString login);
+    static bool isEmailValid(QString email);
 
     QVBoxLayout* mainLayout;
     QLabel* incorrectEdits;
-private:
-    bool isPasswordValid(QString password);
-    bool isLoginValid(QString login);
-    bool isEmailValid(QString email);
 public slots:
     void loginClicked(QString credits, QString password);
     void signupClicked(QString login, QString password, QString email);

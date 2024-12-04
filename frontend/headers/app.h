@@ -1,6 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
+#include <QVBoxLayout>
 #include <QMainWindow>
 #include <QMouseEvent>
 #include <QWidget>
@@ -19,6 +20,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
 private:
+    QVBoxLayout* appMainLayout;
     QPoint m_dragPosition;
 };
 

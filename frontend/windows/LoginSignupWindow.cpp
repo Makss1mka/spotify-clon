@@ -29,15 +29,15 @@ LoginSignupWindow::LoginSignupWindow(QWidget *parent) : QWidget(parent) {
 
     // Exit button
     HoverIconButton* exitButton = new HoverIconButton(QIcon(":/assets/cross.png"), QIcon(":/assets/cross-active.png"));
-    exitButton->setStyleSheet("background: inherit");
+    exitButton->setStyleSheet("background: inherit; margin: 0px 15px 0px 0px;");
     exitButton->connect(exitButton, &QPushButton::clicked, []{Globals::widgetManager->closeApp();});
 
     QHBoxLayout* controlButtonsLayout = new QHBoxLayout();
-    controlButtonsLayout->setAlignment(Qt::AlignLeft);
+    controlButtonsLayout->setAlignment(Qt::AlignRight);
     controlButtonsLayout->addWidget(collapseButton);
     controlButtonsLayout->addWidget(exitButton);
 
-    mainLayout = new QVBoxLayout(this);
+    mainLayout = new QVBoxLayout();
 
     QVBoxLayout* windowLayout = new QVBoxLayout(this);
     windowLayout->addLayout(controlButtonsLayout);
@@ -49,18 +49,18 @@ LoginSignupWindow::LoginSignupWindow(QWidget *parent) : QWidget(parent) {
 void LoginSignupWindow::renderLoginWindow() {
     QLabel *titleLabel = new QLabel("Войти");
     titleLabel->setAlignment(Qt::AlignCenter);
-    titleLabel->setStyleSheet("margin: 35px 0px 10pxpx; font-size: 14px; font-weight: bold; color: white;");
+    titleLabel->setStyleSheet("margin: 35px 0px 10px; font-size: 14px; font-weight: bold; color: white;");
 
 
     QLineEdit *loginEdit = new QLineEdit();
     loginEdit->setPlaceholderText("Логин или почта");
-    loginEdit->setStyleSheet("color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
+    loginEdit->setStyleSheet("margin: 0px 15px 0px 0px; color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
 
 
     QLineEdit *passwordEdit = new QLineEdit();
     passwordEdit->setPlaceholderText("Пароль");
     passwordEdit->setEchoMode(QLineEdit::Password);
-    passwordEdit->setStyleSheet("color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
+    passwordEdit->setStyleSheet("margin: 0px 15px 0px 0px; color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
 
 
     QPushButton *toSignupButton = new QPushButton("Регистрация");
@@ -113,22 +113,22 @@ void LoginSignupWindow::renderLoginWindow() {
 void LoginSignupWindow::renderSignupWindow() {
     QLabel *titleLabel = new QLabel("Регистрация");
     titleLabel->setAlignment(Qt::AlignCenter);
-    titleLabel->setStyleSheet("margin: 35px 0px 10pxpx; font-size: 14px; font-weight: bold; color: white;");
+    titleLabel->setStyleSheet("margin: 35px 0px 10px; font-size: 14px; font-weight: bold; color: white;");
 
     QLineEdit *emailEdit = new QLineEdit();
     emailEdit->setPlaceholderText("Почта");
-    emailEdit->setStyleSheet("color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
+    emailEdit->setStyleSheet("margin: 0px 15px 0px 0px; color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
 
 
     QLineEdit *loginEdit = new QLineEdit();
     loginEdit->setPlaceholderText("Логин");
-    loginEdit->setStyleSheet("color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
+    loginEdit->setStyleSheet("margin: 0px 15px 0px 0px; color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
 
 
     QLineEdit *passwordEdit = new QLineEdit();
     passwordEdit->setPlaceholderText("Пароль");
     passwordEdit->setEchoMode(QLineEdit::Password);
-    passwordEdit->setStyleSheet("width: 150px; color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
+    passwordEdit->setStyleSheet("margin: 0px 15px 0px 0px; width: 150px; color: white; font-size: 14px; border: none; padding: 2px 5px; background: #121212;");
 
 
     QPushButton *toLoginButton = new QPushButton("Войти");
