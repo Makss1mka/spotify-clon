@@ -29,6 +29,7 @@ public:
     bool prev();
     void pause();
     void play();
+    void stop();
     bool isPlayerPaused();
     bool isCurrentTrackLoaded();
     int getVolumeLevel();
@@ -41,7 +42,6 @@ private:
 
     sf::Music music;
     QTimer* checkTimer;
-    QTimer* deviceCheckTimer;
     char* musicBuffer;
     int bufferLength;
     std::vector<std::shared_ptr<MusicObject>> musicQueue;

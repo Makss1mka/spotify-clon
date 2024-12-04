@@ -11,6 +11,7 @@ QString User::name = "";
 QString User::email = "";
 QString User::password = "";
 int User::role = 0;
+QString User::profilePath = "";
 QString User::token = "";
 QString User::refreshToken = "";
 std::vector<std::shared_ptr<AuthorObject>> User::favoriteAuthors;
@@ -22,6 +23,7 @@ void User::loadUser(QJsonObject userObj) {
     name = userObj.value("login").toString();
     email = userObj.value("email").toString();
     role = userObj.value("role").toInt();
+    profilePath = userObj.value("profile").toString();
 
     for(int i = 0; i < userObj.value("favMusics").toArray().size(); i++) {
         favoriteMusics.push_back(std::make_shared<MusicObject>(userObj.value("favMusics")[i].toObject()));
@@ -75,6 +77,10 @@ int User::getRole() {
     return role;
 }
 
+QString User::getProfilePath() {
+    return profilePath;
+}
+
 void User::setName(QString newName) {
     name = newName;
 }
@@ -85,6 +91,10 @@ void User::setEmail(QString newEmail) {
 
 void User::setRole(int newRole) {
     role = newRole;
+}
+
+void User::setProfilePath(QString newProfile) {
+    profilePath = newProfile;
 }
 
 void User::addMusic(std::shared_ptr<MusicObject> music) {
@@ -176,5 +186,20 @@ QString User::getRefreshToken() {
     return refreshToken;
 }
 
+void User::clear() {
+    id = -1;
+    name = "";
+    password = "";
+    email = "";
+    role = 0;
+    token = "";
+    refreshToken = "";
+    profilePath = "";
 
+    favoriteAuthors.clear();
+    favoriteMusics.clear();
+
+    Env::set("TOKEN", "");
+    Env::set("REFRESH_TOKEN", "");
+}
 

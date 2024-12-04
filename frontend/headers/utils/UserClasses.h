@@ -17,6 +17,7 @@ protected:
     static QString password;
     static QString email;
     static int role;
+    static QString profilePath;
 
     static QString token;
     static QString refreshToken;
@@ -29,6 +30,7 @@ public:
 
     static void loadUser(QJsonObject jsonUser);
     static void printInfo();
+    static void clear();
 
     static int getId();
     static QString getName();
@@ -36,6 +38,7 @@ public:
     static int getRole();
     static QString getToken();
     static QString getRefreshToken();
+    static QString getProfilePath();
 
     static void setName(QString newName);
     static void setPassword(QString newPassword, QString oldPassword);
@@ -43,6 +46,7 @@ public:
     static void setRole(int newRole);
     static void setToken(QString newToken);
     static void setRefreshToken(QString newRefreshToken);
+    static void setProfilePath(QString newProfile);
 
     static void addMusic(std::shared_ptr<MusicObject> music);
     static void deleteMusic(int musicId);

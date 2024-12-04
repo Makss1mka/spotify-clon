@@ -21,8 +21,6 @@ Player::Player() : QObject(nullptr) {
     currentQueueInd = -1;
     volumeLevel = 100;
 
-    //deviceCheckTimer = new QTimer();
-    //deviceCheckTimer->connect(deviceCheckTimer, &QTimer::timeout, this, &Player::checkDevices);
     checkTimer = new QTimer();
     checkTimer->connect(checkTimer, &QTimer::timeout, this, &Player::checkStatus);
     connect(this, &Player::playbackFinished, [this](){
@@ -147,6 +145,14 @@ void Player::play() {
     isPaused = false;
 
     music.play();
+}
+
+void Player::stop() {
+    checkTimer->stop();
+    music.stop();
+    isCurrentLoaded = false;
+    currentQueueInd = -1;
+    isPaused = true;
 }
 
 bool Player::isPlayerPaused() {
