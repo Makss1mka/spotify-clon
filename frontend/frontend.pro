@@ -37,6 +37,7 @@ SOURCES += \
     pages/MusicPage.cpp \
     pages/SearchPage.cpp \
     \
+    pages/UserPage.cpp \
     utils/CoverFunks.cpp \
     utils/GlobalVariables.cpp \
     utils/HttpClient.cpp \
@@ -69,6 +70,7 @@ HEADERS += \
     \
     headers/pages/AuthorPage.h \
     headers/pages/MusicPage.h \
+    headers/pages/UserPage.h \
     headers/utils/HttpClient.h \
     headers/utils/MusicClass.h \
     headers/utils/Player.h \
