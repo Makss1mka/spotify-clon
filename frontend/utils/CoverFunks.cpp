@@ -54,3 +54,12 @@ QWidget* coverLayoutWithWidget(QBoxLayout* layout) {
 
     return coverringWidget;
 }
+
+QHBoxLayout* coverWithCenterAlign(QWidget* widget) {
+    QHBoxLayout *coverringLayout = new QHBoxLayout();
+
+    coverringLayout->setAlignment(Qt::AlignCenter);
+    coverringLayout->addWidget(widget);
+
+    return coverringLayout;
+}

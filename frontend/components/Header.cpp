@@ -3,6 +3,7 @@
 #include "../headers/components/Header.h"
 #include "../headers/utils/coverFunks.h"
 #include "../headers/pages/SearchPage.h"
+#include "../headers/pages/UserPage.h"
 #include "../headers/app.h"
 #include <QRegularExpressionValidator>
 #include <QRegularExpression>
@@ -78,6 +79,9 @@ Header::Header(QWidget *parent) : QWidget(parent) {
     userButton = new HoverIconButton(QIcon(":/assets/user.png"), QIcon(":/assets/user-active.png"));
     userButton->setFixedSize(40, 40);
     userButton->setStyleSheet("background: #272727; border-radius: 20px;");
+    userButton->connect(userButton, &QPushButton::clicked, [](){
+        Globals::widgetManager->loadPage(new UserPage());
+    });
 
     // Collapse button
     collapseButton = new HoverIconButton(QIcon(":/assets/line.png"), QIcon(":/assets/line-active.png"));

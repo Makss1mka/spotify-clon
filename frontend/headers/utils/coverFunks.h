@@ -12,5 +12,6 @@ QVBoxLayout* coverWithVLayout(QWidget* widget);
 QVBoxLayout* coverWithoutStretchVLayout(QWidget* widget);
 QWidget* coverLayoutWithWidget(QBoxLayout* layout);
 QHBoxLayout* coverWithLeftAlign(QWidget* widget);
+QHBoxLayout* coverWithCenterAlign(QWidget* widget);
 
 #endif // COVERFUNKS_H

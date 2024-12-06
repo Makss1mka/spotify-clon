@@ -9,13 +9,14 @@
 #include <QJsonObject>
 #include <QUrl>
 
-int main(int argc, char *argv[])
-{
+#include <QFileDialog>
+#include <QFile>
+
+int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     User::setToken(Env::get("TOKEN"));
     User::setRefreshToken(Env::get("REFRESH_TOKEN"));
-    qDebug() << User::getToken() << "\n\n" << User::getRefreshToken();
     App* app;
 
     HttpClient::sendGetRequest(QUrl(Env::get("SERVER_DOMEN") + "/user/authViaToken"), [&app](HttpClient::Response* response) {
