@@ -9,8 +9,10 @@
 #include <QJsonArray>
 #include <QByteArray>
 #include <QSqlQuery>
+#include <QDateTime>
 #include <QString>
 #include <QDebug>
+#include <QFile>
 
 UserProvider::UserProvider() {}
 
@@ -62,11 +64,11 @@ QByteArray UserProvider::authUser(const QString& login, const QString& email, co
         userData["profile"] = query.value(5).toString();
 
         if(login != "") {
-            userData["token"] = QString::fromUtf8(JWT::creaateToken(login, query.value(0).toInt(), Env::get("SECRET", ":/.env"), 3600));
-            userData["refreshToken"] = QString::fromUtf8(JWT::creaateToken(login, query.value(0).toInt(), Env::get("SECRET", ":/.env"), 1000000));
+            userData["token"] = QString::fromUtf8(JWT::creaateToken(login, query.value(0).toInt(), Env::get("SECRET"), 3600));
+            userData["refreshToken"] = QString::fromUtf8(JWT::creaateToken(login, query.value(0).toInt(), Env::get("SECRET"), 1000000));
         } else {
-            userData["token"] = QString::fromUtf8(JWT::creaateToken(email, query.value(0).toInt(), Env::get("SECRET", ":/.env"), 3600));
-            userData["refreshToken"] = QString::fromUtf8(JWT::creaateToken(email, query.value(0).toInt(), Env::get("SECRET", ":/.env"), 1000000));
+            userData["token"] = QString::fromUtf8(JWT::creaateToken(email, query.value(0).toInt(), Env::get("SECRET"), 3600));
+            userData["refreshToken"] = QString::fromUtf8(JWT::creaateToken(email, query.value(0).toInt(), Env::get("SECRET"), 1000000));
         }
     } else {
         throw QueryException(
@@ -117,25 +119,112 @@ QByteArray UserProvider::refreshToken(const QByteArray& refreshToken) {
     QString username = JWT::getUsernameFromToken(refreshToken);
     int id = JWT::getUserIdFromToken(refreshToken);
 
-    QByteArray newToken = JWT::creaateToken(username, id, Env::get("SECRET", ":/.env"), 3600);
+    QByteArray newToken = JWT::creaateToken(username, id, Env::get("SECRET"), 3600);
 
     QJsonObject data;
     data["newToken"] = QString::fromUtf8(newToken);
+
+    if(QDateTime::currentSecsSinceEpoch() + 1000 >= JWT::getExpTimeFromToken(refreshToken)) {
+        QByteArray newRefreshToken = JWT::creaateToken(username, id, Env::get("SECRET"), 1000000);
+        data["newRefrshToken"] = QString::fromUtf8(newRefreshToken);
+    }
 
     return QJsonDocument(data).toJson();;
 }
 
 void UserProvider::updateBasicInfo(int id, const QString& login, const QString& email, const QString& password) {
     QSqlQuery query;
-    if(!query.exec("UPDATE userInfo SET login='" + login + "', email='" + email + "', "
-            "password='" + password + "' WHERE id=" + QString::number(id) + ";")) {
-        throw ServiceUnavailableException(
-            "Method: UserProvider::updateBasicInfo is unavailable",
-            "User service is temporarily unavailable"
-        );
+
+    if(login != "" && password != "" && email != "") {
+        QString request = "UPDATE userInfo SET ";
+
+        if(login != "") request += " login='" + login + "', ";
+        if(email != "") request += " email='" + email + "', ";
+        if(password != "") request += " password='" + password + "', ";
+
+        request.replace(request.size() - 2, 1, "");
+        request += " WHERE id=" + QString::number(id) + ";";
+
+qDebug() << "REQ " << request;
+        if(!query.exec(request)) {
+            throw ServiceUnavailableException(
+                "Method UserProvider::updateBasicInfo: incorrect db request",
+                "incorrect db request"
+            );
+        }
     }
 }
 
+QByteArray UserProvider::updateProfile(const QString& id, const QByteArray& profile) {
+    if(profile == "") {
+        throw BadRequestException(
+            "Invalid body format for update user profile, empty body",
+            "Invalid body format for update user profile, empty body"
+        );
+    }
+
+    QSqlQuery query;
+
+    if(!query.exec("SELECT userInfo.picture FROM userInfo WHERE id=" + id + ";")) {
+        throw ServiceUnavailableException(
+            "Method UserProvider::updateBasicInfo: incorrect db request",
+            "incorrect db request"
+        );
+    }
+
+    QString path = "";
+    if(!query.next()) {
+        throw ServiceUnavailableException(
+            "Method UserProvider::updateBasicInfo: cannot find user with such id",
+            "Cannot find user with such id"
+        );
+    } else if(query.value(0).isNull() == true) {
+        if(!query.exec("SELECT COUNT(*) FROM userINfo WHERE SUBSTR(picture, 1, 1) = 'u'")) {
+            throw ServiceUnavailableException(
+                "Method UserProvider::updateBasicInfo: incorrect db request",
+                "incorrect db request"
+            );
+        }
+
+        if(query.next()) {
+            path = "u_" + QString::number(query.value(0).toInt() + 1) + ".jpg";
+            qDebug() << "PATH: " << path;
+        }
+    } else {
+        path = query.value(0).toString();
+    }
+
+    qDebug() << "PATH 111: " << path;
+    if(path != "") {
+        QFile file(Env::get("PROFILES_DIR") + path);
+        if (!file.open(QIODevice::WriteOnly)) {
+            throw FileException(
+                "Cannot open file for writing profile, path: " + path,
+                "Cannot open file for writing profile",
+                StatusCode::NOT_FOUND
+            );
+        } else {
+            qint64 bytesWritten = file.write(profile);
+            if (bytesWritten == -1) {
+                throw FileException(
+                    "Cannot write profile file, path: " + path,
+                    "Cannot write profile file",
+                    StatusCode::NOT_FOUND
+                );
+            }
+            file.close();
+
+            if(!query.exec("UPDATE userInfo SET picture='" + path + "' WHERE id=" + id + ";")) {
+                throw ServiceUnavailableException(
+                    "Method UserProvider::updateBasicInfo: incorrect db request, cannot set profile picture path",
+                    "incorrect db request"
+                );
+            }
+
+            return path.toUtf8();
+        }
+    }
+}
 
 void UserProvider::addFavoriteAuthor(int authorId, int userId) {
     QSqlQuery query;

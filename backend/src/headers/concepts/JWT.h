@@ -15,6 +15,7 @@ public:
     static void verifyTokenAndThrow(const Request& token, const QString& secret);
     static QString getUsernameFromToken(const QByteArray& token);
     static int getUserIdFromToken(const QByteArray& token);
+    static qint64 getExpTimeFromToken(const QByteArray& token);
 private:
     static QByteArray toBase64(const QJsonObject& cryptable);
     static QByteArray sign(const QByteArray& message, const QString& secret);

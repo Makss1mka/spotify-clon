@@ -10,12 +10,16 @@
 
 class Request {
 public:
-    static Request parseFromQByteArray(QByteArray rawReq);
     static bool isInt(const QString& str);
 
     Request();
     void print();
+    void clear();
+    void printWithoutPrety();
+    void parseFromQByteArrayWithoutBodyParsing(QByteArray rawReq);
+    void parseBody();
 
+    bool isEmpty;
     QString method;
     QString url;
     std::map<QString, QString> query;

@@ -47,7 +47,7 @@ void MusicRouter::setupRoutes() {
         }
 
         std::shared_ptr<MusicProvider> musicProvider = this->getProvider<MusicProvider>("musicProvider");
-        QByteArray data = musicProvider->getFile(Env::get("MUSIC_DIR", ":/.env") + request.query["path"]);
+        QByteArray data = musicProvider->getFile(Env::get("MUSIC_DIR") + request.query["path"]);
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: audio/mpeg\r\n"
@@ -79,7 +79,7 @@ void MusicRouter::setupRoutes() {
         }
 
         std::shared_ptr<MusicProvider> musicProvider = this->getProvider<MusicProvider>("musicProvider");
-        QByteArray data = musicProvider->getFile(Env::get("PROFILES_DIR", ":/.env") + request.query["path"]);
+        QByteArray data = musicProvider->getFile(Env::get("PROFILES_DIR") + request.query["path"]);
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: " + pictureType + "\r\n"

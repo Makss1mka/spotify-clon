@@ -19,7 +19,7 @@ public:
     QByteArray routing(Request &request);
     bool addGetRoute(std::string url, std::function<QByteArray(Request&)> handler);
     bool addPostRoute(std::string url, std::function<QByteArray(Request&)> handler);
-    bool addUpdateRoute(std::string url, std::function<QByteArray(Request&)> handler);
+    bool addPutRoute(std::string url, std::function<QByteArray(Request&)> handler);
     bool addDeleteRoute(std::string url, std::function<QByteArray(Request&)> handler);
     void getRouterInfo();
 

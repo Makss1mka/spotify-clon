@@ -14,6 +14,7 @@ public:
     QByteArray authUserViaToken(int id);
     QByteArray refreshToken(const QByteArray& refreshToken);
     void updateBasicInfo(int id, const QString& login, const QString& email, const QString& password);
+    QByteArray updateProfile(const QString& id, const QByteArray& profile);
 
     void addFavoriteAuthor(int authorId, int userId);
     void deleteFavoriteAuthor(const QString& authorId, const QString& userId);

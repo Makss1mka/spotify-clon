@@ -89,6 +89,17 @@ int JWT::getUserIdFromToken(const QByteArray& token) {
     return obj["id"].toInt();
 }
 
+qint64 JWT::getExpTimeFromToken(const QByteArray& token) {
+    QList<QByteArray> parts = token.split('.');
+    if (parts.size() != 3) return -1;
+
+    QByteArray payloadJson = QByteArray::fromBase64(parts[1], QByteArray::Base64UrlEncoding);
+    QJsonDocument doc = QJsonDocument::fromJson(payloadJson);
+    QJsonObject obj = doc.object();
+
+    return obj["exp"].toInteger();
+}
+
 QByteArray JWT::toBase64(const QJsonObject& cryptable) {
     return QJsonDocument(cryptable).toJson(QJsonDocument::Compact).toBase64(QByteArray::Base64UrlEncoding | QByteArray::OmitTrailingEquals);
 }

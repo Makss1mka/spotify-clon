@@ -8,6 +8,7 @@
 #include "../headers/utils/Map.h"
 #include <QCoreApplication>
 #include <QSqlDatabase>
+#include <QByteArray>
 #include <QTcpSocket>
 #include <QSqlError>
 #include <QFile>
@@ -28,10 +29,10 @@ Server::Server(int port) {
 
 bool Server::openDbConnections() {
     connection = std::make_shared<QSqlDatabase>(QSqlDatabase::addDatabase("QSQLITE"));
-    connection->setDatabaseName(Env::get("USERS_INFO_DB", ":/.env"));
+    connection->setDatabaseName(Env::get("USERS_INFO_DB"));
 
     if(!connection->open()) {
-        qDebug() << "Cannot connect to database, db path: " << Env::get("USERS_INFO_DB", ":/.env") << connection->lastError().text();
+        qDebug() << "Cannot connect to database, db path: " << Env::get("USERS_INFO_DB") << connection->lastError().text();
         return false;
     }
     return true;
@@ -43,12 +44,16 @@ void Server::incomingConnection(qintptr socketDescriptor) {
 
     if(socket->setSocketDescriptor(socketDescriptor)) {
         connect(socket, &QTcpSocket::readyRead, [socket](){
-            QByteArray request = socket->readAll();
-            qDebug() << "Request" << request;
+            QByteArray newData = socket->readAll();
+            Request req;
 
-            Request req = Request::parseFromQByteArray(request);
+            qDebug() << "\nRequest" << newData;
+
+            req.parseFromQByteArrayWithoutBodyParsing(newData);
+            req.parseBody();
 
             QByteArray response = RouterDispatcher::getDispatcher().routing(req);
+            req.clear();
 
             socket->write(response);
             socket->flush();

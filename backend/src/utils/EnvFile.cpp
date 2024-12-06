@@ -6,7 +6,9 @@
 
 Env::Env() {}
 
-QString Env::get(QString key, QString envFilePath) {
+QString Env::get(const QString& key) {
+    QString envFilePath = "C:/Users/maksi/Desktop/PopuskPapka/C++/KuRsAcH/backend/.env";
+
     QFile file(envFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Cannot open env file with path: " << envFilePath;

@@ -5,7 +5,7 @@
 
 class Env {
 public:
-    static QString get(QString key, QString envFilePath);
+    static QString get(const QString& key);
 
     Env(const Env&) = delete;
     void operator=(const Env&) = delete;

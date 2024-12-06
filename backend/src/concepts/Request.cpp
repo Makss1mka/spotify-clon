@@ -9,7 +9,13 @@
 #include <QPair>
 #include <QUrl>
 
-Request::Request() {}
+Request::Request() {
+    isEmpty = true;
+}
+
+void Request::clear() {
+
+}
 
 void Request::print() {
     qDebug() << "Method: " << method << "\nUrl: " << url << "\nQuery: ";
@@ -26,31 +32,61 @@ void Request::print() {
     if (isBodyNoneJson == true) qDebug() << "Body: " << bodyNoneJson;
 }
 
-Request Request::parseFromQByteArray(QByteArray rawReq) {
-    Request parsedReq;
+void Request::printWithoutPrety() {
+    QString result = "";
 
+    result += "Method: " + method + " Url: " + url + " Query: ";
+    for(auto& [key, value] : query) {
+        result +=  " " + key + " : " + value;
+    }
+    result += " Headers: ";
+    for(auto& [key, value] : headers) {
+        result += " " + key + " : " + value;
+    }
+
+    qDebug() << result;
+    if (isBodyJsonArray == true) qDebug() << "Body: " << bodyJsonArray;
+    if (isBodyJsonObj == true) qDebug() << "Body: " << bodyJsonObj;
+    if (isBodyNoneJson == true) qDebug() << "Body: " << bodyNoneJson;
+}
+
+void Request::parseBody() {
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(bodyNoneJson);
+    if (!jsonDoc.isNull()) {
+        if (jsonDoc.isObject()) {
+            isBodyJsonObj = true;
+            bodyJsonObj = jsonDoc.object();
+        } else if (jsonDoc.isArray()) {
+            isBodyJsonArray = true;
+            bodyJsonArray = jsonDoc.array();
+        }
+        isBodyNoneJson = false;
+    }
+}
+
+void Request::parseFromQByteArrayWithoutBodyParsing(QByteArray rawReq) {
     if (rawReq == "") {
-        return parsedReq;
+        return;
     }
 
     QList<QByteArray> splitedRawReq = rawReq.split('\r');
     int tempInd = splitedRawReq[0].indexOf(" /");
 
     // Parsing method
-    parsedReq.method = splitedRawReq[0].mid(0, tempInd);
+    this->method = splitedRawReq[0].mid(0, tempInd);
 
     // Url-Query Parsing
-    QByteArray rawUrl = splitedRawReq[0].mid(tempInd + 1, splitedRawReq[0].indexOf(" ", tempInd + 1) - parsedReq.method.length() - 1);
+    QByteArray rawUrl = splitedRawReq[0].mid(tempInd + 1, splitedRawReq[0].indexOf(" ", tempInd + 1) - this->method.length() - 1);
     QList<QByteArray> splitedRawUrl = rawUrl.split('?');
 
-    parsedReq.url = splitedRawUrl[0];
+    this->url = splitedRawUrl[0];
 
     if (splitedRawUrl.size() > 1) {
         QUrlQuery query = QUrlQuery(splitedRawUrl[1]);
 
         QList<QPair<QString, QString>> items = query.queryItems();
         for(const QPair<QString, QString> &item : items) {
-            parsedReq.query[item.first] = item.second;
+            this->query[item.first] = item.second;
         }
     }
 
@@ -59,31 +95,18 @@ Request Request::parseFromQByteArray(QByteArray rawReq) {
     QByteArray oneHeaderPair = splitedRawReq[tempInd];
     while (oneHeaderPair != "\n") {
         QList<QByteArray> splitedOneHeaderPair = oneHeaderPair.mid(1).split(':');
-        parsedReq.headers.set(splitedOneHeaderPair[0], splitedOneHeaderPair[1].mid(1));
+        this->headers.set(splitedOneHeaderPair[0], splitedOneHeaderPair[1].mid(1));
 
         oneHeaderPair = splitedRawReq[++tempInd];
     }
 
-    // Body parsing
-    if(splitedRawReq[tempInd + 1] == "") {
-        return parsedReq;
+    // Body extracting
+    if(splitedRawReq[tempInd + 1] != "" && splitedRawReq[tempInd + 1] != '\n') {
+        this->bodyNoneJson = splitedRawReq[tempInd + 1];
+        this->isBodyNoneJson = true;
     }
 
-    QJsonDocument jsonDoc = QJsonDocument::fromJson(splitedRawReq[tempInd + 1]);
-    if (!jsonDoc.isNull()) {
-        if (jsonDoc.isObject()) {
-            parsedReq.isBodyJsonObj = true;
-            parsedReq.bodyJsonObj = jsonDoc.object();
-        } else if (jsonDoc.isArray()) {
-            parsedReq.isBodyJsonArray = true;
-            parsedReq.bodyJsonArray = jsonDoc.array();
-        }
-    } else {
-        parsedReq.isBodyNoneJson = true;
-        parsedReq.bodyNoneJson = splitedRawReq[tempInd + 1];
-    }
-
-    return parsedReq;
+    this->isEmpty = false;
 }
 
 bool Request::isInt(const QString& str) {

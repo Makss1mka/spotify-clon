@@ -29,8 +29,8 @@ bool Router::addPostRoute(std::string url, std::function<QByteArray(Request&)> h
     return addRoute("POST", url, handler);
 }
 
-bool Router::addUpdateRoute(std::string url, std::function<QByteArray(Request&)> handler) {
-    return addRoute("UPDATE", url, handler);
+bool Router::addPutRoute(std::string url, std::function<QByteArray(Request&)> handler) {
+    return addRoute("PUT", url, handler);
 }
 
 bool Router::addDeleteRoute(std::string url, std::function<QByteArray(Request&)> handler) {

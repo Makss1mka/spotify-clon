@@ -87,7 +87,7 @@ void UserRouter::setupRoutes() {
     });
 
     this->addGetRoute("/authViaToken", [this](Request& request) -> QByteArray {
-        JWT::verifyTokenAndThrow(request, Env::get("SECRET", ":/.env"));
+        JWT::verifyTokenAndThrow(request, Env::get("SECRET"));
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
         QByteArray data = userProvider->authUserViaToken(JWT::getUserIdFromToken(request.headers.get("authorization").toUtf8()));
@@ -102,7 +102,7 @@ void UserRouter::setupRoutes() {
     });
 
     this->addGetRoute("/refreshToken", [this](Request& request) -> QByteArray {
-        JWT::verifyTokenAndThrow(request, Env::get("SECRET", ":/.env"));
+        JWT::verifyTokenAndThrow(request, Env::get("SECRET"));
 
         std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
         QByteArray newToken = userProvider->refreshToken(request.headers.get("authorization").toUtf8());
@@ -116,7 +116,29 @@ void UserRouter::setupRoutes() {
         return response;
     });
 
-    this->addUpdateRoute("/update", [this](Request& request) -> QByteArray {
+    this->addPutRoute("/updateProfile", [this](Request& request) -> QByteArray {
+        if(request.isBodyNoneJson == false || (request.headers.get("content-type") != "image/jpeg"
+            && request.headers.get("Content-Type") != "image/png") || request.query.size() != 1
+            || request.query.count("user_id") == 0 || Request::isInt(request.query["user_id"]) == false) {
+            throw BadRequestException(
+                "Invalid body format for update user profile",
+                "Invalid body format for update user profile"
+            );
+        }
+
+        std::shared_ptr<UserProvider> userProvider = this->getProvider<UserProvider>("userProvider");
+        QByteArray data = userProvider->updateProfile(request.query["user_id"], request.bodyNoneJson);
+
+        QByteArray response = "HTTP/1.1 200 OK\r\n"
+                    "Content-Type: text/plain\r\n"
+                    "Content-Length: " + QByteArray::number(data.size()) + "\r\n"
+                    "\r\n";
+        response.append(data);
+
+        return response;
+    });
+
+    this->addPutRoute("/update", [this](Request& request) -> QByteArray {
         if(request.isBodyJsonObj == false || request.bodyJsonObj.size() != 4 || request.bodyJsonObj.contains("login") == false
             || request.bodyJsonObj.contains("email") == false || request.bodyJsonObj.contains("password") == false
             || request.bodyJsonObj.contains("id") == false) {
@@ -125,9 +147,9 @@ void UserRouter::setupRoutes() {
                 "Invalid body format for update user info"
             );
         }
-        if (request.bodyJsonObj.value("id").isDouble() == false
-            || request.bodyJsonObj.value("id").toInt() < 0 || request.bodyJsonObj.value("login").isString() == false
-            || request.bodyJsonObj.value("password").isString() == false || request.bodyJsonObj.value("email").isString() == false) {
+        if (request.bodyJsonObj.value("id").isDouble() == false || request.bodyJsonObj.value("id").toInt() < 0
+            || request.bodyJsonObj.value("login").isString() == false || request.bodyJsonObj.value("password").isString() == false
+            || request.bodyJsonObj.value("email").isString() == false) {
             throw BadRequestException(
                 "Invalid body format for update user info, unsupported types",
                 "Invalid body format for update user info, unsupported types"
@@ -142,10 +164,10 @@ void UserRouter::setupRoutes() {
                 request.bodyJsonObj.value("password").toString());
 
         QByteArray response = "HTTP/1.1 200 OK\r\n"
-                            "Content-Type: text/plain\r\n"
-                            "Content-Length: 33\r\n"
-                            "\r\n"
-                            "User data was successfuly changed";
+                    "Content-Type: text/plain\r\n"
+                    "Content-Length: 33\r\n"
+                    "\r\n"
+                    "User data was successfuly changed";
 
         return response;
     });
