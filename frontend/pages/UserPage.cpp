@@ -275,7 +275,7 @@ void UserPage::editProfileButtpnClicked() {
     QString imagePath = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "Images (*.png *.jpg *.jpeg)");
 
     if (!imagePath.isEmpty()) {
-        this->newProfileType = imagePath.split(".")[imagePath.split(".").length() - 1];
+        this->newProfileType = "image/" + imagePath.split(".")[imagePath.split(".").length() - 1];
 
         QFile file(imagePath);
         if (!file.open(QIODevice::ReadOnly)) {
@@ -296,7 +296,7 @@ void UserPage::editProfileButtpnClicked() {
 }
 
 void UserPage::acceptChangesButtonClicked() {
-    HttpClient::sendPutNoneJsonRequest(QUrl(Env::get("SERVER_DOMEN") + "/user/updateProfile?user_id=" + QString::number(User::getId())),
+    HttpClient::sendPutFileRequest("/user/updateProfile?user_id=" + QString::number(User::getId()),
         this->newProfile, this->newProfileType, [this](HttpClient::Response* response) {
             if(response->statusCode < 400) {
                 if(User::getProfilePath() == "") User::setProfilePath(QString::fromUtf8(response->body));
@@ -314,8 +314,8 @@ void UserPage::acceptChangesButtonClicked() {
             User::setName(this->newLogin);
             User::setEmail(this->newEmail);
 
-            this->userNameLabel(this->newLogin);
-            this->userEmailLabel(this->newEmail);
+            this->userNameLabel->setText(this->newLogin);
+            this->userEmailLabel->setText(this->newEmail);
         }
     });
 }
