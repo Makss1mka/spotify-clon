@@ -102,7 +102,15 @@ void Request::parseFromQByteArrayWithoutBodyParsing(QByteArray rawReq) {
 
     // Body extracting
     if(splitedRawReq[tempInd + 1] != "" && splitedRawReq[tempInd + 1] != '\n') {
-        this->bodyNoneJson = splitedRawReq[tempInd + 1];
+        tempInd++;
+        //qDebug() << "first  " << splitedRawReq[tempInd];
+
+        this->bodyNoneJson = splitedRawReq[tempInd++].mid(1);
+
+        for(; tempInd < splitedRawReq.size(); tempInd++) {
+            this->bodyNoneJson += '\r' + splitedRawReq[tempInd];
+        }
+
         this->isBodyNoneJson = true;
     }
 

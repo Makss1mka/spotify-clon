@@ -118,7 +118,7 @@ void UserRouter::setupRoutes() {
 
     this->addPutRoute("/updateProfile", [this](Request& request) -> QByteArray {
         if(request.isBodyNoneJson == false || (request.headers.get("content-type") != "image/jpeg"
-            && request.headers.get("Content-Type") != "image/png") || request.query.size() != 1
+            && request.headers.get("content-type") != "image/png" && request.headers.get("content-type") != "image/jpg") || request.query.size() != 1
             || request.query.count("user_id") == 0 || Request::isInt(request.query["user_id"]) == false) {
             throw BadRequestException(
                 "Invalid body format for update user profile",

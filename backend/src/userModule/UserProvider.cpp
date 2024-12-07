@@ -194,7 +194,7 @@ QByteArray UserProvider::updateProfile(const QString& id, const QByteArray& prof
         path = query.value(0).toString();
     }
 
-    qDebug() << "PATH 111: " << path;
+    qDebug() << "PATH 111: " << path << " len - " << profile.size();
     if(path != "") {
         QFile file(Env::get("PROFILES_DIR") + path);
         if (!file.open(QIODevice::WriteOnly)) {
