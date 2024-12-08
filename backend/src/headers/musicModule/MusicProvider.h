@@ -16,6 +16,10 @@ public:
     QByteArray find(const QString& keyStr);
     QByteArray getAll();
     QByteArray recomend(int limit, const QString& janre, const QString& author, const QString& lang, const QString& trackName);
+    QByteArray addMusicBasicInfo(int authorId, const QString& name, const QString& lang, const QString& janres);
+    void addMusicFile(int musicId, const QByteArray& music);
+    void addMusicProfile(int musicId, const QString& profileType, const QByteArray& profile);
+    void updateMusic(int musicId, const QString& name, const QString& lang, const QString& janres);
 };
 
 #endif // MUSICPROVIDER_H

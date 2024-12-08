@@ -49,7 +49,7 @@ void Server::incomingConnection(qintptr socketDescriptor) {
     if(socket->setSocketDescriptor(socketDescriptor)) {
         connect(socket, &QTcpSocket::readyRead, [this, waitingReqs, socket](){
             QByteArray newData = socket->readAll();
-            qDebug() << "\nRequest" << newData.mid(0, 500) << " LEN " << newData.size();
+            qDebug() << "\nRequest" << newData.mid(0, 300) << " LEN " << newData.size();
 
             if (this->reqFormat.match(newData).hasMatch() == false) {
                 socket->write("HTTP/1.1 400 Bad Request\r\n"
@@ -70,9 +70,10 @@ void Server::incomingConnection(qintptr socketDescriptor) {
                     for(int i = 0; i < waitingReqs->size(); i++) {
                         if((*waitingReqs)[i].headers.get("x-request-id") == req.headers.get("x-request-id") && (*waitingReqs)[i].isBodyNoneJson == true
                             && req.isBodyNoneJson == true) {
+
                             (*waitingReqs)[i].bodyNoneJson += req.bodyNoneJson;
 
-                            if ((*waitingReqs)[i].headers.get("content-length").toInt() == (*waitingReqs)[i].bodyNoneJson.size()) {
+                            if ((*waitingReqs)[i].headers.get("content-length").toInt() <= (*waitingReqs)[i].bodyNoneJson.size()) {
                                 (*waitingReqs)[i].parseBody();
 
                                 QByteArray response = RouterDispatcher::getDispatcher().routing((*waitingReqs)[i]);
