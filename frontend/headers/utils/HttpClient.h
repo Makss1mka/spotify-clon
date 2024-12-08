@@ -31,10 +31,10 @@ public:
 
     static void sendGetRequest(const QUrl &url, std::function<void(Response*)> handler, const QString& token = "");
     static void sendPostRequest(const QUrl &url, const QJsonObject &json, std::function<void(Response*)> handler, const QString& token = "");
-    static void sendPostFileRequest(const QString &url, const QByteArray &body, const QString& contentType, std::function<void(Response*)> handler, const QString& token);
+    static void sendPostFileRequest(const QString &url, const QByteArray &body, const QString& contentType, std::function<void(int)> handler, const QString& token = "");
     static void sendDeleteRequest(const QUrl &url, std::function<void(Response*)> handler, const QString& token = "");
     static void sendPutRequest(const QUrl &url, const QJsonObject &json, std::function<void(Response*)> handler, const QString& token = "");
-    static void sendPutFileRequest(const QString &url, const QByteArray &body, const QString& contentType, std::function<void(Response*)> handler, const QString& token = "");
+    static void sendPutFileRequest(const QString &url, const QByteArray &body, const QString& contentType, std::function<void(int)> handler, const QString& token = "");
 private:
     HttpClient();
 

@@ -71,7 +71,7 @@ void Player::setVolumeLevel(int value) {
 }
 
 void Player::setPosition(int position) {
-    if (position >= 0 && position <= musicQueue[currentQueueInd]->getDuration() * 1000) {
+    if (position >= 0 && position <= getDuration() * 1000) {
         music.setPlayingOffset(sf::milliseconds(position * 10));
     }
 }

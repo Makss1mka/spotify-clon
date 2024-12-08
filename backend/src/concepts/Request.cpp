@@ -60,6 +60,7 @@ void Request::parseBody() {
             isBodyJsonArray = true;
             bodyJsonArray = jsonDoc.array();
         }
+        bodyNoneJson = "";
         isBodyNoneJson = false;
     }
 }

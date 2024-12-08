@@ -52,7 +52,7 @@ UserPage::UserPage(QWidget *parent) : QWidget(parent) {
             "QPushButton:hover { text-decoration: underline; }");
     pencilButton->setText("Изменить иконку");
     pencilButton->setIconSize(QSize(32, 32));
-    pencilButton->connect(pencilButton, &QPushButton::clicked, this, &UserPage::editProfileButtpnClicked);
+    pencilButton->connect(pencilButton, &QPushButton::clicked, this, &UserPage::editProfileButtonClicked);
     QVBoxLayout* pencilButtonLayout = new QVBoxLayout();
     pencilButtonLayout->setAlignment(Qt::AlignBottom);
     pencilButtonLayout->addWidget(pencilButton);
@@ -271,7 +271,7 @@ void UserPage::editEmailButtonClicked() {
     })->exec();
 }
 
-void UserPage::editProfileButtpnClicked() {
+void UserPage::editProfileButtonClicked() {
     QString imagePath = QFileDialog::getOpenFileName(this, "Выберите изображение", "", "Images (*.png *.jpg *.jpeg)");
 
     if (!imagePath.isEmpty()) {
@@ -297,9 +297,9 @@ void UserPage::editProfileButtpnClicked() {
 
 void UserPage::acceptChangesButtonClicked() {
     HttpClient::sendPutFileRequest("/user/updateProfile?user_id=" + QString::number(User::getId()),
-        this->newProfile, this->newProfileType, [this](HttpClient::Response* response) {
-            if(response->statusCode < 400) {
-                if(User::getProfilePath() == "") User::setProfilePath(QString::fromUtf8(response->body));
+        this->newProfile, this->newProfileType, [this](int statusCode) {
+            if(statusCode < 400) {
+                //if(User::getProfilePath() == "") User::setProfilePath(QString::fromUtf8(response->body));
             }
     });
 
@@ -311,11 +311,14 @@ void UserPage::acceptChangesButtonClicked() {
 
     HttpClient::sendPutRequest(QUrl(Env::get("SERVER_DOMEN") + "/user/update"), userData, [this](HttpClient::Response* response){
         if(response->statusCode < 400) {
-            User::setName(this->newLogin);
-            User::setEmail(this->newEmail);
-
-            this->userNameLabel->setText(this->newLogin);
-            this->userEmailLabel->setText(this->newEmail);
+            if(this->newLogin != "") {
+                User::setName(this->newLogin);
+                this->userNameLabel->setText(this->newLogin);
+            }
+            if(this->newEmail != "") {
+                User::setEmail(this->newEmail);
+                this->userEmailLabel->setText(this->newEmail);
+            }
         }
     });
 }

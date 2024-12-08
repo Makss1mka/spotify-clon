@@ -145,7 +145,6 @@ void UserProvider::updateBasicInfo(int id, const QString& login, const QString& 
         request.replace(request.size() - 2, 1, "");
         request += " WHERE id=" + QString::number(id) + ";";
 
-qDebug() << "REQ " << request;
         if(!query.exec(request)) {
             throw ServiceUnavailableException(
                 "Method UserProvider::updateBasicInfo: incorrect db request",
@@ -194,7 +193,6 @@ QByteArray UserProvider::updateProfile(const QString& id, const QByteArray& prof
         path = query.value(0).toString();
     }
 
-    qDebug() << "PATH 111: " << path << " len - " << profile.size();
     if(path != "") {
         QFile file(Env::get("PROFILES_DIR") + path);
         if (!file.open(QIODevice::WriteOnly)) {
@@ -323,7 +321,7 @@ QJsonArray UserProvider::getFavoriteMusics(const QString& userId) {
     QJsonObject musicEntry;
     QSqlQuery query;
 
-    if(!query.exec("SELECT music.id, music.name, music.file, music.author_id, userInfo.login, music.duration, music.listens, "
+    if(!query.exec("SELECT music.id, music.name, music.file, music.author_id, userInfo.login, music.listens, "
         "music.janre, music.lang, music.picture AS musicPic, userInfo.picture AS userPic FROM user_music "
         "JOIN music ON user_music.music_id = music.id "
         "JOIN userInfo ON music.author_id = userInfo.id "
@@ -340,12 +338,11 @@ QJsonArray UserProvider::getFavoriteMusics(const QString& userId) {
         musicEntry["file"] = query.value(2).toString();
         musicEntry["author_id"] = query.value(3).toInt();
         musicEntry["author_name"] = query.value(4).toString();
-        musicEntry["duration"] = query.value(5).toInt();
-        musicEntry["listens"] = query.value(6).toInt();
-        musicEntry["janre"] = query.value(7).toString();
-        musicEntry["lang"] = query.value(8).toString();
-        musicEntry["profile"] = query.value(9).toString();
-        musicEntry["author_profile"] = query.value(10).toString();
+        musicEntry["listens"] = query.value(5).toInt();
+        musicEntry["janre"] = query.value(6).toString();
+        musicEntry["lang"] = query.value(7).toString();
+        musicEntry["profile"] = query.value(8).toString();
+        musicEntry["author_profile"] = query.value(9).toString();
 
         resultArray.append(musicEntry);
     }
