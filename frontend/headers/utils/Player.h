@@ -36,6 +36,9 @@ public:
     int getCurrentQueueInd();
     bool isOnRepeat();
     void swapRepeating();
+    int getDuration() {
+        return static_cast<int>(music.getDuration().asSeconds());
+    }
 private:
     void loadTrack(QUrl);
     void loadTrackFromBuffer();

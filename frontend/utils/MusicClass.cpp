@@ -8,7 +8,6 @@ MusicObject::MusicObject(const QJsonObject &musicObj) {
     author = musicObj.value("author_name").toString();
     authorId = musicObj.value("author_id").toInt();
     authorProfilePath = musicObj.value("author_profile").toString();
-    duration = musicObj.value("duration").toInt();
     path = musicObj.value("file").toString();
     listens = musicObj.value("listens").toInt();
     janres = musicObj.value("janre").toString();
@@ -34,10 +33,6 @@ int MusicObject::getAuthorId() {
 
 QString MusicObject::getAuthorProfilePath() {
     return authorProfilePath;
-}
-
-int MusicObject::getDuration() {
-    return duration;
 }
 
 QString MusicObject::getPath() {

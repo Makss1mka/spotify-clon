@@ -178,12 +178,12 @@ Footer::Footer(QWidget *parent) : QWidget(parent) {
         this->authorLabel->setText(curMusic->getAuthor());
         this->nameLabel->setText(curMusic->getName());
 
-        QString minutes = QString::number(curMusic->getDuration() / 60);
-        QString seconds = QString::number(curMusic->getDuration() % 60);
+        QString minutes = QString::number(Globals::player->getDuration() / 60);
+        QString seconds = QString::number(Globals::player->getDuration() % 60);
         this->endTime->setText(minutes + ":" + ((seconds.length() == 1) ? "0" + seconds : seconds));
         this->startTime->setText("00:00");
 
-        this->musicTimeline->setRange(0, curMusic->getDuration() * 100);
+        this->musicTimeline->setRange(0, Globals::player->getDuration() * 100);
         this->musicTimeline->setValue(0);
 
         if(Globals::player->getCurrentMusic()->getProfilePath() != "") {

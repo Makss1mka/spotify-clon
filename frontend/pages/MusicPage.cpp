@@ -44,11 +44,12 @@ MusicPage::MusicPage(std::shared_ptr<MusicObject> musicData, QWidget *parent) : 
     type->setStyleSheet("font-size: 10px; min-width: 0px; color: white; margin: 0px 0px 0px 10px; padding: 0px; font-weight: bold;");
     name = new QLabel(musicData->getName());
     name->setStyleSheet("font-size: 35px; min-width: 0px; width: 700px; color: white; margin: 0px 0px 0px 5px; padding: 0px; font-weight: bold;");
-    QString minutes = QString::number(musicData->getDuration() / 60);
-    QString seconds = QString::number(musicData->getDuration() % 60);
+
+    // QString minutes = QString::number(Globals::player->getDuration() / 60);
+    // QString seconds = QString::number(musicData->getDuration() % 60);
     metaData = new QLabel(musicData->getAuthor() +
         " • " + musicData->getName() +
-        " • " + minutes + ":" + ((seconds.length() == 1) ? "0" + seconds : seconds) +
+        //" • " + minutes + ":" + ((seconds.length() == 1) ? "0" + seconds : seconds) +
         " • " + QString::number(musicData->getListens()));
     metaData->setStyleSheet("font-size: 12px; color: #A5A5A5; margin: 0px 0px 0px 10px; padding: 0px; font-weight: bold;");
 
