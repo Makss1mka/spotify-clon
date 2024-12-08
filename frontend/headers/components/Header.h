@@ -17,6 +17,7 @@ private:
     HoverIconButton* searchButton;
     QLineEdit* searchInputField;
 
+    HoverIconButton* addMusicButton;
     HoverIconButton* userButton;
     HoverIconButton* collapseButton;
     HoverIconButton* collapseInWindowButton;

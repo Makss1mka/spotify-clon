@@ -1,8 +1,8 @@
 #ifndef USERPAGE_H
 #define USERPAGE_H
 
-#include <QByteArray>
 #include <QPushButton>
+#include <QByteArray>
 #include <functional>
 #include <QWidget>
 #include <QString>
@@ -36,7 +36,7 @@ private:
     void editUsernameButtonClicked();
     void editPasswordButtonClicked();
     void editEmailButtonClicked();
-    void editProfileButtpnClicked();
+    void editProfileButtonClicked();
     void acceptChangesButtonClicked();
     void declineChangesButtonClicked();
 };

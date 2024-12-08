@@ -47,7 +47,6 @@ void User::printInfo() {
             << " name - " << music->getName()
             << " author - " << music->getAuthor()
             << " author-id - " << music->getAuthorId()
-            << " dur - " << music->getDuration()
             << " path - " << music->getPath()
             << " listens - " << music->getListens()
             << " janres - " << music->getJanres()

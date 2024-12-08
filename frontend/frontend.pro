@@ -34,6 +34,7 @@ SOURCES += \
     components/VolumeSlider.cpp \
     \
     pages/AuthorPage.cpp \
+    pages/MusicAddPage.cpp \
     pages/MusicPage.cpp \
     pages/SearchPage.cpp \
     \
@@ -69,6 +70,7 @@ HEADERS += \
     headers/components/VolumeSlider.h \
     \
     headers/pages/AuthorPage.h \
+    headers/pages/MusicAddPage.h \
     headers/pages/MusicPage.h \
     headers/pages/UserPage.h \
     headers/utils/HttpClient.h \

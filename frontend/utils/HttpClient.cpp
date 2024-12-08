@@ -10,6 +10,7 @@
 #include <QString>
 #include <QUuid>
 #include <QUrl>
+#include <QThread>
 
 QNetworkAccessManager* HttpClient::manager = new QNetworkAccessManager();
 HttpClient::HttpClient() {}
@@ -44,7 +45,7 @@ void HttpClient::sendPostRequest(const QUrl &url, const QJsonObject &json, std::
     });
 }
 
-void HttpClient::sendPostFileRequest(const QString &url, const QByteArray &body, const QString& contentType, std::function<void(Response*)> handler, const QString& token) {
+void HttpClient::sendPostFileRequest(const QString &url, const QByteArray &body, const QString& contentType, std::function<void(int)> handler, const QString& token) {
     QTcpSocket* socket = new QTcpSocket();
     socket->connectToHost("localhost", 3000);
 
@@ -55,11 +56,12 @@ void HttpClient::sendPostFileRequest(const QString &url, const QByteArray &body,
 
     QString uuid = QUuid::createUuid().toString();
     QString header = "POST " + url + " HTTP/1.1"
-            "\r\nhost: localhost:3000\r\ncontent-type: " + contentType +
+            "\r\nhost: localhost:3000"
+            "\r\ncontent-type: " + contentType +
             "\r\ncontent-length: " + QString::number(body.size()) +
             "\r\nconnection: Keep-Alive"
             "\r\nauthorization: " + token +
-            "\r\nx-request-id: " + uuid +                         +
+            "\r\nx-request-id: " + uuid +
             "\r\naccept-encoding: gzip, deflate"
             "\r\naccept-language: ru-BY,en,*"
             "\r\nuser-agent: Mozilla/5.0"
@@ -73,7 +75,7 @@ void HttpClient::sendPostFileRequest(const QString &url, const QByteArray &body,
         packet += body[i];
         k++;
 
-        if(k == 40000) {
+        if(k == 16384) {
             socket->write(packet);
             socket->flush();
             socket->waitForReadyRead();
@@ -86,8 +88,10 @@ void HttpClient::sendPostFileRequest(const QString &url, const QByteArray &body,
     socket->write(packet);
     socket->flush();
 
-    QObject::connect(socket, &QTcpSocket::readyRead, [socket](){
-        qDebug() << "recieve";
+    QObject::connect(socket, &QTcpSocket::readyRead, [socket, handler](){
+        QByteArray response = socket->readAll();
+
+        handler(response.split(' ') [1].toInt());
     });
 }
 
@@ -106,7 +110,7 @@ void HttpClient::sendPutRequest(const QUrl &url, const QJsonObject &json, std::f
     });
 }
 
-void HttpClient::sendPutFileRequest(const QString &url, const QByteArray &body, const QString& contentType, std::function<void(Response*)> handler, const QString& token) {
+void HttpClient::sendPutFileRequest(const QString &url, const QByteArray &body, const QString& contentType, std::function<void(int)> handler, const QString& token) {
     QTcpSocket* socket = new QTcpSocket();
     socket->connectToHost("localhost", 3000);
 
@@ -134,7 +138,7 @@ void HttpClient::sendPutFileRequest(const QString &url, const QByteArray &body, 
         packet += body[i];
         k++;
 
-        if(k == 40000) {
+        if(k == 16384) {
             socket->write(packet);
             socket->flush();
             socket->waitForReadyRead();
@@ -147,8 +151,10 @@ void HttpClient::sendPutFileRequest(const QString &url, const QByteArray &body, 
     socket->write(packet);
     socket->flush();
 
-    QObject::connect(socket, &QTcpSocket::readyRead, [socket](){
-        qDebug() << "recieve";
+    QObject::connect(socket, &QTcpSocket::readyRead, [socket, handler](){
+        QByteArray response = socket->readAll();
+
+        handler(response.split(' ')[1].toInt());
     });
 }
 

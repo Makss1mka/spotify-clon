@@ -1,6 +1,8 @@
 #include "../headers/components/HoverIconButton.h"
 #include "../headers/utils/globalVariables.h"
+#include "../headers/pages/MusicAddPage.h"
 #include "../headers/components/Header.h"
+#include "../headers/utils/UserClasses.h"
 #include "../headers/utils/coverFunks.h"
 #include "../headers/pages/SearchPage.h"
 #include "../headers/pages/UserPage.h"
@@ -75,6 +77,16 @@ Header::Header(QWidget *parent) : QWidget(parent) {
 
     // --- Third inner section
 
+    // AddMusicButton
+    addMusicButton = new HoverIconButton(QIcon(":/assets/add.png"), QIcon(":/assets/add-active.png"));
+    addMusicButton->setFixedSize(30, 30);
+    addMusicButton->setIconSize(QSize(30, 30));
+    addMusicButton->setStyleSheet("background: inherit;");
+    addMusicButton->connect(addMusicButton, &QPushButton::clicked, [](){
+        Globals::widgetManager->loadPage(new MusicAddPage());
+    });
+    if(User::getRole() != 1) addMusicButton->hide();
+
     // User button
     userButton = new HoverIconButton(QIcon(":/assets/user.png"), QIcon(":/assets/user-active.png"));
     userButton->setFixedSize(40, 40);
@@ -100,6 +112,7 @@ Header::Header(QWidget *parent) : QWidget(parent) {
 
     // Third inner layout
     QHBoxLayout *rightLayout = new QHBoxLayout;
+    rightLayout->addWidget(addMusicButton);
     rightLayout->addWidget(userButton);
     rightLayout->addWidget(collapseButton);
     rightLayout->addWidget(collapseInWindowButton);
